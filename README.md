@@ -63,22 +63,22 @@ use the docker image `andersgee/http-mysql8-sqlx` for example:
 mkdir mysqldatadir
 
 sudo docker run -d \
---name edge-stack-db \
+--name howler-db \
 --network host \
 --env-file ./.env.db \
 --mount type=bind,source="$(pwd)"/mysqldatadir,destination=/var/lib/mysql \
 --restart unless-stopped \
-andersgee/http-mysql8-sqlx:0.31
+andersgee/http-mysql8-sqlx:0.32
 ```
 
 other
 
 ```sh
 #backup
-sudo docker stop edge-stack-db
+sudo docker stop howler-db-db
 sudo cp -r mysqldatadir mysqldatadir_backup
-sudo docker start edge-stack-db
+sudo docker start howler-db-db
 #remove
-sudo docker rm edge-stack-db
+sudo docker rm howler-db-db
 sudo rm -r mysqldatadir
 ```

@@ -3,3 +3,36 @@ datasource db {
   url = env("DATABASE_MYSQL_URL")
 }
 
+model Post {
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  text String
+  createdAt DateTime @db.DateTime(3) @default(now())
+  updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
+  userId BigInt @db.UnsignedBigInt
+
+  Post_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@index([userId])
+  @@id([id])
+}
+
+model User {
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  email String
+  googleUserSub String?
+  discordUserId String?
+  githubUserId Int?
+  image String?
+  name String
+  createdAt DateTime @db.DateTime(3) @default(now())
+  updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
+
+  Post_userId_fkey Post[]
+
+  @@id([id])
+  @@unique([discordUserId])
+  @@unique([email])
+  @@unique([githubUserId])
+  @@unique([googleUserSub])
+}
+

@@ -30,7 +30,7 @@ export const postRouter = createTRPCRouter({
     return posts;
   }),
   create: protectedProcedure.input(z.object({ text: z.string() })).mutation(async ({ input, ctx }) => {
-    await maybeSleepAndThrow();
+    //await maybeSleepAndThrow();
     const db = dbfetch();
 
     const insertResult = await db
@@ -40,7 +40,9 @@ export const postRouter = createTRPCRouter({
         userId: ctx.user.id,
       })
       .executeTakeFirstOrThrow();
+    console.log("create, insertResult:", insertResult);
 
+    //const { count } = await db.selectFrom("Post").select(eb=>eb.fn.count<bigint>("id").as("count")).executeTakeFirstOrThrow()
     const createdPost = await db
       .selectFrom("Post")
       .innerJoin("User", "User.id", "Post.userId")
@@ -48,6 +50,7 @@ export const postRouter = createTRPCRouter({
       .select(["User.image as userImage", "User.name as userName"])
       .where("Post.id", "=", insertResult.insertId!)
       .executeTakeFirstOrThrow();
+    console.log("create, createdPost:", createdPost);
 
     return createdPost;
   }),

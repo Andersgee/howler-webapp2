@@ -114,7 +114,7 @@ export async function dbTransaction(
       parameters: compiledQuery.parameters,
     })
   );
-  const url = `${process.env.DATABASE_HTTP_URL}/transactionunprepared`;
+  const url = `${process.env.DATABASE_HTTP_URL}/transaction`;
   const res = await fetch(url, {
     method: "POST",
     cache: "no-store",
