@@ -1,0 +1,235 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-neutral-0: 0 0% 100%; /* #ffffff 100% */
+    --color-neutral-50: 60 9.09% 97.84%; /* #fafaf9 98% */
+    --color-neutral-100: 60 4.76% 95.88%; /* #f5f5f4 96% */
+    --color-neutral-200: 20 5.88% 90%; /* #e7e5e4 90% */
+    --color-neutral-300: 24 5.75% 82.94%; /* #d6d3d1 83% */
+    --color-neutral-400: 24 5.43% 63.92%; /* #a8a29e 64% */
+    --color-neutral-500: 25 5.26% 44.71%; /* #78716c 45% */
+    --color-neutral-600: 33.33 5.45% 32.35%; /* #57534e 33% */
+    --color-neutral-700: 30 6.25% 25.1%; /* #44403c 25% */
+    --color-neutral-800: 12 6.49% 15.1%; /* #292524 15% */
+    --color-neutral-900: 24 9.8% 10%; /* #1c1917 10% */
+    --color-neutral-950: 20 14.29% 4.12%; /* #0c0a09 4% */
+    --color-neutral-1000: 0 0% 0%; /* #000000 0% */
+    --color-primary-50: 183.16 100% 96.27%; /* #ecfeff 98% */
+    --color-primary-100: 185.11 95.92% 90.39%; /* #cffafe 94% */
+    --color-primary-200: 186.21 93.55% 81.76%; /* #a5f3fc 88% */
+    --color-primary-300: 186.99 92.41% 69.02%; /* #67e8f9 80% */
+    --color-primary-400: 187.94 85.71% 53.33%; /* #22d3ee 71% */
+    --color-primary-500: 188.74 94.5% 42.75%; /* #06b6d4 61% */
+    --color-primary-600: 191.65 91.4% 36.47%; /* #0891b2 50% */
+    --color-primary-700: 192.92 82.28% 30.98%; /* #0e7490 40% */
+    --color-primary-800: 194.37 69.57% 27.06%; /* #155e75 33% */
+    --color-primary-900: 196.36 63.64% 23.73%; /* #164e63 27% */
+    --color-primary-950: 197 78.95% 14.9%; /* #083344 18% */
+    --color-accent-highlight-50: 289.09 100% 97.84%; /* #fdf4ff 97% */
+    --color-accent-highlight-100: 286.96 100% 95.49%; /* #fae8ff 94% */
+    --color-accent-highlight-200: 288.26 95.83% 90.59%; /* #f5d0fe 88% */
+    --color-accent-highlight-300: 291.11 93.1% 82.94%; /* #f0abfc 80% */
+    --color-accent-highlight-400: 292.03 91.43% 72.55%; /* #e879f9 70% */
+    --color-accent-highlight-500: 292.19 84.08% 60.59%; /* #d946ef 60% */
+    --color-accent-highlight-600: 293.41 69.48% 48.82%; /* #c026d3 51% */
+    --color-accent-highlight-700: 294.69 72.41% 39.8%; /* #a21caf 43% */
+    --color-accent-highlight-800: 295.42 70.24% 32.94%; /* #86198f 35% */
+    --color-accent-highlight-900: 296.7 63.64% 28.04%; /* #701a75 30% */
+    --color-accent-highlight-950: 296.76 90.24% 16.08%; /* #4a044e 19% */
+    --color-accent-danger-50: 0 85.71% 97.25%; /* #fef2f2 96% */
+    --color-accent-danger-100: 0 93.33% 94.12%; /* #fee2e2 92% */
+    --color-accent-danger-200: 0 96.3% 89.41%; /* #fecaca 86% */
+    --color-accent-danger-300: 0 93.55% 81.76%; /* #fca5a5 77% */
+    --color-accent-danger-400: 0 90.6% 70.78%; /* #f87171 65% */
+    --color-accent-danger-500: 0 84.24% 60.2%; /* #ef4444 56% */
+    --color-accent-danger-600: 0 72.22% 50.59%; /* #dc2626 49% */
+    --color-accent-danger-700: 0 73.71% 41.76%; /* #b91c1c 41% */
+    --color-accent-danger-800: 0 70% 35.29%; /* #991b1b 34% */
+    --color-accent-danger-900: 0 62.82% 30.59%; /* #7f1d1d 29% */
+    --color-accent-danger-950: 0 74.68% 15.49%; /* #450a0a 15% */
+    --color-accent-warning-50: 54.55 91.67% 95.29%; /* #fefce8 98% */
+    --color-accent-warning-100: 54.92 96.72% 88.04%; /* #fef9c3 96% */
+    --color-accent-warning-200: 52.76 98.31% 76.86%; /* #fef08a 92% */
+    --color-accent-warning-300: 50.44 97.85% 63.53%; /* #fde047 87% */
+    --color-accent-warning-400: 47.95 95.82% 53.14%; /* #facc15 81% */
+    --color-accent-warning-500: 45.4 93.39% 47.45%; /* #eab308 74% */
+    --color-accent-warning-600: 40.61 96.12% 40.39%; /* #ca8a04 60% */
+    --color-accent-warning-700: 35.45 91.67% 32.94%; /* #a16207 45% */
+    --color-accent-warning-800: 31.76 80.95% 28.82%; /* #854d0e 37% */
+    --color-accent-warning-900: 28.42 72.52% 25.69%; /* #713f12 31% */
+    --color-accent-warning-950: 26 83.33% 14.12%; /* #422006 17% */
+    --color-accent-positive-50: 138.46 76.47% 96.67%; /* #f0fdf4 97% */
+    --color-accent-positive-100: 140.62 84.21% 92.55%; /* #dcfce7 94% */
+    --color-accent-positive-200: 141 78.95% 85.1%; /* #bbf7d0 89% */
+    --color-accent-positive-300: 141.71 76.64% 73.14%; /* #86efac 81% */
+    --color-accent-positive-400: 141.89 69.16% 58.04%; /* #4ade80 71% */
+    --color-accent-positive-500: 142.09 70.56% 45.29%; /* #22c55e 61% */
+    --color-accent-positive-600: 142.13 76.22% 36.27%; /* #16a34a 50% */
+    --color-accent-positive-700: 142.43 71.81% 29.22%; /* #15803d 40% */
+    --color-accent-positive-800: 142.78 64.23% 24.12%; /* #166534 31% */
+    --color-accent-positive-900: 143.81 61.17% 20.2%; /* #14532d 26% */
+    --color-accent-positive-950: 144.88 80.39% 10%; /* #052e16 14% */
+    --color-accent-focus-50: 213.75 100% 96.86%; /* #eff6ff 96% */
+    --color-accent-focus-100: 214.29 94.59% 92.75%; /* #dbeafe 91% */
+    --color-accent-focus-200: 213.33 96.92% 87.25%; /* #bfdbfe 84% */
+    --color-accent-focus-300: 211.7 96.36% 78.43%; /* #93c5fd 75% */
+    --color-accent-focus-400: 213.12 93.9% 67.84%; /* #60a5fa 63% */
+    --color-accent-focus-500: 217.22 91.22% 59.8%; /* #3b82f6 52% */
+    --color-accent-focus-600: 221.21 83.19% 53.33%; /* #2563eb 44% */
+    --color-accent-focus-700: 224.28 76.33% 48.04%; /* #1d4ed8 37% */
+    --color-accent-focus-800: 225.93 70.73% 40.2%; /* #1e40af 31% */
+    --color-accent-focus-900: 224.44 64.29% 32.94%; /* #1e3a8a 26% */
+    --color-accent-focus-950: 226.23 57.01% 20.98%; /* #172554 16% */
+
+    --radius: 0.5rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-neutral-0: 0 0% 0%; /* #000000 0% */
+      --color-neutral-50: 224 71.43% 4.12%; /* #030712 3% */
+      --color-neutral-100: 220.91 39.29% 10.98%; /* #111827 10% */
+      --color-neutral-200: 215 27.91% 16.86%; /* #1f2937 16% */
+      --color-neutral-300: 216.92 19.12% 26.67%; /* #374151 25% */
+      --color-neutral-400: 215 13.79% 34.12%; /* #4b5563 33% */
+      --color-neutral-500: 220 8.94% 46.08%; /* #6b7280 45% */
+      --color-neutral-600: 217.89 10.61% 64.9%; /* #9ca3af 64% */
+      --color-neutral-700: 216 12.2% 83.92%; /* #d1d5db 83% */
+      --color-neutral-800: 220 13.04% 90.98%; /* #e5e7eb 91% */
+      --color-neutral-900: 220 14.29% 95.88%; /* #f3f4f6 96% */
+      --color-neutral-950: 210 20% 98.04%; /* #f9fafb 98% */
+      --color-neutral-1000: 0 0% 100%; /* #ffffff 100% */
+      --color-primary-50: 197 78.95% 14.9%; /* #083344 18% */
+      --color-primary-100: 196.36 63.64% 23.73%; /* #164e63 27% */
+      --color-primary-200: 194.37 69.57% 27.06%; /* #155e75 33% */
+      --color-primary-300: 192.92 82.28% 30.98%; /* #0e7490 40% */
+      --color-primary-400: 191.65 91.4% 36.47%; /* #0891b2 50% */
+      --color-primary-500: 188.74 94.5% 42.75%; /* #06b6d4 61% */
+      --color-primary-600: 187.94 85.71% 53.33%; /* #22d3ee 71% */
+      --color-primary-700: 186.99 92.41% 69.02%; /* #67e8f9 80% */
+      --color-primary-800: 186.21 93.55% 81.76%; /* #a5f3fc 88% */
+      --color-primary-900: 185.11 95.92% 90.39%; /* #cffafe 94% */
+      --color-primary-950: 183.16 100% 96.27%; /* #ecfeff 98% */
+      --color-accent-highlight-50: 296.76 90.24% 16.08%; /* #4a044e 19% */
+      --color-accent-highlight-100: 296.7 63.64% 28.04%; /* #701a75 30% */
+      --color-accent-highlight-200: 295.42 70.24% 32.94%; /* #86198f 35% */
+      --color-accent-highlight-300: 294.69 72.41% 39.8%; /* #a21caf 43% */
+      --color-accent-highlight-400: 293.41 69.48% 48.82%; /* #c026d3 51% */
+      --color-accent-highlight-500: 292.19 84.08% 60.59%; /* #d946ef 60% */
+      --color-accent-highlight-600: 292.03 91.43% 72.55%; /* #e879f9 70% */
+      --color-accent-highlight-700: 291.11 93.1% 82.94%; /* #f0abfc 80% */
+      --color-accent-highlight-800: 288.26 95.83% 90.59%; /* #f5d0fe 88% */
+      --color-accent-highlight-900: 286.96 100% 95.49%; /* #fae8ff 94% */
+      --color-accent-highlight-950: 289.09 100% 97.84%; /* #fdf4ff 97% */
+      --color-accent-danger-50: 0 74.68% 15.49%; /* #450a0a 15% */
+      --color-accent-danger-100: 0 62.82% 30.59%; /* #7f1d1d 29% */
+      --color-accent-danger-200: 0 70% 35.29%; /* #991b1b 34% */
+      --color-accent-danger-300: 0 73.71% 41.76%; /* #b91c1c 41% */
+      --color-accent-danger-400: 0 72.22% 50.59%; /* #dc2626 49% */
+      --color-accent-danger-500: 0 84.24% 60.2%; /* #ef4444 56% */
+      --color-accent-danger-600: 0 90.6% 70.78%; /* #f87171 65% */
+      --color-accent-danger-700: 0 93.55% 81.76%; /* #fca5a5 77% */
+      --color-accent-danger-800: 0 96.3% 89.41%; /* #fecaca 86% */
+      --color-accent-danger-900: 0 93.33% 94.12%; /* #fee2e2 92% */
+      --color-accent-danger-950: 0 85.71% 97.25%; /* #fef2f2 96% */
+      --color-accent-warning-50: 26 83.33% 14.12%; /* #422006 17% */
+      --color-accent-warning-100: 28.42 72.52% 25.69%; /* #713f12 31% */
+      --color-accent-warning-200: 31.76 80.95% 28.82%; /* #854d0e 37% */
+      --color-accent-warning-300: 35.45 91.67% 32.94%; /* #a16207 45% */
+      --color-accent-warning-400: 40.61 96.12% 40.39%; /* #ca8a04 60% */
+      --color-accent-warning-500: 45.4 93.39% 47.45%; /* #eab308 74% */
+      --color-accent-warning-600: 47.95 95.82% 53.14%; /* #facc15 81% */
+      --color-accent-warning-700: 50.44 97.85% 63.53%; /* #fde047 87% */
+      --color-accent-warning-800: 52.76 98.31% 76.86%; /* #fef08a 92% */
+      --color-accent-warning-900: 54.92 96.72% 88.04%; /* #fef9c3 96% */
+      --color-accent-warning-950: 54.55 91.67% 95.29%; /* #fefce8 98% */
+      --color-accent-positive-50: 144.88 80.39% 10%; /* #052e16 14% */
+      --color-accent-positive-100: 143.81 61.17% 20.2%; /* #14532d 26% */
+      --color-accent-positive-200: 142.78 64.23% 24.12%; /* #166534 31% */
+      --color-accent-positive-300: 142.43 71.81% 29.22%; /* #15803d 40% */
+      --color-accent-positive-400: 142.13 76.22% 36.27%; /* #16a34a 50% */
+      --color-accent-positive-500: 142.09 70.56% 45.29%; /* #22c55e 61% */
+      --color-accent-positive-600: 141.89 69.16% 58.04%; /* #4ade80 71% */
+      --color-accent-positive-700: 141.71 76.64% 73.14%; /* #86efac 81% */
+      --color-accent-positive-800: 141 78.95% 85.1%; /* #bbf7d0 89% */
+      --color-accent-positive-900: 140.62 84.21% 92.55%; /* #dcfce7 94% */
+      --color-accent-positive-950: 138.46 76.47% 96.67%; /* #f0fdf4 97% */
+      --color-accent-focus-50: 261.18 72.65% 22.94%; /* #2e1065 17% */
+      --color-accent-focus-100: 263.5 67.42% 34.9%; /* #4c1d95 27% */
+      --color-accent-focus-200: 263.36 69.3% 42.16%; /* #5b21b6 33% */
+      --color-accent-focus-300: 263.39 69.96% 50.39%; /* #6d28d9 39% */
+      --color-accent-focus-400: 262.12 83.26% 57.84%; /* #7c3aed 45% */
+      --color-accent-focus-500: 258.31 89.53% 66.27%; /* #8b5cf6 52% */
+      --color-accent-focus-600: 255.14 91.74% 76.27%; /* #a78bfa 64% */
+      --color-accent-focus-700: 252.5 94.74% 85.1%; /* #c4b5fd 76% */
+      --color-accent-focus-800: 250.5 95.24% 91.76%; /* #ddd6fe 87% */
+      --color-accent-focus-900: 251.43 91.3% 95.49%; /* #ede9fe 93% */
+      --color-accent-focus-950: 250 100% 97.65%; /* #f5f3ff 96% */
+
+      --radius: 0.5rem;
+    }
+  }
+}
+
+@layer base {
+  /* 
+  "@tailwind base" looks like this: https://unpkg.com/tailwindcss@3.3.3/src/css/preflight.css
+
+  it sets 
+  @tailwind base preflight sets border-color: theme('borderColor.DEFAULT', currentColor);
+  */
+
+  html {
+    @apply font-sans;
+  }
+
+  body {
+    @apply bg-color-neutral-50 font-sans text-color-neutral-900 antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply mb-2 text-lg font-medium text-color-neutral-1000;
+  }
+
+  a {
+    @apply border-none outline-none focus:border-none focus:outline-none focus-visible:focusring;
+  }
+
+  p {
+    @apply my-2 max-w-[55ch] font-sans text-color-neutral-800;
+  }
+
+  p > a {
+    @apply font-medium text-color-primary-700 underline;
+  }
+
+  svg {
+    @apply box-content shrink-0;
+    shape-rendering: geometricPrecision;
+    text-rendering: geometricPrecision;
+  }
+
+  code {
+    @apply bg-color-neutral-200 p-1 font-mono font-medium text-color-neutral-1000;
+  }
+  /*
+  p {
+    @apply max-w-[55ch] font-sans text-base font-normal leading-[1.55] tracking-[0.15px] text-neutral-600 [word-spacing:0.5px] dark:text-neutral-300;
+  }
+
+
+  svg {
+    @apply box-content shrink-0;
+    shape-rendering: geometricPrecision;
+    text-rendering: geometricPrecision;
+  }
+  */
+}

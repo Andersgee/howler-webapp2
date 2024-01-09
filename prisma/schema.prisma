@@ -1,0 +1,33 @@
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_MYSQL_URL")
+}
+
+model User {
+    id            BigInt   @default(autoincrement()) @db.UnsignedBigInt
+    email         String   @unique //allow multiple sign in methods, but same email would be same user.
+    googleUserSub String?  @unique
+    discordUserId String?  @unique
+    githubUserId  Int?     @unique
+    image         String?
+    name          String
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @default(now()) @updatedAt
+
+    posts Post[]
+
+    @@id([id])
+}
+
+model Post {
+    id   BigInt @default(autoincrement()) @db.UnsignedBigInt
+    text String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId BigInt @db.UnsignedBigInt
+
+    @@id([id])
+}
