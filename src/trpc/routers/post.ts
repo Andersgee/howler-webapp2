@@ -5,12 +5,13 @@ import { maybeSleepAndThrow, sleep } from "#src/utils/sleep";
 
 export const postRouter = createTRPCRouter({
   latest: publicProcedure.query(async () => {
+    //await dbfetch({ next: { revalidate: 10 } }).selectFrom("Post").orderBy("id desc")
     const posts = await dbfetch({ next: { revalidate: 10 } })
       .selectFrom("Post")
       .innerJoin("User", "User.id", "Post.userId")
       .selectAll("Post")
       .select(["User.image as userImage", "User.name as userName"])
-      .orderBy("id", "desc")
+      .orderBy("Post.id desc")
       .limit(10)
       .execute();
 
@@ -23,7 +24,7 @@ export const postRouter = createTRPCRouter({
       .selectAll("Post")
       .select(["User.image as userImage", "User.name as userName"])
       .where("userId", "=", ctx.user.id)
-      .orderBy("id", "desc")
+      .orderBy("Post.id desc")
       .limit(10)
       .execute();
 
@@ -117,7 +118,7 @@ export const postRouter = createTRPCRouter({
       let query = dbfetch()
         .selectFrom("Post")
         .selectAll()
-        .orderBy("id", "desc")
+        .orderBy("id desc")
         .limit(limit + 1); //one extra to know first item of next page
 
       if (input.cursor !== undefined) {
