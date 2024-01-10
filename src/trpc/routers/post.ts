@@ -54,6 +54,21 @@ export const postRouter = createTRPCRouter({
 
     return createdPost;
   }),
+  createtest: protectedProcedure.input(z.object({ text: z.string() })).mutation(async ({ input, ctx }) => {
+    //await maybeSleepAndThrow();
+    const db = dbfetch();
+
+    const insertResult = await db
+      .insertInto("Post")
+      .values({
+        text: input.text,
+        userId: ctx.user.id,
+      })
+      .executeTakeFirstOrThrow();
+    console.log("insertResult:", insertResult);
+
+    return insertResult;
+  }),
   update: protectedProcedure
     .input(z.object({ postId: z.bigint(), text: z.string() }))
     .mutation(async ({ input, ctx }) => {

@@ -16,9 +16,9 @@ export interface FetchDriverConfig {
   init?: RequestInitLimited;
   transformer: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    serialize: (value: any) => string;
+    stringify: (value: any) => string;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    deserialize: (str: string) => any;
+    parse: (str: string) => any;
   };
 }
 
@@ -72,7 +72,7 @@ class FetchConnection implements DatabaseConnection {
   }
 
   async executeQuery<R>(compiledQuery: CompiledQuery): Promise<QueryResult<R>> {
-    const q = this.config.transformer.serialize({
+    const q = this.config.transformer.stringify({
       sql: compiledQuery.sql,
       parameters: compiledQuery.parameters,
     });
@@ -82,7 +82,7 @@ class FetchConnection implements DatabaseConnection {
 
     if (res.ok) {
       try {
-        const result = this.config.transformer.deserialize(await res.text()) as QueryResult<R>;
+        const result = this.config.transformer.parse(await res.text()) as QueryResult<R>;
         return result;
       } catch (error) {
         throw new Error("failed to parse response");

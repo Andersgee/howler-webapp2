@@ -1,7 +1,7 @@
 import { Kysely, MysqlAdapter, MysqlIntrospector, MysqlQueryCompiler } from "kysely";
 import type { DB } from "./types";
 import { FetchDriver, type RequestInitLimited } from "./fetch-driver";
-import { transformer } from "./transformer";
+import { JSONE } from "#src/utils/jsone";
 
 /**
  * this is a query builder using regular `fetch()` under the hood.
@@ -72,7 +72,7 @@ export function dbfetch(init?: RequestInitLimited) {
         }
 
         return new FetchDriver({
-          transformer: transformer,
+          transformer: JSONE,
           url: process.env.DATABASE_HTTP_URL,
           init: {
             method: "GET",
@@ -109,7 +109,7 @@ export async function dbTransaction(
   compiledQuerys: { sql: string; parameters: readonly unknown[] }[]
 ): Promise<TransactionResults> {
   const body = compiledQuerys.map((compiledQuery) =>
-    transformer.serialize({
+    JSONE.stringify({
       sql: compiledQuery.sql,
       parameters: compiledQuery.parameters,
     })
@@ -127,7 +127,7 @@ export async function dbTransaction(
 
   if (res.ok) {
     try {
-      const result = transformer.deserialize(await res.text()) as TransactionResults;
+      const result = JSONE.parse(await res.text()) as TransactionResults;
       return result;
     } catch (error) {
       throw new Error("failed to parse response");

@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { type NextRequest } from "next/server";
 import { SESSION_COOKIE_NAME, USER_COOKIE_NAME } from "../auth/schema";
 import { TokenSessionSchema, TokenStateSchema, type TokenUser, TokenUserSchema } from "./schema";
-import { transformer } from "#src/db/transformer";
+import { JSONE } from "../jsone";
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
@@ -15,7 +15,7 @@ export async function getUserFromToken(token: string | undefined) {
     if (typeof payload.user !== "string") {
       return null;
     }
-    const user = TokenUserSchema.parse(transformer.deserialize(payload.user));
+    const user = TokenUserSchema.parse(JSONE.parse(payload.user));
 
     return user;
   } catch (err) {
@@ -58,7 +58,7 @@ export async function getSessionFromCookie() {
 }
 
 export async function createTokenFromUser(user: TokenUser) {
-  const payload = { user: transformer.serialize(user) };
+  const payload = { user: JSONE.stringify(user) };
   const jwt = await new SignJWT(payload).setProtectedHeader({ alg: "HS256" }).sign(SECRET);
   return jwt;
 }

@@ -2,7 +2,7 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { ZodError } from "zod";
 import type { NextRequest } from "next/server";
-import { transformer } from "./transformer";
+import { trpcTransformer } from "./transformer";
 import { getUserFromRequestCookie } from "#src/utils/jwt";
 import type { TokenUser } from "#src/utils/jwt/schema";
 
@@ -24,7 +24,7 @@ export async function createTrpcContext(opts: FetchCreateContextFnOptions, nextR
 }
 
 const t = initTRPC.context<typeof createTrpcContext>().create({
-  transformer: transformer,
+  transformer: trpcTransformer,
   errorFormatter({ shape, error }) {
     return {
       ...shape,

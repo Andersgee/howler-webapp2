@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 import { TokenUserSchema, type TokenUser } from "#src/utils/jwt/schema";
-import { transformer } from "#src/db/transformer";
+import { JSONE } from "#src/utils/jsone";
 
 export type Userlice = {
   user: TokenUser | null;
@@ -26,7 +26,7 @@ async function getSession() {
   try {
     const res = await fetch("/api/session");
     if (res.status === 200) {
-      const user = TokenUserSchema.parse(await transformer.deserializeResponse(res));
+      const user = TokenUserSchema.parse(await JSONE.parse(await res.text()));
       return user;
     } else {
       return null;
