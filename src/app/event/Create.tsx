@@ -10,6 +10,7 @@ import { Input } from "#src/ui/input";
 import { useToast } from "#src/ui/use-toast";
 import { schemaCreate } from "#src/trpc/routers/eventSchema";
 import { useRouter } from "next/navigation";
+import { datetimelocalString } from "#src/utils/date";
 
 type FormData = z.infer<typeof schemaCreate>;
 
@@ -47,13 +48,33 @@ export function Create() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>What</FormLabel>
               <FormMessage />
               <FormControl>
                 <Input type="text" placeholder="Whats happening?" {...field} />
               </FormControl>
-
-              {/*<FormDescription>some description.</FormDescription>*/}
+              {/*<FormDescription>some string.</FormDescription>*/}
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="date"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>When</FormLabel>
+              <FormMessage />
+              <FormControl>
+                <Input
+                  type="datetime-local"
+                  value={datetimelocalString(field.value!)}
+                  onChange={(e) => {
+                    if (!e.target.value) return;
+                    form.setValue("date", new Date(e.target.value));
+                  }}
+                />
+              </FormControl>
+              {/*<FormDescription>some date.</FormDescription>*/}
             </FormItem>
           )}
         />
