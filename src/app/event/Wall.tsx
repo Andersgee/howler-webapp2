@@ -3,7 +3,8 @@
 import { PrettyDate } from "#src/components/PrettyDate";
 import { type RouterOutputs, api } from "#src/hooks/api";
 import { cn } from "#src/utils/cn";
-import { JSONE } from "#src/utils/jsone";
+import { hashidFromId } from "#src/utils/hashid";
+import Link from "next/link";
 
 type Props = {
   className?: string;
@@ -17,13 +18,14 @@ export function Wall({ initialData, className }: Props) {
 
   return (
     <div className={cn("", className)}>
+      <h1>latest 10 events</h1>
       {eventLatest.data.map((event) => (
         <div key={event.id}>
-          <h2>{event.title}</h2>
-          <div>
-            <PrettyDate date={event.createdAt} />
-          </div>
-          <pre>{JSONE.stringify(event, 2)}</pre>
+          <Link prefetch={false} href={`/event/${hashidFromId(event.id)}`} className="block">
+            <h2>{event.title}</h2>
+          </Link>
+
+          <PrettyDate date={event.createdAt} />
         </div>
       ))}
     </div>

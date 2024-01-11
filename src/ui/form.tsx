@@ -88,7 +88,8 @@ const FormLabel = React.forwardRef<
   return (
     <Label
       ref={ref}
-      className={cn(error && "text-color-accent-danger-500 dark:text-color-accent-danger-900", className)}
+      className={className}
+      //className={cn(error && "animate-pulse-tmp text-color-accent-danger-500", className)}
       htmlFor={formItemId}
       {...props}
     />
@@ -118,12 +119,7 @@ const FormDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttribu
     const { formDescriptionId } = useFormField();
 
     return (
-      <p
-        ref={ref}
-        id={formDescriptionId}
-        className={cn("text-sm text-color-neutral-500 dark:text-color-neutral-400", className)}
-        {...props}
-      />
+      <p ref={ref} id={formDescriptionId} className={cn("text-sm text-color-neutral-700", className)} {...props} />
     );
   }
 );
@@ -142,7 +138,7 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
       <p
         ref={ref}
         id={formMessageId}
-        className={cn("text-sm font-medium text-red-500 dark:text-red-900", className)}
+        className={cn("animate-pulse-tmp text-sm font-medium text-color-accent-danger-500", className)}
         {...props}
       >
         {body}

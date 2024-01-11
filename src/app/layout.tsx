@@ -23,7 +23,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <Providers>
           <Topnav />
-          {children}
+          <div className="mx-4">{children}</div>
         </Providers>
         <Toaster />
       </body>

@@ -9,10 +9,12 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "#src/ui/input";
 import { useToast } from "#src/ui/use-toast";
 import { schemaCreate } from "#src/trpc/routers/eventSchema";
+import { useRouter } from "next/navigation";
 
 type FormData = z.infer<typeof schemaCreate>;
 
 export function Create() {
+  const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(schemaCreate),
     defaultValues: {
@@ -24,11 +26,9 @@ export function Create() {
   const { toast } = useToast();
 
   const eventCreate = api.event.create.useMutation({
-    onSuccess: (insertResult) => {
-      console.log("insertResult:", insertResult);
-      console.log(`go to event/${insertResult.hashid}`);
-
+    onSuccess: ({ hashid }) => {
       form.reset();
+      router.push(`/event/${hashid}`);
     },
     onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Couldnt create event", description: "Try again" });
@@ -47,12 +47,13 @@ export function Create() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>some label</FormLabel>
+              <FormLabel>Title</FormLabel>
+              <FormMessage />
               <FormControl>
                 <Input type="text" placeholder="Whats happening?" {...field} />
               </FormControl>
-              <FormDescription>some description.</FormDescription>
-              <FormMessage />
+
+              {/*<FormDescription>some description.</FormDescription>*/}
             </FormItem>
           )}
         />
