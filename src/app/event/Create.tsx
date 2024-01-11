@@ -11,6 +11,7 @@ import { useToast } from "#src/ui/use-toast";
 import { schemaCreate } from "#src/trpc/routers/eventSchema";
 import { useRouter } from "next/navigation";
 import { datetimelocalString } from "#src/utils/date";
+import { GoogleMaps } from "#src/components/GoogleMaps";
 
 type FormData = z.infer<typeof schemaCreate>;
 
@@ -78,6 +79,9 @@ export function Create() {
             </FormItem>
           )}
         />
+        <div className="h-52 w-full">
+          <GoogleMaps />
+        </div>
         <Button type="submit" disabled={eventCreate.isPending}>
           Submit
         </Button>

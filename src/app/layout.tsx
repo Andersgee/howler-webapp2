@@ -5,6 +5,7 @@ import { Providers } from "#src/context/Providers";
 import { seo } from "#src/utils/seo";
 import { Toaster } from "#src/ui/toaster";
 import { Topnav } from "#src/components/topnav";
+import { GoogleMapsScript, GoogleMapsPortal } from "#src/components/GoogleMaps";
 
 export const metadata = seo({
   title: "Boilerplate app",
@@ -26,7 +27,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="mx-4">{children}</div>
         </Providers>
         <Toaster />
+        <GoogleMapsPortal />
       </body>
+      <GoogleMapsScript />
     </html>
   );
 }
