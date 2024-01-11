@@ -14,20 +14,66 @@ model User {
     createdAt     DateTime @default(now())
     updatedAt     DateTime @default(now()) @updatedAt
 
-    posts Post[]
+    Post           Post[]
+    Event          Event[]
+    UserEventPivot UserEventPivot[]
 
     @@id([id])
 }
 
 model Post {
-    id   BigInt @default(autoincrement()) @db.UnsignedBigInt
-    text String
-
+    id        BigInt   @default(autoincrement()) @db.UnsignedBigInt
+    text      String
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now()) @updatedAt
+    userId    BigInt   @db.UnsignedBigInt
 
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId BigInt @db.UnsignedBigInt
+    User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@id([id])
 }
+
+model UserEventPivot {
+    user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId   BigInt   @db.UnsignedBigInt
+    event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    eventId  BigInt   @db.UnsignedBigInt
+    joinDate DateTime @default(now())
+
+    @@id([eventId, userId])
+}
+
+model Event {
+    id        BigInt                @default(autoincrement()) @db.UnsignedBigInt
+    createdAt DateTime              @default(now())
+    updatedAt DateTime              @default(now()) @updatedAt
+    title     String                @db.VarChar(55)
+    date      DateTime              @default(now())
+    location  Unsupported("point")? //https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html
+    creatorId BigInt                @db.UnsignedBigInt
+    //locationName String?               @db.VarChar(55)
+
+    User           User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+    UserEventPivot UserEventPivot[]
+
+    @@id([id])
+}
+
+//model Event {
+//    id        Int  @id @default(autoincrement())
+//    creator   User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+//    creatorId Int
+//
+//    what             String
+//    where            String
+//    when             DateTime
+//    whenEnd          DateTime
+//    who              String
+//    info             String
+//    image            String?
+//    imageAspectRatio Float?
+//
+//    joinedUsers      UserEventPivot[]
+//    eventchatmessage Eventchatmessage[]
+//    eventLocation    EventLocation?
+//}

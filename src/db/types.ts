@@ -2,8 +2,27 @@ import type { Generated } from "kysely";
 import type { GeoJSON } from "./geojson-types";
   
 export type DB = {
-  Post: Post;
   User: User;
+  Event: Event;
+  UserEventPivot: UserEventPivot;
+  Post: Post;
+};
+
+export type Event = {
+  /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  id: Generated<bigint>;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  updatedAt: Generated<Date>;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  title: string;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  date: Generated<Date>;
+  /** dbtype: 'point' */
+  location: GeoJSON["Point"] | null;
+  /** indexed: (creatorId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  creatorId: bigint;
 };
 
 export type Post = {
@@ -38,5 +57,14 @@ export type User = {
   createdAt: Generated<Date>;
   /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   updatedAt: Generated<Date>;
+};
+
+export type UserEventPivot = {
+  /** indexed: (eventId, userId) and (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  userId: bigint;
+  /** indexed: (eventId, userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  eventId: bigint;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  joinDate: Generated<Date>;
 };
 

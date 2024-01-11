@@ -3,6 +3,23 @@ datasource db {
   url = env("DATABASE_MYSQL_URL")
 }
 
+model Event {
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  createdAt DateTime @db.DateTime(3) @default(now())
+  updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
+  title String @db.VarChar(55)
+  date DateTime @db.DateTime(3)
+  location Unsupported("point")?
+  creatorId BigInt @db.UnsignedBigInt
+
+  Event_creatorId_fkey User @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  UserEventPivot_eventId_fkey UserEventPivot[]
+
+  @@id([id])
+  @@index([creatorId])
+}
+
 model Post {
   id BigInt @db.UnsignedBigInt @default(autoincrement())
   text String
@@ -12,8 +29,8 @@ model Post {
 
   Post_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  @@index([userId])
   @@id([id])
+  @@index([userId])
 }
 
 model User {
@@ -27,12 +44,26 @@ model User {
   createdAt DateTime @db.DateTime(3) @default(now())
   updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
 
+  Event_creatorId_fkey Event[]
   Post_userId_fkey Post[]
+  UserEventPivot_userId_fkey UserEventPivot[]
 
   @@id([id])
-  @@unique([discordUserId])
   @@unique([email])
-  @@unique([githubUserId])
   @@unique([googleUserSub])
+  @@unique([discordUserId])
+  @@unique([githubUserId])
+}
+
+model UserEventPivot {
+  userId BigInt @db.UnsignedBigInt
+  eventId BigInt @db.UnsignedBigInt
+  joinDate DateTime @db.DateTime(3) @default(now())
+
+  UserEventPivot_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  UserEventPivot_eventId_fkey Event @relation(fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([eventId, userId])
+  @@index([userId])
 }
 

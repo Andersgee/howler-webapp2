@@ -3,9 +3,8 @@ import { fontSans } from "#src/utils/font";
 import { apiRsc } from "#src/trpc/api-rsc";
 import { Providers } from "#src/context/Providers";
 import { seo } from "#src/utils/seo";
-import { TopnavLink } from "#src/components/TopnavLink";
-import { ProfileButton } from "#src/components/user/ProfileButton";
 import { Toaster } from "#src/ui/toaster";
+import { Topnav } from "#src/components/topnav";
 
 export const metadata = seo({
   title: "Boilerplate app",
@@ -29,24 +28,5 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <Toaster />
       </body>
     </html>
-  );
-}
-
-async function Topnav() {
-  const { user } = await apiRsc();
-  //const user = useStore.use.user();
-  return (
-    <div className="m-2 flex justify-between">
-      <div>
-        <div className="flex">
-          <TopnavLink label="Home" href="/" />
-          <TopnavLink label="Posts" href="/posts" />
-          <TopnavLink label="ui showcase" href="/ui-showcase" />
-        </div>
-      </div>
-      <div>
-        <ProfileButton user={user} />
-      </div>
-    </div>
   );
 }

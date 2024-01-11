@@ -1,9 +1,9 @@
 import { jwtVerify, SignJWT } from "jose";
-import { cookies } from "next/headers";
 import { type NextRequest } from "next/server";
 import { SESSION_COOKIE_NAME, USER_COOKIE_NAME } from "../auth/schema";
 import { TokenSessionSchema, TokenStateSchema, type TokenUser, TokenUserSchema } from "./schema";
 import { JSONE } from "../jsone";
+import { cookies } from "next/headers";
 
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 
@@ -48,13 +48,13 @@ export async function getSessionFromRequestCookie(req: NextRequest) {
 /** for server component files (or in server actions) */
 export async function getUserFromCookie() {
   const token = cookies().get(USER_COOKIE_NAME)?.value;
-  return getUserFromToken(token);
+  return await getUserFromToken(token);
 }
 
 /** for server component files (or in server actions) */
 export async function getSessionFromCookie() {
   const token = cookies().get(SESSION_COOKIE_NAME)?.value;
-  return getUserFromToken(token);
+  return await getUserFromToken(token);
 }
 
 export async function createTokenFromUser(user: TokenUser) {
