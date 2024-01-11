@@ -83,10 +83,4 @@ another option is monkey patching the toJSON, something like
 Date.prototype.toJSON = function () {return ["Date", this.toISOString()];};
 Buffer.prototype.toJSON = function () {return ["Base64", this.toString("base64url")];};
 but thats bad practise
-
-for dbfetch() there is actually no need to handle the scenario
-where a data or buffer appears in an object, they only appear
-in the parameters array.
-
-but for completeness sake
 */
