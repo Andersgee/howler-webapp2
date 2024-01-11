@@ -22,15 +22,15 @@ export const JSONE = {
   parse,
 };
 
-export function stringify(value: any, space?: string | number) {
+function stringify(value: any, space?: string | number) {
   return JSON.stringify(replace(value), (_key, val) => replace(val), space);
 }
 
-export function parse(text: string) {
+function parse(text: string) {
   return JSON.parse(text, (_key, val) => revive(val));
 }
 
-export function revive(value: any) {
+function revive(value: any) {
   const maybeSpecialTuple = Array.isArray(value) && value.length === 2 && typeof value[1] === "string";
   if (maybeSpecialTuple && value[0] === "Date") {
     return new Date(value[1]);
@@ -43,7 +43,7 @@ export function revive(value: any) {
   }
 }
 
-export function replace(value: any): any {
+function replace(value: any): any {
   if (value === undefined) {
     return null;
   } else if (Array.isArray(value)) {
@@ -87,8 +87,6 @@ but thats bad practise
 for dbfetch() there is actually no need to handle the scenario
 where a data or buffer appears in an object, they only appear
 in the parameters array.
-
-the if (value === Object(value)) check 
 
 but for completeness sake
 */

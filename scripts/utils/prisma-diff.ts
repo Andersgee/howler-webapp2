@@ -1,5 +1,4 @@
 import { execSync } from "node:child_process";
-import { execa } from "execa";
 
 // pnpm prisma migrate diff --from-schema-datamodel prisma/pulled.prisma --to-schema-datamodel prisma/schema.prisma --script
 // pnpm prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script
@@ -12,22 +11,6 @@ import { execa } from "execa";
 export function prismadiff(fromPath: string, toPath: string) {
   const cmd = `pnpm prisma migrate diff --from-schema-datamodel ${fromPath} --to-schema-datamodel ${toPath} --script`;
   const diff_sql = execSync(cmd, { encoding: "utf8" });
-  return sqllist(diff_sql);
-}
-
-/** a list of sql according to "prisma migrate diff" */
-export async function prismadiff_execa(fromPath: string, toPath: string) {
-  const { stdout: diff_sql } = await execa("pnpm", [
-    "prisma",
-    "migrate",
-    "diff",
-    "--from-schema-datamodel",
-    fromPath,
-    "--to-schema-datamodel",
-    toPath,
-    "--script",
-  ]);
-
   return sqllist(diff_sql);
 }
 
