@@ -5,7 +5,7 @@ import { Providers } from "#src/context/Providers";
 import { seo } from "#src/utils/seo";
 import { Toaster } from "#src/ui/toaster";
 import { Topnav } from "#src/components/topnav";
-import { MountGoogleMaps } from "#src/components/GoogleMaps";
+//import { MountGoogleMaps } from "#src/components/GoogleMaps";
 import { MountSomeExpensiveComp } from "./portalstuff/SomExpensiveComp";
 
 export const metadata = seo({
@@ -29,7 +29,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </Providers>
         <Toaster />
       </body>
-      <MountGoogleMaps />
       <MountSomeExpensiveComp />
     </html>
   );

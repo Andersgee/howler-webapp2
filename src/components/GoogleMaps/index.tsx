@@ -9,12 +9,18 @@ import { initGoogleMaps, setGoogleMapsElement } from "#src/store/actions";
 
 /** parent decides size */
 export function GoogleMaps() {
+  const googleMaps = useStore.use.googleMaps();
   const element = useStore.use.googleMapsElement();
-  if (!element) return null;
+  if (!googleMaps) {
+    return <MountGoogleMaps />;
+  }
+  if (!element) {
+    return null;
+  }
   return <ReversePortal element={element} />;
 }
 
-export function MountGoogleMaps() {
+function MountGoogleMaps() {
   const [googleMapsScriptIsLoaded, setGoogleMapsScriptIsLoaded] = useState(false);
   const element = useStore.use.googleMapsElement();
   useEffect(() => {
