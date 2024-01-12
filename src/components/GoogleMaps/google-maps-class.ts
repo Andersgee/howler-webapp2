@@ -31,10 +31,13 @@ export class GoogleMapsClass {
   map: google.maps.Map | null;
   markerClusterer: MarkerClusterer | null;
 
+  markerPickedLocation: google.maps.marker.AdvancedMarkerElement | null;
+
   constructor() {
     console.log("GoogleMapsClass, constructor");
     this.map = null;
     this.markerClusterer = null;
+    this.markerPickedLocation = null;
   }
 
   async init(element: HTMLDivElement) {
@@ -59,10 +62,23 @@ export class GoogleMapsClass {
         minZoom: 3,
       });
 
-      const a: google.maps.marker.AdvancedMarkerElement | null = null;
-
-      this.map.addListener("click", (clickEvent: unknown) => {
-        console.log("clickEvent:", clickEvent);
+      this.map.addListener("click", ({ latLng }: EventClick) => {
+        //const a = { lat: latLng.lat(), lng: latLng.lng() };
+        if (this.markerPickedLocation) {
+          //move it
+          this.markerPickedLocation.position = latLng;
+        } else {
+          const pin = new PinElement({
+            //scale: 1.5,
+            scale: 1,
+          });
+          this.markerPickedLocation = new AdvancedMarkerElement({
+            map: this.map,
+            content: pin.element,
+            position: latLng,
+            title: "This is where it happens.",
+          });
+        }
       });
 
       return true;
@@ -71,3 +87,6 @@ export class GoogleMapsClass {
     }
   }
 }
+
+//any way to
+type EventClick = { latLng: google.maps.LatLng };
