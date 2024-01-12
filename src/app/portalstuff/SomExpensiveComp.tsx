@@ -24,7 +24,7 @@ export function SomExpensiveComp({ className }: Props) {
   );
 }
 
-export function PreloadSomExpensiveComp() {
+export function MountSomeExpensiveComp() {
   const element = useStore.use.portalstuffElement();
   useEffect(() => {
     const el = document.createElement("div");
