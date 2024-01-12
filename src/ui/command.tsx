@@ -7,6 +7,9 @@ import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "#src/utils/cn";
 import { Dialog, DialogContent } from "#src/ui/dialog";
 import { Search } from "#src/icons";
+import { inputElementStyles } from "./input";
+
+export const CommandLoading = CommandPrimitive.Loading;
 
 const Command = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive>,
@@ -41,12 +44,16 @@ const CommandInput = React.forwardRef<
   React.ElementRef<typeof CommandPrimitive.Input>,
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
-  <div className="flex items-center px-3" cmdk-input-wrapper="">
-    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+  <div className="flex items-center" cmdk-input-wrapper="">
+    {/*<Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />*/}
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
-        "flex h-10 w-full rounded-md border border-color-neutral-400 bg-color-neutral-0 px-3 py-6 text-sm text-color-neutral-1000 outline-none placeholder:text-color-neutral-500 disabled:cursor-not-allowed disabled:bg-color-neutral-200 disabled:text-color-neutral-400",
+        //"flex h-10 w-full rounded-md border border-color-neutral-400 bg-color-neutral-0 px-3 py-6 text-sm text-color-neutral-1000 outline-none placeholder:text-color-neutral-500 disabled:cursor-not-allowed disabled:bg-color-neutral-200 disabled:text-color-neutral-400",
+        inputElementStyles,
+        //"outline-none focus-visible:focusring",
+        //"border-4 border-color-accent-highlight-600",
+        "m-1 focus:focusring",
         className
       )}
       {...props}

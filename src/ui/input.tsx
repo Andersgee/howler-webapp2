@@ -9,12 +9,7 @@ export const inputElementStyles =
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(({ className, type, ...props }, ref) => {
   return (
-    <input
-      type={type}
-      className={cn(inputElementStyles, "outline-none focus-visible:focusring", className)}
-      ref={ref}
-      {...props}
-    />
+    <input type={type} className={cn(inputElementStyles, "focus-visible:focusring", className)} ref={ref} {...props} />
   );
 });
 Input.displayName = "Input";

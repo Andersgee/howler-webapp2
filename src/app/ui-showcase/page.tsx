@@ -9,11 +9,16 @@ import AccordionDemo from "./AccordionDemo";
 import { HovercardDemo } from "./HovercardDemo";
 import { AlertDialogDemo } from "./AlertDialogDemo";
 import { ToastDemo } from "./ToastDemo";
+import { AutoCompleteDemo2 } from "./AutocompleteDemo2";
 
 export default function Page() {
   return (
     <main className="flex justify-center">
       <div className="container flex flex-wrap justify-center gap-12">
+        <div className="">
+          <h2>AutoCompleteDemo2</h2>
+          <AutoCompleteDemo2 />
+        </div>
         <div className="">
           <h2 className="mx-auto">1. CardDemo</h2>
           <CardDemo />

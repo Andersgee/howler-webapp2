@@ -6,7 +6,6 @@ export async function getGoogleReverseGeocoding(p: { lng: number; lat: number })
   try {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${p.lat},${p.lng}&key=${key}`;
     const data = schemaReverseGeoCodingResponse.parse(await fetch(url).then((res) => res.json()));
-    console.log({ data });
     if (data.status !== "OK") {
       throw new Error(data.status);
     }
