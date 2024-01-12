@@ -7,7 +7,10 @@ export const setGoogleMapsElement = (el: HTMLDivElement) => {
 
 export const initGoogleMaps = async (el: HTMLDivElement) => {
   const googleMaps = new GoogleMapsClass();
-  await googleMaps.init(el);
-
-  useStore.setState({ googleMaps });
+  const ok = await googleMaps.init(el);
+  if (ok) {
+    useStore.setState({ googleMaps });
+  } else {
+    console.log("could not init googleMaps");
+  }
 };

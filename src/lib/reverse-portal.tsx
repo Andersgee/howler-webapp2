@@ -36,9 +36,13 @@ export function ReversePortal({ element }: { element: HTMLDivElement }) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const parent = el.parentNode!;
-    //parent.replaceChild(newChild, oldChild)
-    parent.replaceChild(element, el);
+    const parent = el.parentNode;
+    if (parent) {
+      //parent.replaceChild(newChild, oldChild)
+      parent.replaceChild(element, el);
+    } else {
+      console.log("ReversePortal, no parent");
+    }
   }, [element]);
 
   return <div ref={ref} />;

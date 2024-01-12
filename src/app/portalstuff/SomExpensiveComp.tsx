@@ -2,10 +2,11 @@
 
 import { cn } from "#src/utils/cn";
 import { useEffect } from "react";
-import { ReversePortal } from "./portalstuff";
+
 import { setPortalstuffElement, useStore } from "#src/store";
 import { createPortal } from "react-dom";
 import { Button } from "#src/ui/button";
+import { ReversePortal } from "#src/lib/reverse-portal";
 
 type Props = {
   className?: string;

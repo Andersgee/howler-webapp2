@@ -58,6 +58,13 @@ export class GoogleMapsClass {
         mapId: TEST_MAP_ID,
         minZoom: 3,
       });
+
+      const a: google.maps.marker.AdvancedMarkerElement | null = null;
+
+      this.map.addListener("click", (clickEvent: unknown) => {
+        console.log("clickEvent:", clickEvent);
+      });
+
       return true;
     } catch (error) {
       return false;
