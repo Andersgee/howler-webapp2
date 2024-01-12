@@ -6,6 +6,7 @@ import { seo } from "#src/utils/seo";
 import { Toaster } from "#src/ui/toaster";
 import { Topnav } from "#src/components/topnav";
 import { GoogleMapsScript, GoogleMapsPortal } from "#src/components/GoogleMaps";
+import { PreloadSomExpensiveComp } from "./portalstuff/SomExpensiveComp";
 
 export const metadata = seo({
   title: "Boilerplate app",
@@ -30,6 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <GoogleMapsPortal />
       </body>
       <GoogleMapsScript />
+      <PreloadSomExpensiveComp />
     </html>
   );
 }
