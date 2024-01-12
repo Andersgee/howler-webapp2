@@ -19,6 +19,13 @@ type FormData = z.infer<typeof schemaCreate>;
 
 export function Create() {
   const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
+  const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
+    { point: googleMapsPickedPoint! },
+    {
+      enabled: !!googleMapsPickedPoint,
+    }
+  );
+
   const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(schemaCreate),
@@ -46,9 +53,17 @@ export function Create() {
 
   useEffect(() => {
     if (googleMapsPickedPoint) {
+      console.log({ googleMapsPickedPoint });
       form.setValue("location", googleMapsPickedPoint);
     }
   }, [googleMapsPickedPoint, form]);
+
+  useEffect(() => {
+    if (pickedPointNames && pickedPointNames.length > 0) {
+      console.log({ pickedPointName: pickedPointNames });
+      form.setValue("locationName", pickedPointNames[0]);
+    }
+  }, [pickedPointNames, form]);
 
   return (
     <Form {...form}>
@@ -88,22 +103,36 @@ export function Create() {
             </FormItem>
           )}
         />
+        <FormItem>
+          <FormLabel>Where</FormLabel>
+          <FormMessage />
+          <FormControl>
+            <Input type="text" placeholder="Location name" {...form.register("locationName")} />
+          </FormControl>
+          {/*<FormDescription>{pickedPointName}</FormDescription>*/}
+          <div className="h-52 w-full">
+            <GoogleMaps />
+          </div>
+        </FormItem>
+        {/*
         <FormField
           control={form.control}
-          name="location"
+          name="locationName"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Where</FormLabel>
               <FormMessage />
-
+              <FormControl>
+                <Input type="text" placeholder="Location name" {...field} />
+              </FormControl>
+              <FormDescription>{pickedPointName}</FormDescription>
               <div className="h-52 w-full">
                 <GoogleMaps />
               </div>
-
-              <FormDescription>point: {JSON.stringify(googleMapsPickedPoint)}</FormDescription>
             </FormItem>
           )}
         />
+        */}
 
         <Button type="submit" disabled={eventCreate.isPending}>
           Submit

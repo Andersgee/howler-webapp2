@@ -44,14 +44,14 @@ model UserEventPivot {
 }
 
 model Event {
-    id        BigInt                @default(autoincrement()) @db.UnsignedBigInt
-    createdAt DateTime              @default(now())
-    updatedAt DateTime              @default(now()) @updatedAt
-    title     String                @db.VarChar(55)
-    date      DateTime              @default(now())
-    location  Unsupported("point")? //https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html
-    creatorId BigInt                @db.UnsignedBigInt
-    //locationName String?               @db.VarChar(55)
+    id           BigInt                @default(autoincrement()) @db.UnsignedBigInt
+    createdAt    DateTime              @default(now())
+    updatedAt    DateTime              @default(now()) @updatedAt
+    title        String                @db.VarChar(55)
+    date         DateTime              @default(now())
+    location     Unsupported("point")? //https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html
+    locationName String?               @db.VarChar(55)
+    creatorId    BigInt                @db.UnsignedBigInt
 
     User           User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
     UserEventPivot UserEventPivot[]

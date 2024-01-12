@@ -8,4 +8,5 @@ export const schemaCreate = z.object({
     .max(55, { message: "must be less than 55 characters" }),
   date: z.date().optional(),
   location: schemaPoint.optional(),
+  locationName: z.string().optional(),
 });

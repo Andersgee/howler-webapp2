@@ -8,7 +8,7 @@ model Event {
   createdAt DateTime @db.DateTime(3) @default(now())
   updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
   title String @db.VarChar(55)
-  date DateTime @db.DateTime(3)
+  date DateTime @db.DateTime(3) @default(now())
   location Unsupported("point")?
   creatorId BigInt @db.UnsignedBigInt
 
@@ -16,8 +16,8 @@ model Event {
 
   UserEventPivot_eventId_fkey UserEventPivot[]
 
-  @@id([id])
   @@index([creatorId])
+  @@id([id])
 }
 
 model Post {
@@ -29,8 +29,8 @@ model Post {
 
   Post_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  @@id([id])
   @@index([userId])
+  @@id([id])
 }
 
 model User {
@@ -49,10 +49,10 @@ model User {
   UserEventPivot_userId_fkey UserEventPivot[]
 
   @@id([id])
-  @@unique([email])
-  @@unique([googleUserSub])
   @@unique([discordUserId])
+  @@unique([email])
   @@unique([githubUserId])
+  @@unique([googleUserSub])
 }
 
 model UserEventPivot {

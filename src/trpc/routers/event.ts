@@ -21,6 +21,7 @@ export const eventRouter = createTRPCRouter({
         title: input.title,
         date: input.date,
         location: input.location,
+        locationName: input.locationName,
       })
       .executeTakeFirstOrThrow();
     console.log("insertResult:", insertResult);

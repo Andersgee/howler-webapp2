@@ -11,7 +11,7 @@ import { z } from "zod";
  */
 export const envSchema = z.object({
   //NODE_ENV: z.enum(["development", "test", "production"]),
-
+  GOOGLE_GEOCODING_API_KEY: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   DISCORD_CLIENT_ID: z.string(),

@@ -2,9 +2,9 @@ import type { Generated } from "kysely";
 import type { GeoJSON } from "./geojson-types";
   
 export type DB = {
-  User: User;
   Event: Event;
   UserEventPivot: UserEventPivot;
+  User: User;
   Post: Post;
 };
 
@@ -23,6 +23,8 @@ export type Event = {
   location: GeoJSON["Point"] | null;
   /** indexed: (creatorId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   creatorId: bigint;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  locationName: string | null;
 };
 
 export type Post = {
