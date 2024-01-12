@@ -1,3 +1,4 @@
+import { setGoogleMapsPickedPoint } from "#src/store/actions";
 import { GridAlgorithm, type MarkerClusterer } from "@googlemaps/markerclusterer";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
@@ -79,6 +80,7 @@ export class GoogleMapsClass {
             title: "This is where it happens.",
           });
         }
+        setGoogleMapsPickedPoint({ type: "Point", coordinates: [latLng.lat(), latLng.lng()] });
       });
 
       return true;

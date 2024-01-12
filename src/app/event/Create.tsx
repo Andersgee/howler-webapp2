@@ -12,10 +12,13 @@ import { schemaCreate } from "#src/trpc/routers/eventSchema";
 import { useRouter } from "next/navigation";
 import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
+import { useStore } from "#src/store";
+import { useEffect } from "react";
 
 type FormData = z.infer<typeof schemaCreate>;
 
 export function Create() {
+  const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
   const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(schemaCreate),
@@ -40,6 +43,12 @@ export function Create() {
   function onValid(data: FormData) {
     eventCreate.mutate(data);
   }
+
+  useEffect(() => {
+    if (googleMapsPickedPoint) {
+      form.setValue("location", googleMapsPickedPoint);
+    }
+  }, [googleMapsPickedPoint, form]);
 
   return (
     <Form {...form}>
@@ -79,9 +88,23 @@ export function Create() {
             </FormItem>
           )}
         />
-        <div className="h-52 w-full">
-          <GoogleMaps />
-        </div>
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Where</FormLabel>
+              <FormMessage />
+
+              <div className="h-52 w-full">
+                <GoogleMaps />
+              </div>
+
+              <FormDescription>point: {JSON.stringify(googleMapsPickedPoint)}</FormDescription>
+            </FormItem>
+          )}
+        />
+
         <Button type="submit" disabled={eventCreate.isPending}>
           Submit
         </Button>
