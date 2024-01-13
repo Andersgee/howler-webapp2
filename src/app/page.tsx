@@ -1,7 +1,9 @@
+import { ExploreEvents } from "./ExploreEvents";
+
 export default function Page() {
   return (
-    <div>
-      <div>hello</div>
+    <div className="bg-red-500">
+      <ExploreEvents />
     </div>
   );
 }

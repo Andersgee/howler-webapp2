@@ -9,13 +9,9 @@ export async function Topnav() {
     <div className="m-2 flex justify-between">
       <div>
         <div className="flex">
-          <TopnavLink label="/portalstuff/a" href="/portalstuff/a" />
-          <TopnavLink label="/portalstuff/b" href="/portalstuff/b" />
-
           <TopnavLink label="Home" href="/" />
           <TopnavLink label="event" href="/event" />
-          <TopnavLink label="Posts" href="/posts" />
-          <TopnavLink label="ui showcase" href="/ui-showcase" />
+          <TopnavLink label="ui" href="/ui-showcase" />
         </div>
       </div>
       <div>

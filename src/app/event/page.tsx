@@ -1,14 +1,12 @@
-import { apiRscPublic } from "#src/trpc/api-rsc";
-import { Create } from "./Create";
-import { Wall } from "./Wall";
+import { CreateEventForm } from "./CreateEventForm";
 
-export default async function Page() {
-  const { api } = apiRscPublic();
-  const initialData = await api.event.latest();
+export default function Page() {
   return (
-    <div>
-      <Create />
-      <Wall initialData={initialData} />
+    <div className="container mx-auto flex justify-center">
+      <div>
+        <h1>create</h1>
+        <CreateEventForm />
+      </div>
     </div>
   );
 }

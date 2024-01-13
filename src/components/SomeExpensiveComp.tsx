@@ -12,7 +12,7 @@ type Props = {
   className?: string;
 };
 
-export function SomExpensiveComp({ className }: Props) {
+function SomExpensiveComp({ className }: Props) {
   useEffect(() => {
     console.log("running useEffect in SomExpensiveComp");
   }, []);
@@ -25,7 +25,15 @@ export function SomExpensiveComp({ className }: Props) {
   );
 }
 
-export function MountSomeExpensiveComp() {
+export function PreloadedExpensiveComp() {
+  const element = useStore.use.portalstuffElement();
+  if (!element) {
+    return null;
+  }
+  return <ReversePortal element={element} />;
+}
+
+export function MountSomeExpensiveComp(props: Props) {
   const element = useStore.use.portalstuffElement();
   useEffect(() => {
     const el = document.createElement("div");
@@ -36,13 +44,5 @@ export function MountSomeExpensiveComp() {
   if (!element) {
     return null;
   }
-  return createPortal(<SomExpensiveComp />, element);
-}
-
-export function PreloadedSomExpensiveComp() {
-  const element = useStore.use.portalstuffElement();
-  if (!element) {
-    return null;
-  }
-  return <ReversePortal element={element} />;
+  return createPortal(<SomExpensiveComp {...props} />, element);
 }

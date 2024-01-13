@@ -16,10 +16,11 @@ import { useStore } from "#src/store";
 import { useEffect, useRef, useState } from "react";
 import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 import { IconWhat, IconWhen, IconWhere, IconWho } from "#src/icons";
+import { cn } from "#src/utils/cn";
 
 type FormData = z.infer<typeof schemaCreate>;
 
-export function Create() {
+export function CreateEventForm({ className }: { className?: string }) {
   const [showMap, setShowMap] = useState(false);
   const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
   const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
@@ -62,7 +63,7 @@ export function Create() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((data) => eventCreate.mutate(data))} className="space-y-2">
+      <form onSubmit={form.handleSubmit((data) => eventCreate.mutate(data))} className={cn("space-y-2", className)}>
         <FormField
           control={form.control}
           name="title"
