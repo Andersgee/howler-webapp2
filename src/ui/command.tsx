@@ -18,7 +18,8 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      "flex h-full w-full flex-col overflow-hidden rounded-md bg-color-neutral-50 text-color-neutral-900",
+      "flex h-full w-full flex-col rounded-md bg-color-neutral-50 text-color-neutral-900",
+      //"overflow-hidden",
       className
     )}
     {...props}
@@ -53,7 +54,7 @@ const CommandInput = React.forwardRef<
         inputElementStyles,
         //"outline-none focus-visible:focusring",
         //"border-4 border-color-accent-highlight-600",
-        "m-1 focus:focusring",
+        "mb-1 focus:focusring",
         className
       )}
       {...props}
@@ -69,7 +70,12 @@ const CommandList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <CommandPrimitive.List
     ref={ref}
-    className={cn("max-h-[300px] overflow-y-auto overflow-x-hidden", className)}
+    className={cn(
+      "max-h-72 overflow-x-hidden overflow-y-scroll",
+      "border-b border-l border-r border-color-neutral-400",
+      //"overflow-y-auto overflow-x-hidden",
+      className
+    )}
     {...props}
   />
 ));
@@ -90,7 +96,8 @@ const CommandGroup = React.forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      "overflow-hidden bg-color-neutral-0 p-1 text-color-neutral-900 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-color-neutral-500",
+      "bg-color-neutral-0 p-1 text-color-neutral-900 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-color-neutral-500",
+      //"overflow-hidden",
       className
     )}
     {...props}
