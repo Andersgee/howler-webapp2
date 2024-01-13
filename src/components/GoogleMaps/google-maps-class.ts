@@ -1,5 +1,8 @@
+import { GeoJSON } from "#src/db/geojson-types";
+import { type RouterOutputs } from "#src/hooks/api";
 import { setGoogleMapsPickedPoint } from "#src/store/actions";
-import { GridAlgorithm, type MarkerClusterer } from "@googlemaps/markerclusterer";
+import { absUrl } from "#src/utils/url";
+import { GridAlgorithm, SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -32,14 +35,15 @@ export class GoogleMapsClass {
   map!: google.maps.Map; //| null;
   primaryPin!: google.maps.marker.PinElement;
   primaryMarker!: google.maps.marker.AdvancedMarkerElement;
+  exploreMarkers!: google.maps.marker.AdvancedMarkerElement[];
+  markerClusterer!: MarkerClusterer;
 
-  markerClusterer: MarkerClusterer | null;
-  mode: "pick-location" | "view-event";
+  mode: "pick-location" | "view-event" | "explore";
 
   constructor() {
     console.log("GoogleMapsClass, constructor");
     //this.map = null;
-    this.markerClusterer = null;
+    //this.markerClusterer = null;
     //this.primaryMarker = null
     this.mode = "view-event";
   }
@@ -64,6 +68,7 @@ export class GoogleMapsClass {
         center: INITIAL_CENTER,
         mapId: TEST_MAP_ID,
         minZoom: 3,
+        maxZoom: 16,
         clickableIcons: false,
       });
 
@@ -77,6 +82,16 @@ export class GoogleMapsClass {
         position: null,
         title: "This is where it happens.",
       });
+      this.exploreMarkers = [];
+
+      //https://github.com/mapbox/supercluster#readme
+      this.markerClusterer = new MarkerClusterer({
+        map: this.map,
+        algorithm: new SuperClusterAlgorithm({ radius: 40, maxZoom: 16, minZoom: 3 }),
+      });
+
+      //const a= new SuperCl
+      //this.markerClusterer.addMarkers()
 
       this.map.addListener("click", (e: EventClick) => {
         console.log("click, e:", e);
@@ -84,8 +99,6 @@ export class GoogleMapsClass {
         if (this.mode === "pick-location") {
           this.primaryMarker.position = latLng;
           setGoogleMapsPickedPoint({ type: "Point", coordinates: [latLng.lat(), latLng.lng()] });
-        } else if (this.mode === "view-event") {
-          //ignore
         }
       });
 
@@ -93,6 +106,29 @@ export class GoogleMapsClass {
     } catch (error) {
       return false;
     }
+  }
+
+  addEventsAsMarkers(events: RouterOutputs["event"]["getAll"]) {
+    const markers = events.map((event) => {
+      const pinGlyph = new google.maps.marker.PinElement({
+        glyph: event.title,
+        glyphColor: "white",
+      });
+      const marker = new google.maps.marker.AdvancedMarkerElement({
+        position: { lat: event.location!.coordinates[0], lng: event.location!.coordinates[1] },
+        content: pinGlyph.element,
+      });
+
+      // markers can only be keyboard focusable when they have click listeners
+      // open info window when marker is clicked
+      //marker.addListener("click", () => {
+      //  infoWindow.setContent(position.lat + ", " + position.lng);
+      //  infoWindow.open(map, marker);
+      //});
+      return marker;
+    });
+
+    this.markerClusterer.addMarkers(markers);
   }
 }
 

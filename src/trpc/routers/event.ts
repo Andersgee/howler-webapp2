@@ -34,4 +34,11 @@ export const eventRouter = createTRPCRouter({
       .where("id", "=", input.id)
       .executeTakeFirstOrThrow();
   }),
+  getAll: publicProcedure.query(async () => {
+    return await dbfetch({ next: { revalidate: 10 } })
+      .selectFrom("Event")
+      .select(["id", "title", "location", "locationName"])
+      .where("location", "is not", null)
+      .execute();
+  }),
 });
