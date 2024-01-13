@@ -61,6 +61,7 @@ export class GoogleMapsClass {
         center: INITIAL_CENTER,
         mapId: TEST_MAP_ID,
         minZoom: 3,
+        clickableIcons: false,
       });
 
       this.map.addListener("click", (e: EventClick) => {

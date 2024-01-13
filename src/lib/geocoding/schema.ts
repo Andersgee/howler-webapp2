@@ -1,6 +1,52 @@
 import { z } from "zod";
 
 //https://developers.google.com/maps/documentation/geocoding/requests-reverse-geocoding#reverse-status-codes
+//https://developers.google.com/maps/documentation/geocoding/requests-geocoding#Types
+
+const RESULT_TYPES = [
+  "street_address",
+  "route",
+  "intersection",
+  "political",
+  "country",
+  "administrative_area_level_1",
+  "administrative_area_level_2",
+  "administrative_area_level_3",
+  "administrative_area_level_4",
+  "administrative_area_level_5",
+  "administrative_area_level_6",
+  "administrative_area_level_7",
+  "colloquial_area",
+  "locality",
+  "sublocality",
+  "neighborhood",
+  "premise",
+  "subpremise",
+  "plus_code",
+  "postal_code",
+  "natural_feature",
+  "airport",
+  "park",
+  "point_of_interest",
+] as const;
+
+const schemaResultType = z.enum(RESULT_TYPES);
+
+//adress components have some extra, and this list is not exhaustive, and it might change
+//I just copy pasted these cuz can atleast filter out some specific types that I dont want
+const schemaAdressComponentType = z.enum([
+  ...RESULT_TYPES,
+  "floor",
+  "establishment",
+  "landmark",
+  "parking",
+  "post_box",
+  "postal_town",
+  "room",
+  "street_number",
+]);
+export type AdressComponentType = z.infer<typeof schemaAdressComponentType>;
+
 export const schemaReverseGeoCodingResponse = z.object({
   status: z.enum(["OK", "ZERO_RESULTS", "OVER_QUERY_LIMIT", "REQUEST_DENIED", "INVALID_REQUEST", "UNKNOWN_ERROR"]),
   plus_code: z.object({
@@ -14,7 +60,7 @@ export const schemaReverseGeoCodingResponse = z.object({
         z.object({
           long_name: z.string(),
           short_name: z.string(),
-          types: z.array(z.string()), //enum?
+          types: z.array(schemaAdressComponentType.or(z.string())),
         })
       ),
       geometry: z.object({
@@ -41,7 +87,7 @@ export const schemaReverseGeoCodingResponse = z.object({
           global_code: z.string(),
         })
         .optional(),
-      types: z.array(z.string()),
+      types: z.array(schemaResultType.or(z.string())),
     })
   ),
 });

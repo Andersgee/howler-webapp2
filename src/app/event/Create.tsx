@@ -13,13 +13,14 @@ import { useRouter } from "next/navigation";
 import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { useStore } from "#src/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 import { IconWhat, IconWhen, IconWhere, IconWho } from "#src/icons";
 
 type FormData = z.infer<typeof schemaCreate>;
 
 export function Create() {
+  const [showMap, setShowMap] = useState(false);
   const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
   const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
     { point: googleMapsPickedPoint! },
@@ -35,6 +36,8 @@ export function Create() {
       title: "",
       date: new Date(),
       locationName: "",
+      location: undefined,
+      who: "",
     },
   });
 
@@ -103,17 +106,20 @@ export function Create() {
                     {...field}
                   />
                 </FormControl>
+                <Button variant="outline" onClick={() => setShowMap((prev) => !prev)}>
+                  {showMap ? "close map" : "show map"}
+                </Button>
               </div>
               <FormMessage className="ml-8" />
               {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
           )}
         />
-        {/*
-        <div className="h-96 w-full">
-          <GoogleMaps />
-        </div>
-        */}
+        {showMap && (
+          <div className="h-96 w-full">
+            <GoogleMaps />
+          </div>
+        )}
 
         <FormField
           control={form.control}

@@ -42,8 +42,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, variant,
 
 export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof buttonVariants>;
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, variant, ...props }, ref) => {
-  return <button className={buttonVariants({ variant, className })} ref={ref} {...props} />;
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, type = "button", variant, ...props }, ref) => {
+  return <button type={type} className={buttonVariants({ variant, className })} ref={ref} {...props} />;
 });
 Button.displayName = "Button";
 

@@ -1,4 +1,4 @@
-import { schemaReverseGeoCodingResponse, type ReverseGeoCodingResponse } from "./schema";
+import { schemaReverseGeoCodingResponse, type ReverseGeoCodingResponse, type AdressComponentType } from "./schema";
 
 export async function getGoogleReverseGeocoding(p: { lng: number; lat: number }) {
   const key = process.env.GOOGLE_GEOCODING_API_KEY;
@@ -19,12 +19,19 @@ export async function getGoogleReverseGeocoding(p: { lng: number; lat: number })
 }
 
 function nameList(data: ReverseGeoCodingResponse) {
+  const ignoredTypes: AdressComponentType[] = ["plus_code", "country", "floor", "postal_code", "premise"];
   const s = new Set<string>();
   for (const result of data.results) {
-    s.add(result.formatted_address);
+    const ignoreResult = ignoredTypes.some((t) => result.types.includes(t));
+    if (!ignoreResult) {
+      s.add(result.formatted_address);
+    }
     for (const address_component of result.address_components) {
-      s.add(address_component.short_name);
-      s.add(address_component.long_name);
+      const ignoreComponent = ignoredTypes.some((t) => address_component.types.includes(t));
+      if (!ignoreComponent) {
+        s.add(address_component.short_name);
+        s.add(address_component.long_name);
+      }
     }
   }
   return Array.from(s);
