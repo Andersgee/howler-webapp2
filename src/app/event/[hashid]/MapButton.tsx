@@ -18,7 +18,7 @@ export function MapButton({ location, locationName }: Props) {
     if (!googleMaps) return;
 
     const latLng = { lat: location.coordinates[0], lng: location.coordinates[1] };
-    googleMaps.mode = "view-event";
+    googleMaps.setMode("view-event");
     googleMaps.primaryMarker.position = latLng;
     googleMaps.map.setOptions({
       center: latLng,

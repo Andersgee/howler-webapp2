@@ -15,10 +15,7 @@ export function MapExplore({ events }: Props) {
   useEffect(() => {
     if (!googleMaps) return;
 
-    //const latLng = { lat: location.coordinates[0], lng: location.coordinates[1] };
-    googleMaps.mode = "explore";
-    googleMaps.primaryMarker.position = null;
-    console.log("adding all markers now");
+    googleMaps.setMode("explore");
     googleMaps.addEventsAsMarkers(events);
     //googleMaps.map.setOptions({
     //  center: latLng,

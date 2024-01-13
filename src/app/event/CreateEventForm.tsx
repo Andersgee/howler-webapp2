@@ -183,9 +183,7 @@ function Map({ show }: { show: boolean }) {
   useEffect(() => {
     if (!googleMaps || didRun.current) return;
 
-    googleMaps.mode = "pick-location";
-    googleMaps.primaryMarker.position = null;
-
+    googleMaps.setMode("pick-location");
     didRun.current = true;
     //googleMaps.map.setOptions({
     //  center: latLng,

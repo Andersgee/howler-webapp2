@@ -48,6 +48,14 @@ export class GoogleMapsClass {
     this.mode = "view-event";
   }
 
+  /** clean up markers and state */
+  setMode(mode: "pick-location" | "view-event" | "explore") {
+    this.markerClusterer.clearMarkers();
+    this.primaryMarker.position = null;
+
+    this.mode = mode;
+  }
+
   async init(element: HTMLDivElement) {
     console.log("GoogleMapsClass, init");
     try {
