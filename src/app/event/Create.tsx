@@ -15,6 +15,7 @@ import { GoogleMaps } from "#src/components/GoogleMaps";
 import { useStore } from "#src/store";
 import { useEffect } from "react";
 import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
+import { IconWhat, IconWhen, IconWhere, IconWho } from "#src/icons";
 
 type FormData = z.infer<typeof schemaCreate>;
 
@@ -69,46 +70,83 @@ export function Create() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onValid)} className="">
+      <form onSubmit={form.handleSubmit(onValid)} className="space-y-2">
         <FormField
           control={form.control}
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>What</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Anything..."
-                  autoCapitalize="none"
-                  autoComplete="off"
-                  autoCorrect="off"
-                  {...field}
-                />
-              </FormControl>
+              <div className="flex items-center gap-2">
+                <IconWhat />
+                <FormLabel className="w-11 shrink-0">What</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="anything"
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    {...field}
+                  />
+                </FormControl>
+              </div>
+              <FormMessage className="ml-8" />
               {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
+          name="locationName"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-2">
+                <IconWhere />
+                <FormLabel className="w-11 shrink-0">Where</FormLabel>
+                {/*<FormDescription>click on map (optional)</FormDescription>*/}
+                <FormControl>
+                  <InputWithAutocomplete
+                    placeholder="anywhere"
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLocaleLowerCase() })) ?? []}
+                    {...field}
+                  />
+                </FormControl>
+              </div>
+              <FormMessage className="ml-8" />
+              {/*<FormDescription>some string.</FormDescription>*/}
+            </FormItem>
+          )}
+        />
+        {/*
+        <div className="h-96 w-full">
+          <GoogleMaps />
+        </div>
+        */}
+
+        <FormField
+          control={form.control}
           name="date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>When</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input
-                  type="datetime-local"
-                  value={datetimelocalString(field.value!)}
-                  onChange={(e) => {
-                    if (!e.target.value) return;
-                    form.setValue("date", new Date(e.target.value));
-                  }}
-                  className="w-auto"
-                />
-              </FormControl>
+              <div className="flex items-center gap-2">
+                <IconWhen />
+                <FormLabel className="w-11 shrink-0">When</FormLabel>
+                <FormControl>
+                  <Input
+                    type="datetime-local"
+                    value={datetimelocalString(field.value!)}
+                    onChange={(e) => {
+                      if (!e.target.value) return;
+                      form.setValue("date", new Date(e.target.value));
+                    }}
+                    className="w-auto"
+                  />
+                </FormControl>
+              </div>
+              <FormMessage className="ml-8" />
               {/*<FormDescription>some date.</FormDescription>*/}
             </FormItem>
           )}
@@ -116,26 +154,28 @@ export function Create() {
 
         <FormField
           control={form.control}
-          name="locationName"
+          name="who"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Where</FormLabel>
-              <FormDescription>click on map (optional)</FormDescription>
-              <FormMessage />
-              <FormControl>
-                <InputWithAutocomplete
-                  placeholder="Location name?.."
-                  suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLocaleLowerCase() })) ?? []}
-                  {...field}
-                />
-              </FormControl>
+              <div className="flex items-center gap-2">
+                <IconWho />
+                <FormLabel className="w-11 shrink-0">Who</FormLabel>
+                <FormControl>
+                  <Input
+                    type="text"
+                    placeholder="anyone"
+                    autoCapitalize="none"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    {...field}
+                  />
+                </FormControl>
+              </div>
+              <FormMessage className="ml-8" />
               {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
           )}
         />
-        <div className="h-96 w-full">
-          <GoogleMaps />
-        </div>
 
         {/*
         <FormItem>
@@ -177,7 +217,7 @@ export function Create() {
         */}
 
         <Button type="submit" disabled={eventCreate.isPending}>
-          Submit
+          Howl
         </Button>
       </form>
     </Form>

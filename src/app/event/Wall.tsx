@@ -21,8 +21,8 @@ export function Wall({ initialData, className }: Props) {
       <h1>latest 10 events</h1>
       {eventLatest.data.map((event) => (
         <div key={event.id}>
-          <Link prefetch={false} href={`/event/${hashidFromId(event.id)}`} className="block">
-            <h2>{event.title}</h2>
+          <Link prefetch={false} href={`/event/${hashidFromId(event.id)}`} className="block hover:underline">
+            <h2>{event.title || "anything"}</h2>
           </Link>
 
           <PrettyDate date={event.createdAt} />
