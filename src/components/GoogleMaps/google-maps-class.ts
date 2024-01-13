@@ -63,7 +63,9 @@ export class GoogleMapsClass {
         minZoom: 3,
       });
 
-      this.map.addListener("click", ({ latLng }: EventClick) => {
+      this.map.addListener("click", (e: EventClick) => {
+        console.log("click, e:", e);
+        const latLng = e.latLng;
         //const a = { lat: latLng.lat(), lng: latLng.lng() };
         if (this.markerPickedLocation) {
           //move it

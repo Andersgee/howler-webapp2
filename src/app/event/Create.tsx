@@ -50,10 +50,6 @@ export function Create() {
     },
   });
 
-  function onValid(data: FormData) {
-    eventCreate.mutate(data);
-  }
-
   useEffect(() => {
     if (googleMapsPickedPoint) {
       console.log({ googleMapsPickedPoint });
@@ -61,16 +57,9 @@ export function Create() {
     }
   }, [googleMapsPickedPoint, form]);
 
-  //useEffect(() => {
-  //  if (pickedPointNames && pickedPointNames.length > 0) {
-  //    console.log({ pickedPointName: pickedPointNames });
-  //    form.setValue("locationName", pickedPointNames[0]);
-  //  }
-  //}, [pickedPointNames, form]);
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onValid)} className="space-y-2">
+      <form onSubmit={form.handleSubmit((data) => eventCreate.mutate(data))} className="space-y-2">
         <FormField
           control={form.control}
           name="title"
@@ -176,45 +165,6 @@ export function Create() {
             </FormItem>
           )}
         />
-
-        {/*
-        <FormItem>
-          <FormLabel>Where</FormLabel>
-          <FormDescription>click on map (optional)</FormDescription>
-          <FormMessage />
-          <FormControl>
-
-            <InputWithAutocomplete
-              placeholder="Location name"
-              suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLocaleLowerCase() })) ?? []}
-              {...form.register("locationName")}
-              onChange={(value) => {
-                console.log("in form, onChange, value:", value);
-                form.setValue("locationName", value);
-              }}
-            />
-          </FormControl>
-        </FormItem>
-        */}
-        {/*
-        <FormField
-          control={form.control}
-          name="locationName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Where</FormLabel>
-              <FormMessage />
-              <FormControl>
-                <Input type="text" placeholder="Location name" {...field} />
-              </FormControl>
-              <FormDescription>{pickedPointName}</FormDescription>
-              <div className="h-52 w-full">
-                <GoogleMaps />
-              </div>
-            </FormItem>
-          )}
-        />
-        */}
 
         <Button type="submit" disabled={eventCreate.isPending}>
           Howl
