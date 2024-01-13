@@ -14,6 +14,7 @@ import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { useStore } from "#src/store";
 import { useEffect } from "react";
+import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 
 type FormData = z.infer<typeof schemaCreate>;
 
@@ -32,6 +33,7 @@ export function Create() {
     defaultValues: {
       title: "",
       date: new Date(),
+      locationName: "",
     },
   });
 
@@ -58,16 +60,16 @@ export function Create() {
     }
   }, [googleMapsPickedPoint, form]);
 
-  useEffect(() => {
-    if (pickedPointNames && pickedPointNames.length > 0) {
-      console.log({ pickedPointName: pickedPointNames });
-      form.setValue("locationName", pickedPointNames[0]);
-    }
-  }, [pickedPointNames, form]);
+  //useEffect(() => {
+  //  if (pickedPointNames && pickedPointNames.length > 0) {
+  //    console.log({ pickedPointName: pickedPointNames });
+  //    form.setValue("locationName", pickedPointNames[0]);
+  //  }
+  //}, [pickedPointNames, form]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onValid)} className="w-2/3 space-y-6">
+      <form onSubmit={form.handleSubmit(onValid)} className="">
         <FormField
           control={form.control}
           name="title"
@@ -76,7 +78,14 @@ export function Create() {
               <FormLabel>What</FormLabel>
               <FormMessage />
               <FormControl>
-                <Input type="text" placeholder="Whats happening?" {...field} />
+                <Input
+                  type="text"
+                  placeholder="Anything..."
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  {...field}
+                />
               </FormControl>
               {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
@@ -97,23 +106,56 @@ export function Create() {
                     if (!e.target.value) return;
                     form.setValue("date", new Date(e.target.value));
                   }}
+                  className="w-auto"
                 />
               </FormControl>
               {/*<FormDescription>some date.</FormDescription>*/}
             </FormItem>
           )}
         />
+
+        <FormField
+          control={form.control}
+          name="locationName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Where</FormLabel>
+              <FormDescription>click on map (optional)</FormDescription>
+              <FormMessage />
+              <FormControl>
+                <InputWithAutocomplete
+                  placeholder="Location name?.."
+                  suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLocaleLowerCase() })) ?? []}
+                  {...field}
+                />
+              </FormControl>
+              {/*<FormDescription>some string.</FormDescription>*/}
+            </FormItem>
+          )}
+        />
+        <div className="h-96 w-full">
+          <GoogleMaps />
+        </div>
+
+        {/*
         <FormItem>
           <FormLabel>Where</FormLabel>
+          <FormDescription>click on map (optional)</FormDescription>
           <FormMessage />
           <FormControl>
-            <Input type="text" placeholder="Location name" {...form.register("locationName")} />
+
+            <InputWithAutocomplete
+              placeholder="Location name"
+              suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLocaleLowerCase() })) ?? []}
+              {...form.register("locationName")}
+              onChange={(value) => {
+                console.log("in form, onChange, value:", value);
+                form.setValue("locationName", value);
+              }}
+            />
           </FormControl>
-          {/*<FormDescription>{pickedPointName}</FormDescription>*/}
-          <div className="h-52 w-full">
-            <GoogleMaps />
-          </div>
         </FormItem>
+        */}
         {/*
         <FormField
           control={form.control}

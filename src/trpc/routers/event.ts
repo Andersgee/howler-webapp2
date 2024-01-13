@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { hashidFromId, idFromHashid } from "#src/utils/hashid";
+import { hashidFromId } from "#src/utils/hashid";
 import { schemaCreate } from "./eventSchema";
 
 export const eventRouter = createTRPCRouter({
@@ -21,16 +21,9 @@ export const eventRouter = createTRPCRouter({
         title: input.title,
         date: input.date,
         location: input.location,
-        locationName: input.locationName,
+        locationName: input.locationName ? input.locationName : undefined,
       })
       .executeTakeFirstOrThrow();
-    console.log("insertResult:", insertResult);
-    console.log("typeof insertResult.insertId:", typeof insertResult.insertId);
-    const hashid = hashidFromId(insertResult.insertId!);
-    console.log("hashid:", hashid);
-    const re_insertId = idFromHashid(hashid);
-    console.log("re_insertId:", re_insertId);
-    console.log("typeof re_insertId:", typeof re_insertId);
 
     return { ...insertResult, hashid: hashidFromId(insertResult.insertId!) };
   }),
