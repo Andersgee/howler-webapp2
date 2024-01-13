@@ -109,11 +109,18 @@ export class GoogleMapsClass {
   }
 
   addEventsAsMarkers(events: RouterOutputs["event"]["getAll"]) {
+    this.markerClusterer.clearMarkers();
     const markers = events.map((event) => {
+      const glyphImg = document.createElement("img");
+      glyphImg.src = absUrl("/icons/pin.svg");
       const pinGlyph = new google.maps.marker.PinElement({
-        glyph: event.title,
-        glyphColor: "white",
+        glyph: glyphImg,
+        glyphColor: "#fff",
+        background: "#fff",
+        borderColor: "#fff",
+        scale: 1.5, //default looks like 24px, recommended is atleast 44px, lets do 36? adjust pin.svg accordingly
       });
+
       const marker = new google.maps.marker.AdvancedMarkerElement({
         position: { lat: event.location!.coordinates[0], lng: event.location!.coordinates[1] },
         content: pinGlyph.element,
