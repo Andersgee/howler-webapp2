@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { useStore } from "#src/store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 import { IconWhat, IconWhen, IconWhere, IconWho } from "#src/icons";
 
@@ -115,11 +115,7 @@ export function Create() {
             </FormItem>
           )}
         />
-        {showMap && (
-          <div className="h-96 w-full">
-            <GoogleMaps />
-          </div>
-        )}
+        <Map show={showMap} />
 
         <FormField
           control={form.control}
@@ -178,4 +174,28 @@ export function Create() {
       </form>
     </Form>
   );
+}
+
+function Map({ show }: { show: boolean }) {
+  const didRun = useRef(false);
+  const googleMaps = useStore.use.googleMaps();
+  useEffect(() => {
+    if (!googleMaps || didRun.current) return;
+
+    googleMaps.mode = "pick-location";
+    googleMaps.primaryMarker.position = null;
+
+    didRun.current = true;
+    //googleMaps.map.setOptions({
+    //  center: latLng,
+    //  heading: 0,
+    //  zoom: 11,
+    //});
+  }, [googleMaps]);
+
+  return show ? (
+    <div className="h-96 w-full">
+      <GoogleMaps />
+    </div>
+  ) : null;
 }

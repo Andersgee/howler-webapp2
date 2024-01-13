@@ -29,16 +29,19 @@ export class GoogleMapsClass {
   //PinElement!: typeof google.maps.marker.PinElement;
   //InfoWindow!: typeof google.maps.InfoWindow;
 
-  map: google.maps.Map | null;
-  markerClusterer: MarkerClusterer | null;
+  map!: google.maps.Map; //| null;
+  primaryPin!: google.maps.marker.PinElement;
+  primaryMarker!: google.maps.marker.AdvancedMarkerElement;
 
-  markerPickedLocation: google.maps.marker.AdvancedMarkerElement | null;
+  markerClusterer: MarkerClusterer | null;
+  mode: "pick-location" | "view-event";
 
   constructor() {
     console.log("GoogleMapsClass, constructor");
-    this.map = null;
+    //this.map = null;
     this.markerClusterer = null;
-    this.markerPickedLocation = null;
+    //this.primaryMarker = null
+    this.mode = "view-event";
   }
 
   async init(element: HTMLDivElement) {
@@ -64,26 +67,26 @@ export class GoogleMapsClass {
         clickableIcons: false,
       });
 
+      this.primaryPin = new PinElement({
+        //scale: 1.5,
+        scale: 1,
+      });
+      this.primaryMarker = new AdvancedMarkerElement({
+        map: this.map,
+        content: this.primaryPin.element,
+        position: null,
+        title: "This is where it happens.",
+      });
+
       this.map.addListener("click", (e: EventClick) => {
         console.log("click, e:", e);
         const latLng = e.latLng;
-        //const a = { lat: latLng.lat(), lng: latLng.lng() };
-        if (this.markerPickedLocation) {
-          //move it
-          this.markerPickedLocation.position = latLng;
-        } else {
-          const pin = new PinElement({
-            //scale: 1.5,
-            scale: 1,
-          });
-          this.markerPickedLocation = new AdvancedMarkerElement({
-            map: this.map,
-            content: pin.element,
-            position: latLng,
-            title: "This is where it happens.",
-          });
+        if (this.mode === "pick-location") {
+          this.primaryMarker.position = latLng;
+          setGoogleMapsPickedPoint({ type: "Point", coordinates: [latLng.lat(), latLng.lng()] });
+        } else if (this.mode === "view-event") {
+          //ignore
         }
-        setGoogleMapsPickedPoint({ type: "Point", coordinates: [latLng.lat(), latLng.lng()] });
       });
 
       return true;

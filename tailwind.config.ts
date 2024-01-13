@@ -1086,7 +1086,17 @@ export default {
         ".focusring": {
           "@apply ring-color-accent-focus-300 ring-offset-2 ring-offset-color-neutral-0 ring-2": {},
         },
+        ".capitalize-first:first-letter": {
+          textTransform: "uppercase",
+        },
       });
+
+      //const newUtilities = {
+      //  ".capitalize-first:first-letter": {
+      //    textTransform: "uppercase",
+      //  },
+      //};
+      //addUtilities(newUtilities, { respectPrefix: true });
     }),
   ],
 } satisfies Config;
