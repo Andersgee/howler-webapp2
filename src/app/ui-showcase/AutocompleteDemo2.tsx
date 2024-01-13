@@ -51,29 +51,36 @@ export function AutoCompleteDemo2() {
           setSearch(x);
           //setOpen(true);
         }}
-        placeholder="Search framework..."
+        placeholder="Location name..."
       />
       <CommandList>
-        {/*<CommandEmpty>No framework found.</CommandEmpty>*/}
+        <CommandGroup heading="Suggestions">
+          {/*<CommandEmpty>No framework found.</CommandEmpty>*/}
 
-        {frameworks
-          //.filter((x) => x.value !== search)
-          .map((framework) => (
-            <CommandItem
-              hidden={search === framework.value}
-              className={search === framework.value ? "hidden" : ""}
-              key={framework.value}
-              value={framework.value}
-              onSelect={(val) => {
-                console.log(val);
-                //setValue(currentValue === value ? "" : currentValue);
-                setSearch(val);
-                //setOpen(false);
-              }}
-            >
-              {framework.label}
-            </CommandItem>
-          ))}
+          {frameworks
+            //.filter((x) => x.value !== search)
+            .map((framework) => (
+              <CommandItem
+                hidden={search === framework.value}
+                className={search === framework.value ? "hidden" : ""}
+                key={framework.value}
+                value={framework.value}
+                onMouseDown={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  //setSearch(val);
+                }}
+                onSelect={(val) => {
+                  console.log(val);
+                  //setValue(currentValue === value ? "" : currentValue);
+                  setSearch(val);
+                  //setOpen(false);
+                }}
+              >
+                {framework.label}
+              </CommandItem>
+            ))}
+        </CommandGroup>
       </CommandList>
     </Command>
   );
