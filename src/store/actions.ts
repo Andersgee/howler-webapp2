@@ -10,6 +10,10 @@ export const setGoogleMapsPickedPoint = (point: GeoJSON["Point"]) => {
   useStore.setState({ googleMapsPickedPoint: point });
 };
 
+export const setGoogleMapsExploreSelectedEventId = (id: bigint | null) => {
+  useStore.setState({ googleMapsExploreSelectedEventId: id });
+};
+
 export const initGoogleMaps = async (el: HTMLDivElement) => {
   const googleMaps = new GoogleMapsClass();
   const ok = await googleMaps.init(el);

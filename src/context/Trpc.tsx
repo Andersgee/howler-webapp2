@@ -6,6 +6,7 @@ import { useState } from "react";
 import { trpcTransformer } from "#src/trpc/transformer";
 import { api } from "#src/hooks/api";
 import { baseUrl } from "#src/utils/url";
+import { JSONE } from "#src/utils/jsone";
 
 //https://tanstack.com/query/v4/docs/react/guides/important-defaults
 
@@ -28,6 +29,7 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
             //select
             //suspense
             //placeholderData
+            queryKeyHashFn: (k) => JSONE.stringify(k), //https://github.com/TanStack/query/discussions/2450#discussioncomment-988761
           },
         },
       })

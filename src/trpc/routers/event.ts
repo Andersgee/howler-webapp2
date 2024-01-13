@@ -34,6 +34,16 @@ export const eventRouter = createTRPCRouter({
       .where("id", "=", input.id)
       .executeTakeFirstOrThrow();
   }),
+  getByIdNumber: publicProcedure
+    .input(z.object({ id: z.number(), k: z.date(), r: z.bigint() }))
+    .query(async ({ input }) => {
+      console.log({ input });
+      return await dbfetch({ next: { revalidate: 10 } })
+        .selectFrom("Event")
+        .selectAll()
+        .where("id", "=", BigInt(input.id))
+        .executeTakeFirstOrThrow();
+    }),
   getAll: publicProcedure.query(async () => {
     return await dbfetch({ next: { revalidate: 10 } })
       .selectFrom("Event")

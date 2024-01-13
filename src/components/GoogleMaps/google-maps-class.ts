@@ -1,8 +1,8 @@
-import { GeoJSON } from "#src/db/geojson-types";
+import { type GeoJSON } from "#src/db/geojson-types";
 import { type RouterOutputs } from "#src/hooks/api";
-import { setGoogleMapsPickedPoint } from "#src/store/actions";
+import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#src/store/actions";
 import { absUrl } from "#src/utils/url";
-import { GridAlgorithm, SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
+import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -37,6 +37,7 @@ export class GoogleMapsClass {
   primaryMarker!: google.maps.marker.AdvancedMarkerElement;
   exploreMarkers!: google.maps.marker.AdvancedMarkerElement[];
   markerClusterer!: MarkerClusterer;
+  infoWindowElement!: HTMLDivElement;
 
   mode: "pick-location" | "view-event" | "explore";
 
@@ -91,6 +92,7 @@ export class GoogleMapsClass {
         title: "This is where it happens.",
       });
       this.exploreMarkers = [];
+      this.infoWindowElement = document.createElement("div");
 
       //https://github.com/mapbox/supercluster#readme
       this.markerClusterer = new MarkerClusterer({
@@ -117,7 +119,15 @@ export class GoogleMapsClass {
   }
 
   addEventsAsMarkers(events: RouterOutputs["event"]["getAll"]) {
-    this.markerClusterer.clearMarkers();
+    //same info window for all markers
+    const infoWindow = new google.maps.InfoWindow({
+      content: this.infoWindowElement,
+      disableAutoPan: true,
+    });
+    infoWindow.addListener("closeclick", () => {
+      setGoogleMapsExploreSelectedEventId(null);
+    });
+
     const markers = events.map((event) => {
       const glyphImg = document.createElement("img");
       glyphImg.src = absUrl("/icons/pin.svg");
@@ -134,12 +144,15 @@ export class GoogleMapsClass {
         content: pinGlyph.element,
       });
 
-      // markers can only be keyboard focusable when they have click listeners
-      // open info window when marker is clicked
-      //marker.addListener("click", () => {
-      //  infoWindow.setContent(position.lat + ", " + position.lng);
-      //  infoWindow.open(map, marker);
-      //});
+      marker.addListener("click", () => {
+        setGoogleMapsExploreSelectedEventId(event.id);
+        infoWindow.open({
+          map: this.map,
+          anchor: marker,
+          //shouldFocus: true,
+        });
+      });
+
       return marker;
     });
 
