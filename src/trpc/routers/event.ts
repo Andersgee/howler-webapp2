@@ -57,28 +57,6 @@ export const eventRouter = createTRPCRouter({
   getFiltered: publicProcedure.input(schemaFilter).query(async ({ input }) => {
     //let q = dbfetch().selectFrom("Event");
 
-    //const doSingleWordSerach = true;
-
-    /*
-    if (input.titleOrLocationName) {
-      const search = split_whitespace(input.titleOrLocationName).join("* ").concat("*");
-
-      return await dbfetch()
-        .selectFrom("Event")
-        .select([
-          "title",
-          "locationName",
-          "id",
-          "location",
-          sql<number>`MATCH (title,locationName) AGAINST (${search} IN BOOLEAN MODE)`.as("score"),
-        ])
-        .orderBy("score desc")
-        .orderBy("id desc")
-        .limit(10)
-        .execute();
-    }
-    */
-
     //https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
 
     //Relevancy Ranking for a Single Word Search
@@ -107,39 +85,14 @@ export const eventRouter = createTRPCRouter({
         .execute();
     }
 
-    //} else {
-    //  q = q.select(["id", "location"]);
-    //}
+    //I manually added a fulltext index like so:
+    //ALTER TABLE `Event` ADD FULLTEXT `Event_title_locationName_fulltextidx` (`title`, `locationName`)
 
-    /*
+    //https://dev.mysql.com/doc/refman/8.0/en/fulltext-natural-language.html
+    //natural language mode (default) also sorts in order of decreasing relevance, unless you use some other orderby instruction
+    //q = q.where(sql<SqlBool>`MATCH (title,locationName) AGAINST (${input.titleOrLocationName} IN NATURAL LANGUAGE MODE)`);
 
-    if (input.minDate) {
-      q = q.where("date", ">", input.minDate);
-    }
-    if (input.maxDate) {
-      q = q.where("date", "<", input.maxDate);
-    }
-
-    if (input.titleOrLocationName) {
-      //I manually added a fulltext index like so:
-      //ALTER TABLE `Event` ADD FULLTEXT `Event_title_locationName_fulltextidx` (`title`, `locationName`)
-
-      //https://dev.mysql.com/doc/refman/8.0/en/fulltext-natural-language.html
-      //natural language mode (default) also sorts in order of decreasing relevance
-      q = q.where(
-        sql<SqlBool>`MATCH (title,locationName) AGAINST (${input.titleOrLocationName} IN NATURAL LANGUAGE MODE)`
-      );
-
-      //natural language mode has optional "query expansion" essentially meaning "run again using most common words in first result, return result of both"
-      //q = q.where(sql<SqlBool>`MATCH (title,locationName) AGAINST (${input.titleOrLocationName} IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)`);
-
-      //https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
-      //q = q.where(
-      //  sql<SqlBool>`MATCH (title,locationName) AGAINST (${input.titleOrLocationName} IN BOOLEAN MODE)`
-      //).orderBy("id desc");
-    }
-
-    return await q.limit(20).execute();
-    */
+    //natural language mode has optional "query expansion" essentially meaning "run again using most common words in first result, return result of both"
+    //q = q.where(sql<SqlBool>`MATCH (title,locationName) AGAINST (${input.titleOrLocationName} IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)`);
   }),
 });

@@ -56,6 +56,7 @@ model Event {
     User           User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
     UserEventPivot UserEventPivot[]
 
+    //I added this aswell (btw, found out apparently prisma has @@fulltext if enabling preview feature)
     //ALTER TABLE `Event` ADD FULLTEXT `Event_title_locationName_fulltextidx` (`title`, `locationName`)
     @@id([id])
 }
