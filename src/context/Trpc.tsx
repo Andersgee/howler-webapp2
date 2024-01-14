@@ -24,12 +24,10 @@ export function TrpcProvider({ children }: { children: React.ReactNode }) {
             refetchOnReconnect: false,
             refetchOnMount: false,
             retryOnMount: true,
-            //notifyOnChangeProps
             throwOnError: false,
-            //select
-            //suspense
-            //placeholderData
-            queryKeyHashFn: (k) => JSONE.stringify(k), //https://github.com/TanStack/query/discussions/2450#discussioncomment-988761
+            //notifyOnChangeProps,
+            //the default JSON.sringify will error on anything without .toJSON() method. like bigint or typed arrays etc
+            queryKeyHashFn: (k) => JSONE.stringify(k),
           },
         },
       })
