@@ -58,11 +58,12 @@ export function MapExplore({ initialEvents }: Props) {
       <div>
         <div>what / where</div>
         <InputWithAutocomplete
-          placeholder="Search..."
+          placeholder="anything and anywhere..."
           suggestions={
             data?.events.map((event) => ({
               label: event.location ? event.title : `${event.title} (anywhere)`,
               value: event.title,
+              key: event.id,
             })) ?? []
           }
           value={text}
