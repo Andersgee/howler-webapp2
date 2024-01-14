@@ -22,9 +22,13 @@ export const schemaFilter = z.object({
   maxDate: z.date().optional(),
 });
 
+/**
+ * note: this is not about sql injection or anything...
+ * its just that the string has to be well formed.
+ */
 export function trimSearchOperators(s: string) {
   let search = s.trim();
-  const operators = ["+", "-", "@distance", ">", "<", "(", ")", "~", "*", '"'];
+  const operators = ["+", "-", "@", ">", "<", "(", ")", "~", "*", '"'];
   for (const operator of operators) {
     search = search.replaceAll(operator, "");
   }
