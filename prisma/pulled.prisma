@@ -11,12 +11,14 @@ model Event {
   date DateTime @db.DateTime(3) @default(now())
   location Unsupported("point")?
   creatorId BigInt @db.UnsignedBigInt
+  locationName String? @db.VarChar(55)
 
   Event_creatorId_fkey User @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   UserEventPivot_eventId_fkey UserEventPivot[]
 
   @@index([creatorId])
+  @@index([title, locationName])
   @@id([id])
 }
 

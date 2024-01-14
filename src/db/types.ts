@@ -2,8 +2,8 @@ import type { Generated } from "kysely";
 import type { GeoJSON } from "./geojson-types";
   
 export type DB = {
-  Event: Event;
   UserEventPivot: UserEventPivot;
+  Event: Event;
   User: User;
   Post: Post;
 };
@@ -15,7 +15,7 @@ export type Event = {
   createdAt: Generated<Date>;
   /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   updatedAt: Generated<Date>;
-  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  /** indexed: (title, locationName), dbtype: 'varchar(55)', eg string with max 55 chars */
   title: string;
   /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   date: Generated<Date>;
@@ -23,7 +23,7 @@ export type Event = {
   location: GeoJSON["Point"] | null;
   /** indexed: (creatorId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   creatorId: bigint;
-  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  /** indexed: (title, locationName), dbtype: 'varchar(55)', eg string with max 55 chars */
   locationName: string | null;
 };
 

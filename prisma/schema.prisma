@@ -56,6 +56,7 @@ model Event {
     User           User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
     UserEventPivot UserEventPivot[]
 
+    //ALTER TABLE `Event` ADD FULLTEXT `Event_title_locationName_fulltextidx` (`title`, `locationName`)
     @@id([id])
 }
 
