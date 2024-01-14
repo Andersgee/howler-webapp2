@@ -32,11 +32,11 @@ export function trimSearchOperators(s: string) {
   for (const operator of operators) {
     search = search.replaceAll(operator, "");
   }
-  search = split_whitespace(search).join("* ").concat("*");
+  search = split_whitespace(search).join(" ");
   return search;
 }
 
-function split_whitespace(s: string) {
+export function split_whitespace(s: string) {
   return s
     .trim()
     .split(/(\s+)/)

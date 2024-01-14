@@ -2,7 +2,7 @@ import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
-import { schemaCreate, schemaFilter, trimSearchOperators } from "./eventSchema";
+import { schemaCreate, schemaFilter, split_whitespace, trimSearchOperators } from "./eventSchema";
 import { type SqlBool, sql } from "kysely";
 
 export const eventRouter = createTRPCRouter({
@@ -55,13 +55,28 @@ export const eventRouter = createTRPCRouter({
       .execute();
   }),
   getFiltered: publicProcedure.input(schemaFilter).query(async ({ input }) => {
-    //let q = dbfetch().selectFrom("Event");
+    let q = dbfetch().selectFrom("Event").select(["title", "locationName", "id", "location"]);
 
-    //https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
-
-    //Relevancy Ranking for a Single Word Search
     if (input.titleOrLocationName) {
-      const search = trimSearchOperators(input.titleOrLocationName);
+      let search = trimSearchOperators(input.titleOrLocationName);
+      //TODO: play with actual search string a bit. perhaps add a "<" in front of last word
+      //or smth to decrease its contribution since it might be an incomplete word, or add ">" to first word perhaps?..
+      //see: https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
+      search = split_whitespace(search).join("* ").concat("*");
+      search = `>${search}`;
+
+      q = q
+        .select(sql<number>`MATCH (title,locationName) AGAINST (${search} IN BOOLEAN MODE)`.as("score"))
+        .orderBy("score desc");
+    }
+    q = q.orderBy("id desc").limit(10);
+
+    return await q.execute();
+
+    /*
+    if (input.titleOrLocationName) {
+      let search = trimSearchOperators(input.titleOrLocationName);
+      search = split_whitespace(search).join("* ").concat("*");
 
       return await dbfetch()
         .selectFrom("Event")
@@ -84,6 +99,7 @@ export const eventRouter = createTRPCRouter({
         .limit(10)
         .execute();
     }
+    */
 
     //I manually added a fulltext index like so:
     //ALTER TABLE `Event` ADD FULLTEXT `Event_title_locationName_fulltextidx` (`title`, `locationName`)
