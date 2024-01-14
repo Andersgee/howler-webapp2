@@ -83,7 +83,6 @@ export const eventRouter = createTRPCRouter({
 
     //Relevancy Ranking for a Single Word Search
     if (input.titleOrLocationName) {
-      //note: this is not about sql injection or anything... its just that the string has to be well formed.
       const search = trimSearchOperators(input.titleOrLocationName);
 
       return await dbfetch()
