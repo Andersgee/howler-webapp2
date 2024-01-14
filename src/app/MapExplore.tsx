@@ -9,6 +9,7 @@ import { trimSearchOperators } from "#src/trpc/routers/eventSchema";
 import { Input } from "#src/ui/input";
 import { datetimelocalString } from "#src/utils/date";
 import { Switch } from "#src/ui/switch";
+import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 
 type Props = {
   initialEvents: RouterOutputs["event"]["getAll"];
@@ -55,7 +56,17 @@ export function MapExplore({ initialEvents }: Props) {
     <div>
       <div>
         <div>what / where</div>
-        <Input type="text" value={text} onChange={(e) => setText(e.target.value)} />
+        <InputWithAutocomplete
+          suggestions={
+            data?.events.map((event) => ({
+              label: event.location ? event.title : `${event.title} (anywhere)`,
+              value: event.title,
+            })) ?? []
+          }
+          value={text}
+          onChange={setText}
+        />
+        {/*<Input type="text" value={text} onChange={(e) => setText(e.target.value)} />*/}
 
         <div>
           <p>when</p>
@@ -74,6 +85,12 @@ export function MapExplore({ initialEvents }: Props) {
           </div>
         </div>
       </div>
+
+      <div className="h-96 w-full">
+        <GoogleMaps />
+      </div>
+      <InfoWindow />
+
       <div>
         {data?.events?.map((event) => (
           <div key={event.id}>
@@ -81,10 +98,6 @@ export function MapExplore({ initialEvents }: Props) {
           </div>
         ))}
       </div>
-      <div className="h-96 w-full">
-        <GoogleMaps />
-      </div>
-      <InfoWindow />
     </div>
   );
 }
