@@ -99,10 +99,7 @@ export function CreateEventForm({ className }: { className?: string }) {
                 {/*<FormDescription>click on map (optional)</FormDescription>*/}
                 <FormControl>
                   <InputWithAutocomplete
-                    placeholder="anywhere"
-                    autoCapitalize="none"
-                    autoComplete="off"
-                    autoCorrect="off"
+                    placeholder="Location name..."
                     suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLocaleLowerCase() })) ?? []}
                     {...field}
                   />

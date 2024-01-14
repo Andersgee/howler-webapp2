@@ -46,8 +46,9 @@ export function MapExplore({ initialEvents }: Props) {
     if (!data || !googleMaps) return;
     googleMaps.setMode("explore");
     if (data.withScore) {
-      googleMaps.addEventsAsMarkers(data.events.filter((x) => !!x.location && x.score! > 0));
+      googleMaps.addEventsAsMarkers(data.events.filter((x) => !!x.location && !!x.score && x.score > 0));
     } else {
+      //no search string filter... just show all
       googleMaps.addEventsAsMarkers(data.events.filter((x) => !!x.location));
     }
   }, [data, googleMaps]);
@@ -57,6 +58,7 @@ export function MapExplore({ initialEvents }: Props) {
       <div>
         <div>what / where</div>
         <InputWithAutocomplete
+          placeholder="Search..."
           suggestions={
             data?.events.map((event) => ({
               label: event.location ? event.title : `${event.title} (anywhere)`,
