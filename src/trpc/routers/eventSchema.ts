@@ -21,3 +21,20 @@ export const schemaFilter = z.object({
   minDate: z.date().optional(),
   maxDate: z.date().optional(),
 });
+
+export function trimSearchOperators(s: string) {
+  let search = s.trim();
+  const operators = ["+", "-", "@distance", ">", "<", "(", ")", "~", "*", '"'];
+  for (const operator of operators) {
+    search = search.replaceAll(operator, "");
+  }
+  search = split_whitespace(search).join("* ").concat("*");
+  return search;
+}
+
+function split_whitespace(s: string) {
+  return s
+    .trim()
+    .split(/(\s+)/)
+    .filter((x) => x.trim().length > 0);
+}

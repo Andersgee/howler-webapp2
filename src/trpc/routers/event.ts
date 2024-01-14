@@ -2,7 +2,7 @@ import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
-import { schemaCreate, schemaFilter } from "./eventSchema";
+import { schemaCreate, schemaFilter, trimSearchOperators } from "./eventSchema";
 import { type SqlBool, sql } from "kysely";
 
 export const eventRouter = createTRPCRouter({
@@ -59,23 +59,54 @@ export const eventRouter = createTRPCRouter({
 
     //const doSingleWordSerach = true;
 
+    /*
+    if (input.titleOrLocationName) {
+      const search = split_whitespace(input.titleOrLocationName).join("* ").concat("*");
+
+      return await dbfetch()
+        .selectFrom("Event")
+        .select([
+          "title",
+          "locationName",
+          "id",
+          "location",
+          sql<number>`MATCH (title,locationName) AGAINST (${search} IN BOOLEAN MODE)`.as("score"),
+        ])
+        .orderBy("score desc")
+        .orderBy("id desc")
+        .limit(10)
+        .execute();
+    }
+    */
+
     //https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
 
     //Relevancy Ranking for a Single Word Search
-    const word = `${input.titleOrLocationName}*`;
-    return await dbfetch()
-      .selectFrom("Event")
-      .select([
-        "title",
-        "locationName",
-        "id",
-        "location",
-        sql<number>`MATCH (title,locationName) AGAINST (${word} IN BOOLEAN MODE)`.as("score"),
-      ])
-      .orderBy("score desc")
-      .orderBy("id desc")
-      .limit(20)
-      .execute();
+    if (input.titleOrLocationName) {
+      const search = trimSearchOperators(input.titleOrLocationName);
+
+      return await dbfetch()
+        .selectFrom("Event")
+        .select([
+          "title",
+          "locationName",
+          "id",
+          "location",
+          sql<number>`MATCH (title,locationName) AGAINST (${search} IN BOOLEAN MODE)`.as("score"),
+        ])
+        .orderBy("score desc")
+        .orderBy("id desc")
+        .limit(10)
+        .execute();
+    } else {
+      return await dbfetch()
+        .selectFrom("Event")
+        .select(["title", "locationName", "id", "location"])
+        .orderBy("id desc")
+        .limit(10)
+        .execute();
+    }
+
     //} else {
     //  q = q.select(["id", "location"]);
     //}

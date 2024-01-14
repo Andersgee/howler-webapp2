@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "#src/hooks/api";
+import { trimSearchOperators } from "#src/trpc/routers/eventSchema";
 import { Input } from "#src/ui/input";
 import { cn } from "#src/utils/cn";
 import { JSONE } from "#src/utils/jsone";
@@ -9,9 +10,9 @@ import { useState } from "react";
 export default function Page() {
   const [text, setText] = useState("");
   const { data } = api.event.getFiltered.useQuery(
-    { titleOrLocationName: text.trim() },
+    { titleOrLocationName: trimSearchOperators(text) },
     {
-      enabled: text.trim().length >= 3,
+      enabled: trimSearchOperators(text).length >= 3,
     }
   );
   return (
@@ -22,7 +23,7 @@ export default function Page() {
       <div>
         {data?.map((event) => (
           <div key={event.id}>
-            score: {event.score}, id:{event.id.toString()}, title: {event.title}, locationName:{event.locationName}
+            score: {event.score ?? 0}, id:{event.id.toString()}, title: {event.title}, locationName:{event.locationName}
           </div>
         ))}
       </div>
