@@ -70,7 +70,8 @@ export const eventRouter = createTRPCRouter({
       .$if(!!input.minDate, (qb) => {
         return qb.where("date", ">", input.minDate!);
       })
-      .orderBy("id desc")
+      //.orderBy("location", sql`IS NULL`).orderBy("location asc") //this is how to do null last
+      .orderBy("id desc") //finally order by id desc aka latest created first
       .limit(10)
       .execute();
 
