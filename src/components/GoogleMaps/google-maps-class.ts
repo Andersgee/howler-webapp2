@@ -23,6 +23,8 @@ tiling, how google handles map and tile coordinates:
 https://developers.google.com/maps/documentation/javascript/coordinates
 */
 
+const MIN_ZOOM = 3;
+const MAX_ZOOM = 18;
 const INITIAL_ZOOM = 5;
 const INITIAL_CENTER = { lat: 55.49, lng: 13.04 };
 
@@ -77,8 +79,8 @@ export class GoogleMapsClass {
         zoom: INITIAL_ZOOM,
         center: INITIAL_CENTER,
         mapId: TEST_MAP_ID,
-        minZoom: 3,
-        maxZoom: 16,
+        minZoom: MIN_ZOOM,
+        maxZoom: MAX_ZOOM,
         clickableIcons: false,
       });
 
@@ -105,7 +107,7 @@ export class GoogleMapsClass {
       //https://github.com/mapbox/supercluster#readme
       this.markerClusterer = new MarkerClusterer({
         map: this.map,
-        algorithm: new SuperClusterAlgorithm({ radius: 40, maxZoom: 16, minZoom: 3 }),
+        algorithm: new SuperClusterAlgorithm({ radius: 40, minZoom: MIN_ZOOM, maxZoom: MAX_ZOOM }),
       });
 
       //const a= new SuperCl
