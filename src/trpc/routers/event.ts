@@ -62,6 +62,7 @@ export const eventRouter = createTRPCRouter({
     if (input.maxDate) {
       q = q.where("date", "<", input.maxDate);
     }
+
     if (input.titleOrLocationName) {
       //I manually added a fulltext index like so:
       //ALTER TABLE `Event` ADD FULLTEXT `Event_title_locationName_fulltextidx` (`title`, `locationName`)
@@ -78,6 +79,6 @@ export const eventRouter = createTRPCRouter({
       //).orderBy("id desc");
     }
 
-    return await q.execute();
+    return await q.limit(20).execute();
   }),
 });
