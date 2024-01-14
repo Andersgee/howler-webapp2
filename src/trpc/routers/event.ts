@@ -69,6 +69,10 @@ export const eventRouter = createTRPCRouter({
         .select(sql<number>`MATCH (title,locationName) AGAINST (${search} IN BOOLEAN MODE)`.as("score"))
         .orderBy("score desc");
     }
+    if (input.minDate) {
+      q = q.where("date", ">", input.minDate);
+    }
+
     q = q.orderBy("id desc").limit(10);
 
     return await q.execute();

@@ -10,7 +10,6 @@
  * - bigint -> ["BigInt","str"]
  * - node:Buffer -> ["Base64","str"]
  * - TypedArray -> ["Base64","str"] aswell
- * - undefined -> null
  *
  * ## parse
  * - ["Date","str"] -> Date
@@ -44,9 +43,7 @@ function revive(value: any) {
 }
 
 function replace(value: any): any {
-  if (value === undefined) {
-    return null;
-  } else if (Array.isArray(value)) {
+  if (Array.isArray(value)) {
     return value.map(replace);
   } else if (value instanceof Date) {
     return ["Date", value.toISOString()];
