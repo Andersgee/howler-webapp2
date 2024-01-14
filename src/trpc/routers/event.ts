@@ -54,6 +54,29 @@ export const eventRouter = createTRPCRouter({
       //.where("date",">", new Date())
       .execute();
   }),
+  getExplore: publicProcedure.input(schemaFilter).query(async ({ input }) => {
+    const withScore = !!input.titleOrLocationName;
+    const result = await dbfetch()
+      .selectFrom("Event")
+      .select(["id", "location"])
+      .$if(withScore, (qb) => {
+        let search = trimSearchOperators(input.titleOrLocationName!);
+        search = split_whitespace(search).join("* ").concat("*");
+        search = `>${search}`;
+        return qb
+          .select(sql<number>`MATCH (title,locationName) AGAINST (${search} IN BOOLEAN MODE)`.as("score"))
+          .orderBy("score desc");
+      })
+      .$if(!!input.minDate, (qb) => {
+        return qb.where("date", ">", input.minDate!);
+      })
+      .orderBy("id desc")
+      .limit(10)
+      .execute();
+
+    return { events: result, withScore };
+  }),
+
   getFiltered: publicProcedure.input(schemaFilter).query(async ({ input }) => {
     let q = dbfetch().selectFrom("Event").select(["title", "locationName", "id", "location"]);
 
@@ -72,7 +95,6 @@ export const eventRouter = createTRPCRouter({
     if (input.minDate) {
       q = q.where("date", ">", input.minDate);
     }
-
     q = q.orderBy("id desc").limit(10);
 
     return await q.execute();
