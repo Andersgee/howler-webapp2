@@ -8,7 +8,7 @@ import { useState } from "react";
 
 export default function Page() {
   const [text, setText] = useState("");
-  const query = api.event.getFiltered.useQuery(
+  const { data } = api.event.getFiltered.useQuery(
     { titleOrLocationName: text.trim() },
     {
       enabled: text.trim().length >= 3,
@@ -18,7 +18,15 @@ export default function Page() {
     <div>
       <div>input</div>
       <Input type="text" value={text} onChange={(e) => setText(e.target.value)} />
-      <pre>data: {JSONE.stringify(query.data, 2)}</pre>
+
+      <div>
+        {data?.map((event) => (
+          <div key={event.id}>
+            score: {event.score}, id:{event.id.toString()}, title: {event.title}, locationName:{event.locationName}
+          </div>
+        ))}
+      </div>
+      {/*<pre>data: {JSONE.stringify(data, 2)}</pre>*/}
     </div>
   );
 }

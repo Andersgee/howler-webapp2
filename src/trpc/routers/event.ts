@@ -55,7 +55,33 @@ export const eventRouter = createTRPCRouter({
       .execute();
   }),
   getFiltered: publicProcedure.input(schemaFilter).query(async ({ input }) => {
-    let q = dbfetch().selectFrom("Event").select(["id", "location"]);
+    //let q = dbfetch().selectFrom("Event");
+
+    //const doSingleWordSerach = true;
+
+    //https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
+
+    //Relevancy Ranking for a Single Word Search
+    const word = `${input.titleOrLocationName}*`;
+    return await dbfetch()
+      .selectFrom("Event")
+      .select([
+        "title",
+        "locationName",
+        "id",
+        "location",
+        sql<number>`MATCH (title,locationName) AGAINST (${word} IN BOOLEAN MODE)`.as("score"),
+      ])
+      .orderBy("score desc")
+      .orderBy("id desc")
+      .limit(20)
+      .execute();
+    //} else {
+    //  q = q.select(["id", "location"]);
+    //}
+
+    /*
+
     if (input.minDate) {
       q = q.where("date", ">", input.minDate);
     }
@@ -73,6 +99,9 @@ export const eventRouter = createTRPCRouter({
         sql<SqlBool>`MATCH (title,locationName) AGAINST (${input.titleOrLocationName} IN NATURAL LANGUAGE MODE)`
       );
 
+      //natural language mode has optional "query expansion" essentially meaning "run again using most common words in first result, return result of both"
+      //q = q.where(sql<SqlBool>`MATCH (title,locationName) AGAINST (${input.titleOrLocationName} IN NATURAL LANGUAGE MODE WITH QUERY EXPANSION)`);
+
       //https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
       //q = q.where(
       //  sql<SqlBool>`MATCH (title,locationName) AGAINST (${input.titleOrLocationName} IN BOOLEAN MODE)`
@@ -80,5 +109,6 @@ export const eventRouter = createTRPCRouter({
     }
 
     return await q.limit(20).execute();
+    */
   }),
 });
