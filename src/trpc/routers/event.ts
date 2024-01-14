@@ -47,7 +47,7 @@ export const eventRouter = createTRPCRouter({
   getAll: publicProcedure.query(async () => {
     return await dbfetch({ next: { revalidate: 10 } })
       .selectFrom("Event")
-      .select(["id", "title", "location", "locationName"])
+      .select(["id", "location"])
       .where("location", "is not", null)
       .execute();
   }),

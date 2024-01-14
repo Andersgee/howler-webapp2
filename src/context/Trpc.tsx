@@ -8,7 +8,7 @@ import { api } from "#src/hooks/api";
 import { baseUrl } from "#src/utils/url";
 import { JSONE } from "#src/utils/jsone";
 
-//https://tanstack.com/query/v4/docs/react/guides/important-defaults
+//https://tanstack.com/query/v5/docs/react/guides/important-defaults
 
 export function TrpcProvider({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(

@@ -1,41 +1,45 @@
 "use client";
 
 import { api } from "#src/hooks/api";
+import { IconLoadingSpinner } from "#src/icons/special";
 import { useStore } from "#src/store";
+import { hashidFromId } from "#src/utils/hashid";
 import { JSONE } from "#src/utils/jsone";
-//import { useEffect, useState } from "react";
-//import { createPortal } from "react-dom";
+import Link from "next/link";
+import { createPortal } from "react-dom";
 
-/*
 export function InfoWindow() {
-  const [node, setNode] = useState<HTMLElement | null>(null);
   const googleMaps = useStore.use.googleMaps();
-
-  useEffect(() => {
-    if (!googleMaps?.infoWindowElement) return;
-    setNode(googleMaps.infoWindowElement);
-  }, [googleMaps?.infoWindowElement]);
-
-  if (!node) {
+  if (!googleMaps?.infoWindowElement) {
     return null;
   }
-
-  return createPortal(<InfowindowContent />, node);
+  return createPortal(<InfowindowContent />, googleMaps.infoWindowElement);
 }
-*/
-export function InfowindowContent() {
-  const googleMapsExploreSelectedEventId = useStore.use.googleMapsExploreSelectedEventId();
-  //const mapSetClickedEventId = useStore.use.mapSetClickedEventId();
 
-  const query = api.event.getById.useQuery(
+function InfowindowContent() {
+  const googleMapsExploreSelectedEventId = useStore.use.googleMapsExploreSelectedEventId();
+
+  const { data: event, isLoading } = api.event.getById.useQuery(
     { id: googleMapsExploreSelectedEventId! },
     {
       enabled: !!googleMapsExploreSelectedEventId,
     }
   );
-  //const query = api.event.getById.useQuery({ id: BigInt(2) });
 
-  if (!query.data) return <div>no data</div>;
+  if (!event || isLoading)
+    return (
+      <div className="flex h-24 w-48 items-center justify-center bg-color-unthemed-neutral-0">
+        <IconLoadingSpinner className="text-color-unthemed-neutral-600" />
+      </div>
+    );
 
-  return <div>{JSONE.stringify(query.data, 2)}</div>;
+  return (
+    <Link
+      className="block bg-color-unthemed-neutral-0 text-color-unthemed-neutral-800 hover:bg-color-unthemed-neutral-300"
+      href={`/event/${hashidFromId(event.id)}`}
+    >
+      <div className="mb-2 text-lg font-medium text-color-unthemed-neutral-1000">{event.title}</div>
+      <div className="w-48">{JSONE.stringify(event, 2)}</div>
+    </Link>
+  );
 }

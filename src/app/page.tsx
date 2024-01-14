@@ -1,9 +1,14 @@
-import { ExploreEvents } from "./ExploreEvents";
+import { apiRscPublic } from "#src/trpc/api-rsc";
+import { MapExplore } from "./MapExplore";
 
-export default function Page() {
+export default async function Page() {
+  const { api } = apiRscPublic();
+  const events = await api.event.getAll();
+
   return (
-    <div className="bg-red-500">
-      <ExploreEvents />
+    <div>
+      <h1>explore</h1>
+      <MapExplore initialEvents={events} />
     </div>
   );
 }

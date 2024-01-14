@@ -38,6 +38,7 @@ export class GoogleMapsClass {
   exploreMarkers!: google.maps.marker.AdvancedMarkerElement[];
   markerClusterer!: MarkerClusterer;
   infoWindowElement!: HTMLDivElement;
+  infoWindow!: google.maps.InfoWindow;
 
   mode: "pick-location" | "view-event" | "explore";
 
@@ -93,6 +94,13 @@ export class GoogleMapsClass {
       });
       this.exploreMarkers = [];
       this.infoWindowElement = document.createElement("div");
+      this.infoWindow = new google.maps.InfoWindow({
+        content: this.infoWindowElement,
+        disableAutoPan: true,
+      });
+      this.infoWindow.addListener("closeclick", () => {
+        setGoogleMapsExploreSelectedEventId(null);
+      });
 
       //https://github.com/mapbox/supercluster#readme
       this.markerClusterer = new MarkerClusterer({
@@ -104,11 +112,16 @@ export class GoogleMapsClass {
       //this.markerClusterer.addMarkers()
 
       this.map.addListener("click", (e: EventClick) => {
+        //click on map (not infowindow)
         console.log("click, e:", e);
         const latLng = e.latLng;
         if (this.mode === "pick-location") {
           this.primaryMarker.position = latLng;
           setGoogleMapsPickedPoint({ type: "Point", coordinates: [latLng.lat(), latLng.lng()] });
+        }
+        if (this.mode === "explore") {
+          setGoogleMapsExploreSelectedEventId(null);
+          this.infoWindow.close();
         }
       });
 
@@ -119,15 +132,6 @@ export class GoogleMapsClass {
   }
 
   addEventsAsMarkers(events: RouterOutputs["event"]["getAll"]) {
-    //same info window for all markers
-    const infoWindow = new google.maps.InfoWindow({
-      content: this.infoWindowElement,
-      disableAutoPan: true,
-    });
-    infoWindow.addListener("closeclick", () => {
-      setGoogleMapsExploreSelectedEventId(null);
-    });
-
     const markers = events.map((event) => {
       const glyphImg = document.createElement("img");
       glyphImg.src = absUrl("/icons/pin.svg");
@@ -146,7 +150,7 @@ export class GoogleMapsClass {
 
       marker.addListener("click", () => {
         setGoogleMapsExploreSelectedEventId(event.id);
-        infoWindow.open({
+        this.infoWindow.open({
           map: this.map,
           anchor: marker,
           //shouldFocus: true,
