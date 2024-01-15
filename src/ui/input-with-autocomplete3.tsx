@@ -21,6 +21,7 @@ export function InputWithAutocomplete3({ className, suggestions, value, onChange
   return (
     <Command>
       <Command.Input
+        placeholder="anything / anywhere..."
         autoCapitalize="none"
         autoComplete="off"
         autoCorrect="off"
@@ -33,7 +34,7 @@ export function InputWithAutocomplete3({ className, suggestions, value, onChange
             setOpen(true);
           }
         }}
-        className={cn(inputElementStyles, "mb-1 w-full focus:focusring")}
+        className={cn(inputElementStyles, "mb-1 w-full focus:focusring", className)}
         value={value}
         //when typing in search field (not triggered when selecting an option)
         onValueChange={(search) => onChange(search, undefined)}

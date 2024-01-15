@@ -4,6 +4,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
 import { schemaCreate, schemaFilter, split_whitespace, trimSearchOperators } from "./eventSchema";
 import { type SqlBool, sql } from "kysely";
+import { type GeoJSON } from "#src/db/geojson-types";
 
 export const eventRouter = createTRPCRouter({
   latest: publicProcedure.query(async () => {
@@ -67,6 +68,8 @@ export const eventRouter = createTRPCRouter({
           .select(sql<number>`MATCH (title,locationName) AGAINST (${search} IN BOOLEAN MODE)`.as("score"))
           .orderBy("score desc");
       })
+      .where("location", "is not", null)
+      .$narrowType<{ location: GeoJSON["Point"] }>() //for typescript, make location not null
       .$if(!!input.minDate, (qb) => {
         return qb.where("date", ">", input.minDate!);
       })

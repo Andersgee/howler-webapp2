@@ -9,8 +9,6 @@ import { trimSearchOperators } from "#src/trpc/routers/eventSchema";
 import { Input } from "#src/ui/input";
 import { datetimelocalString } from "#src/utils/date";
 import { Switch } from "#src/ui/switch";
-import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
-import { JSONE } from "#src/utils/jsone";
 import { InputWithAutocomplete3 } from "#src/ui/input-with-autocomplete3";
 import { hashidFromId } from "#src/utils/hashid";
 import { setGoogleMapsExploreSelectedEventId } from "#src/store/actions";
@@ -48,12 +46,12 @@ export function MapExplore({ initialEvents }: Props) {
 
   useEffect(() => {
     if (!data || !googleMaps) return;
-    googleMaps.setMode("explore");
+    googleMaps.markerClusterer.clearMarkers();
     if (data.withScore) {
-      googleMaps.addEventsAsMarkers(data.events.filter((x) => !!x.location && !!x.score && x.score > 0));
+      googleMaps.addEventsAsMarkers(data.events.filter((x) => x.score! > 0));
     } else {
       //no search string filter... just show all
-      googleMaps.addEventsAsMarkers(data.events.filter((x) => !!x.location));
+      googleMaps.addEventsAsMarkers(data.events);
     }
   }, [data, googleMaps]);
 
@@ -62,13 +60,12 @@ export function MapExplore({ initialEvents }: Props) {
       <div>
         <div>what / where</div>
         <InputWithAutocomplete3
-          //placeholder="anything and anywhere..."
           suggestions={
-            data?.events.map((e) => ({
-              key: e.id,
-              label: `${e.title} ${e.locationName ?? ""}`.trim(),
-              value: `${e.title} ${e.locationName ?? ""} ${hashidFromId(e.id)}`.trim(),
-            })) ?? []
+            data?.events
+              ? data.withScore
+                ? data.events.filter((x) => x.score! > 0).map(suggestionFromEvent)
+                : data.events.map(suggestionFromEvent)
+              : []
           }
           value={text}
           onChange={(s, id) => {
@@ -76,22 +73,17 @@ export function MapExplore({ initialEvents }: Props) {
             if (id !== undefined) {
               //selected a suggestion
               const ev = data?.events.find((x) => x.id === id);
-              if (googleMaps) {
-                if (ev?.location) {
-                  setGoogleMapsExploreSelectedEventId(id);
-                  const latLng = { lat: ev.location.coordinates[0], lng: ev.location.coordinates[1] };
-                  googleMaps.infoWindow.setPosition(latLng);
-                  googleMaps.infoWindow.open({ map: googleMaps.map, shouldFocus: false });
-                  googleMaps.map.setOptions({
-                    center: latLng,
-                    heading: 0,
-                    zoom: 11,
-                  });
-                } else {
-                  console.log("seleced event has no location");
-                  googleMaps.infoWindow.setPosition(null);
-                  googleMaps.infoWindow.close();
-                }
+              if (googleMaps && ev) {
+                setGoogleMapsExploreSelectedEventId(id);
+                const latLng = { lat: ev.location.coordinates[0], lng: ev.location.coordinates[1] };
+                googleMaps.infoWindow.setPosition(latLng);
+                googleMaps.infoWindow.open({ map: googleMaps.map, shouldFocus: false });
+                googleMaps.map.panTo(latLng);
+                //googleMaps.map.setOptions({
+                //  center: latLng,
+                //  //heading: 0,
+                //  //zoom: 11,
+                //});
               } else {
                 console.log("no google maps");
               }
@@ -124,4 +116,12 @@ export function MapExplore({ initialEvents }: Props) {
       <InfoWindow />
     </div>
   );
+}
+
+function suggestionFromEvent(e: RouterOutputs["event"]["getExplore"]["events"][number]) {
+  return {
+    key: e.id,
+    label: `${e.title} ${e.locationName ?? ""}`.trim(),
+    value: `${e.title} ${e.locationName ?? ""} ${hashidFromId(e.id)}`.trim(),
+  };
 }
