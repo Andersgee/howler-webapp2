@@ -82,7 +82,7 @@ export class GoogleMapsClass {
       //this.AdvancedMarkerElement = AdvancedMarkerElement;
       //this.PinElement = PinElement;
 
-      this.map = new Map(element, {
+      this.map = new google.maps.Map(element, {
         zoom: INITIAL_ZOOM,
         center: INITIAL_CENTER,
         mapId: TEST_MAP_ID,
@@ -105,7 +105,7 @@ export class GoogleMapsClass {
         //scale: 1.5,
         scale: 1,
       });
-      this.primaryMarker = new AdvancedMarkerElement({
+      this.primaryMarker = new google.maps.marker.AdvancedMarkerElement({
         map: this.map,
         content: this.primaryPin.element,
         position: null,
