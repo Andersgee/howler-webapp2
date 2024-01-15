@@ -5,12 +5,12 @@ import { useStore } from "#src/store";
 import { setGoogleMapsExploreSelectedEventId } from "#src/store/actions";
 import { trimSearchOperators } from "#src/trpc/routers/eventSchema";
 import { Input } from "#src/ui/input";
-import { InputWithAutocomplete3 } from "#src/ui/input-with-autocomplete3";
 import { Switch } from "#src/ui/switch";
 import { datetimelocalString } from "#src/utils/date";
 import { hashidFromId } from "#src/utils/hashid";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { InputSearch } from "./InputSearch";
 
 export function ControlSearch() {
   const googleMaps = useStore.use.googleMaps();
@@ -61,10 +61,7 @@ function Content() {
   return (
     <div>
       <div>what / where</div>
-      <InputWithAutocomplete3
-        //suggestions={
-        //  data?.events && data.withScore ? data.events.filter((x) => x.score! > 0).map(suggestionFromEvent) : []
-        //}
+      <InputSearch
         suggestions={
           data?.events
             ? data.withScore
