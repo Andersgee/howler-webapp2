@@ -41,7 +41,8 @@ export class GoogleMapsClass {
   markerClusterer!: MarkerClusterer;
   infoWindowElement!: HTMLDivElement;
   infoWindow!: google.maps.InfoWindow;
-  filterControlsElement!: HTMLDivElement;
+  controls_element_search!: HTMLDivElement;
+  controls_element_locate!: HTMLDivElement;
 
   mode: "pick-location" | "view-event" | "explore";
 
@@ -125,8 +126,11 @@ export class GoogleMapsClass {
       });
 
       //https://developers.google.com/maps/documentation/javascript/controls#ControlPositioning
-      this.filterControlsElement = document.createElement("div");
-      this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.filterControlsElement);
+      this.controls_element_search = document.createElement("div");
+      this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.controls_element_search);
+
+      this.controls_element_locate = document.createElement("div");
+      this.map.controls[google.maps.ControlPosition.BOTTOM_RIGHT]!.push(this.controls_element_locate);
 
       //https://github.com/mapbox/supercluster#readme
       this.markerClusterer = new MarkerClusterer({

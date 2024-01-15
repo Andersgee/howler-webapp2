@@ -17,10 +17,10 @@ import { createPortal } from "react-dom";
 
 export function ExploreFilterControl() {
   const googleMaps = useStore.use.googleMaps();
-  if (!googleMaps?.filterControlsElement) {
+  if (!googleMaps?.controls_element_search) {
     return null;
   }
-  return createPortal(<ExploreFilterControlContent />, googleMaps.filterControlsElement);
+  return createPortal(<ExploreFilterControlContent />, googleMaps.controls_element_search);
 }
 
 function ExploreFilterControlContent() {

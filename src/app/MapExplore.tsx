@@ -2,8 +2,8 @@
 
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { type RouterOutputs } from "#src/hooks/api";
-import { InfoWindow } from "./ExploreInfoWindow";
-import { ExploreFilterControl } from "./ExploreFilterControl";
+import { InfoWindow } from "#src/components/GoogleMaps/ExploreInfoWindow";
+import { ExploreFilterControl } from "#src/components/GoogleMaps/ExploreFilterControl";
 
 type Props = {
   initialEvents: RouterOutputs["event"]["getAll"];
@@ -11,12 +11,10 @@ type Props = {
 
 export function MapExplore({ initialEvents }: Props) {
   return (
-    <div>
-      <div className="h-96 w-full">
-        <GoogleMaps />
-        <ExploreFilterControl />
-        <InfoWindow />
-      </div>
+    <div className="h-96 w-full">
+      <GoogleMaps />
+      <ExploreFilterControl />
+      <InfoWindow />
     </div>
   );
 }

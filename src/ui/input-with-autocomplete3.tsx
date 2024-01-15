@@ -1,7 +1,6 @@
 import { cn } from "#src/utils/cn";
 import { Command } from "cmdk";
-import { inputElementStyles } from "./input";
-import { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   className?: string;
