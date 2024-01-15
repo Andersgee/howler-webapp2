@@ -18,10 +18,6 @@ type Props = {
 export function InputWithAutocomplete3({ className, suggestions, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
 
-  const list = useMemo(() => {
-    return open ? suggestions : [];
-  }, [suggestions, open]);
-
   return (
     <Command className="w-72 text-base text-color-neutral-1000">
       <Command.Input
@@ -47,35 +43,28 @@ export function InputWithAutocomplete3({ className, suggestions, value, onChange
         //when typing in search field (not triggered when selecting an option)
         onValueChange={(search) => onChange(search, undefined)}
       />
-      <Command.List
-        className={cn(
-          "m-0 max-h-72 overflow-x-hidden overflow-y-scroll rounded-b-lg bg-color-neutral-0"
-          //open ? "opacity-100" : "opacity-0"
-        )}
-      >
-        {list.map((x) => (
-          <Command.Item
-            className="cursor-pointer px-2 py-1.5 hover:bg-color-neutral-400 aria-selected:bg-color-neutral-200"
-            key={x.key}
-            value={x.value}
-            //when selecting an option with mouse/keyboard only
-            onSelect={() => {
-              console.log("onSelect");
-              onChange(x.label, x.key);
-              setOpen(false);
-            }}
-            onMouseDown={(event) => {
-              event.preventDefault();
-              event.stopPropagation();
-            }}
-            //onClick={() => {
-            //  console.log("onClick");
-            //}}
-          >
-            {x.label}
-          </Command.Item>
-        ))}
-      </Command.List>
+      {open && (
+        <Command.List className="m-0 max-h-72 overflow-x-hidden overflow-y-scroll rounded-b-lg bg-color-neutral-0">
+          {suggestions.map((x) => (
+            <Command.Item
+              className="cursor-pointer px-2 py-1.5 hover:bg-color-neutral-400 aria-selected:nothover:bg-color-neutral-200"
+              key={x.key}
+              value={x.value}
+              //when selecting an option with mouse/keyboard only
+              onSelect={() => {
+                onChange(x.label, x.key);
+                setOpen(false);
+              }}
+              onMouseDown={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+              }}
+            >
+              {x.label}
+            </Command.Item>
+          ))}
+        </Command.List>
+      )}
     </Command>
   );
 }
