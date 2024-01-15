@@ -56,7 +56,13 @@ export function InputWithAutocomplete3({ className, suggestions, value, onChange
                     key={x.key}
                     value={x.value}
                     //when selecting an option with mouse/keyboard only
-                    onSelect={() => onChange(x.label, x.key)}
+                    onSelect={() => {
+                      console.log("onSelect");
+                      onChange(x.label, x.key);
+                    }}
+                    onClick={() => {
+                      console.log("onClick");
+                    }}
                   >
                     {x.label}
                   </Command.Item>
