@@ -1,7 +1,7 @@
 import { cn } from "#src/utils/cn";
 import { Command } from "cmdk";
 import { inputElementStyles } from "./input";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 type Props = {
   className?: string;
@@ -17,6 +17,10 @@ type Props = {
 
 export function InputWithAutocomplete3({ className, suggestions, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
+
+  const list = useMemo(() => {
+    return open ? suggestions : [];
+  }, [suggestions, open]);
 
   return (
     <Command className="w-72 text-base text-color-neutral-1000">
@@ -49,7 +53,7 @@ export function InputWithAutocomplete3({ className, suggestions, value, onChange
           //open ? "opacity-100" : "opacity-0"
         )}
       >
-        {suggestions.map((x) => (
+        {list.map((x) => (
           <Command.Item
             className="cursor-pointer px-2 py-1.5 hover:bg-color-neutral-400 aria-selected:bg-color-neutral-200"
             key={x.key}

@@ -5,10 +5,5 @@ export default async function Page() {
   const { api } = apiRscPublic();
   const events = await api.event.getAll();
 
-  return (
-    <div>
-      <h1>explore</h1>
-      <MapExplore initialEvents={events} />
-    </div>
-  );
+  return <MapExplore initialEvents={events} />;
 }

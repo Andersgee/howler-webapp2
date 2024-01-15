@@ -14,9 +14,9 @@ export function MapExplore({ initialEvents }: Props) {
     <div>
       <div className="h-96 w-full">
         <GoogleMaps />
+        <ExploreFilterControl />
+        <InfoWindow />
       </div>
-      <InfoWindow />
-      <ExploreFilterControl />
     </div>
   );
 }
