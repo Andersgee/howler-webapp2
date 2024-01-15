@@ -39,39 +39,38 @@ export function InputWithAutocomplete3({ className, suggestions, value, onChange
         //when typing in search field (not triggered when selecting an option)
         onValueChange={(search) => onChange(search, undefined)}
       />
-      <div className="relative">
-        <div className="absolute z-50 w-full">
-          {open && value.length > 0 && (
-            <Command.List
-              className="max-h-72 overflow-x-hidden overflow-y-scroll
-      border-b border-l border-r border-color-neutral-400"
-            >
-              <Command.Group
-                //heading="Suggestions"
-                className="bg-color-neutral-0 p-1 text-color-neutral-900 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-color-neutral-500"
-              >
-                {suggestions.map((x) => (
-                  <Command.Item
-                    className="cursor-pointer px-2 py-1.5 hover:bg-color-neutral-400 aria-selected:bg-color-neutral-200 "
-                    key={x.key}
-                    value={x.value}
-                    //when selecting an option with mouse/keyboard only
-                    onSelect={() => {
-                      console.log("onSelect");
-                      onChange(x.label, x.key);
-                    }}
-                    onClick={() => {
-                      console.log("onClick");
-                    }}
-                  >
-                    {x.label}
-                  </Command.Item>
-                ))}
-              </Command.Group>
-            </Command.List>
+
+      {true && (
+        <Command.List
+          className={cn(
+            "max-h-72 overflow-x-hidden overflow-y-scroll border-b border-l border-r border-color-neutral-400"
+            //open ? "visible" : "invisible"
           )}
-        </div>
-      </div>
+        >
+          <Command.Group
+            //heading="Suggestions"
+            className="bg-color-neutral-0 p-1 text-color-neutral-900 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-1.5 [&_[cmdk-group-heading]]:text-xs [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group-heading]]:text-color-neutral-500"
+          >
+            {suggestions.map((x) => (
+              <Command.Item
+                className="cursor-pointer px-2 py-1.5 hover:bg-color-neutral-400 aria-selected:bg-color-neutral-200 "
+                key={x.key}
+                value={x.value}
+                //when selecting an option with mouse/keyboard only
+                onSelect={() => {
+                  console.log("onSelect");
+                  onChange(x.label, x.key);
+                }}
+                //onClick={() => {
+                //  console.log("onClick");
+                //}}
+              >
+                {x.label}
+              </Command.Item>
+            ))}
+          </Command.Group>
+        </Command.List>
+      )}
     </Command>
   );
 }
