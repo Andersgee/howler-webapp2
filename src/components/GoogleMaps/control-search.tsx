@@ -59,8 +59,24 @@ function Content() {
   }, [data, googleMaps]);
 
   return (
-    <div>
-      <div>what / where</div>
+    <div className="m-2">
+      <div className="mb-2 rounded-lg bg-color-neutral-0 p-2">
+        <div className="flex w-auto items-center gap-2 ">
+          <Switch checked={checked} onCheckedChange={setChecked} />
+          <div className="text-lg text-color-neutral-500">{checked ? "anytime" : "only after this date"}</div>
+        </div>
+        {!checked && (
+          <Input
+            type="datetime-local"
+            value={datetimelocalString(minDate)}
+            onChange={(e) => {
+              if (!e.target.value) return;
+              setMinDate(new Date(e.target.value));
+            }}
+          />
+        )}
+      </div>
+
       <InputSearch
         suggestions={
           data?.events
@@ -92,24 +108,6 @@ function Content() {
           }
         }}
       />
-      <div>
-        <p>when</p>
-        <div className="flex items-center gap-2">
-          <Switch checked={checked} onCheckedChange={setChecked} />
-          <p>{checked ? "anytime" : "only after this date"}</p>
-        </div>
-        {!checked && (
-          <Input
-            type="datetime-local"
-            value={datetimelocalString(minDate)}
-            onChange={(e) => {
-              if (!e.target.value) return;
-              setMinDate(new Date(e.target.value));
-            }}
-            className="mb-2 w-auto"
-          />
-        )}
-      </div>
     </div>
   );
 }
