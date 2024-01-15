@@ -64,6 +64,10 @@ export function InputWithAutocomplete3({ className, suggestions, value, onChange
               onChange(x.label, x.key);
               setOpen(false);
             }}
+            onMouseDown={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }}
             //onClick={() => {
             //  console.log("onClick");
             //}}
