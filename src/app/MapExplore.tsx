@@ -10,6 +10,7 @@ import { Input } from "#src/ui/input";
 import { datetimelocalString } from "#src/utils/date";
 import { Switch } from "#src/ui/switch";
 import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
+import { JSONE } from "#src/utils/jsone";
 
 type Props = {
   initialEvents: RouterOutputs["event"]["getAll"];
@@ -18,12 +19,12 @@ type Props = {
 export function MapExplore({ initialEvents }: Props) {
   const googleMaps = useStore.use.googleMaps();
   const [text, setText] = useState("");
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
   const [minDate, setMinDate] = useState<Date>(new Date());
   const { data } = api.event.getExplore.useQuery(
     {
       titleOrLocationName: trimSearchOperators(text).length >= 3 ? trimSearchOperators(text) : undefined,
-      minDate: checked ? minDate : undefined,
+      minDate: !checked ? minDate : undefined,
     },
     {
       //enabled: trimSearchOperators(text).length >= 3,
@@ -53,27 +54,37 @@ export function MapExplore({ initialEvents }: Props) {
     }
   }, [data, googleMaps]);
 
+  const suggestions =
+    data?.events.map((e) => {
+      //const label = `${event.id}`;
+      //const value = `${event.id}`;
+      //const key = `${event.id}`;
+      //return { label, value, key };
+      return {
+        title: e.title,
+        value: e.locationName ? `${e.title} ${e.locationName}` : e.title,
+        label: e.locationName ? `${e.title} @ ${e.locationName}` : e.title,
+        key: e.id,
+      };
+    }) ?? [];
+
   return (
     <div>
       <div>
         <div>what / where</div>
         <InputWithAutocomplete
           placeholder="anything and anywhere..."
-          suggestions={
-            data?.events.map((event) => ({
-              label: event.location ? event.title : `${event.title} (anywhere)`,
-              value: event.title,
-              key: event.id,
-            })) ?? []
-          }
+          suggestions={suggestions}
           value={text}
           onChange={setText}
         />
-        {/*<Input type="text" value={text} onChange={(e) => setText(e.target.value)} />*/}
-
         <div>
           <p>when</p>
           <div className="flex items-center gap-2">
+            <Switch checked={checked} onCheckedChange={setChecked} />
+            <p>{checked ? "anytime" : "only after this date"}</p>
+          </div>
+          {!checked && (
             <Input
               type="datetime-local"
               value={datetimelocalString(minDate)}
@@ -81,11 +92,9 @@ export function MapExplore({ initialEvents }: Props) {
                 if (!e.target.value) return;
                 setMinDate(new Date(e.target.value));
               }}
-              className="w-auto"
+              className="mb-2 w-auto"
             />
-            <Switch checked={checked} onCheckedChange={setChecked} />
-            <p>{checked ? "only after this date" : "anytime"}</p>
-          </div>
+          )}
         </div>
       </div>
 
@@ -93,14 +102,6 @@ export function MapExplore({ initialEvents }: Props) {
         <GoogleMaps />
       </div>
       <InfoWindow />
-
-      <div>
-        {data?.events?.map((event) => (
-          <div key={event.id}>
-            id:{event.id.toString()}, score: {event.score ?? "nope"}
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

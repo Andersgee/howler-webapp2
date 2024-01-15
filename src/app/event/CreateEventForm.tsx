@@ -100,9 +100,7 @@ export function CreateEventForm({ className }: { className?: string }) {
                 <FormControl>
                   <InputWithAutocomplete
                     placeholder="Location name..."
-                    suggestions={
-                      pickedPointNames?.map((p) => ({ label: p, value: p.toLocaleLowerCase(), key: p })) ?? []
-                    }
+                    suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLowerCase() })) ?? []}
                     {...field}
                   />
                 </FormControl>

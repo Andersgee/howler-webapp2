@@ -58,7 +58,7 @@ export const eventRouter = createTRPCRouter({
     const withScore = !!input.titleOrLocationName;
     const result = await dbfetch()
       .selectFrom("Event")
-      .select(["id", "location", "title"])
+      .select(["id", "location", "locationName", "title"])
       .$if(withScore, (qb) => {
         let search = trimSearchOperators(input.titleOrLocationName!);
         search = split_whitespace(search).join("* ").concat("*");

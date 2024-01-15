@@ -4,7 +4,7 @@ import { Command, CommandInput, CommandGroup, CommandItem, CommandList } from "#
 import { type Key, forwardRef, useState } from "react";
 
 type Props = React.ComponentPropsWithoutRef<typeof CommandInput> & {
-  suggestions: { label: string; value: string; key: Key }[];
+  suggestions: { label: string; value: string }[];
   onChange?: (value: string) => void;
 };
 
@@ -57,7 +57,7 @@ const InputWithAutocomplete = forwardRef<React.ElementRef<typeof CommandInput>, 
                 <CommandGroup heading="Suggestions">
                   {suggestions.map((suggestion) => (
                     <CommandItem
-                      key={suggestion.key}
+                      key={suggestion.value}
                       value={suggestion.value}
                       onMouseDown={(e) => {
                         e.preventDefault();
