@@ -39,7 +39,7 @@ export class GoogleMapsClass {
   primaryMarker!: google.maps.marker.AdvancedMarkerElement;
   exploreMarkers!: google.maps.marker.AdvancedMarkerElement[];
   markerClusterer!: MarkerClusterer;
-  infoWindowElement!: HTMLDivElement;
+  controls_element_infowindow!: HTMLDivElement;
   infoWindow!: google.maps.InfoWindow;
   controls_element_search!: HTMLDivElement;
   controls_element_locate!: HTMLDivElement;
@@ -117,9 +117,9 @@ export class GoogleMapsClass {
         title: "This is where it happens.",
       });
       this.exploreMarkers = [];
-      this.infoWindowElement = document.createElement("div");
+      this.controls_element_infowindow = document.createElement("div");
       this.infoWindow = new google.maps.InfoWindow({
-        content: this.infoWindowElement,
+        content: this.controls_element_infowindow,
         disableAutoPan: true,
         //position: null,
         pixelOffset: new google.maps.Size(0, -36), //offset relative to position
@@ -130,7 +130,7 @@ export class GoogleMapsClass {
       this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.controls_element_search);
 
       this.controls_element_locate = document.createElement("div");
-      this.map.controls[google.maps.ControlPosition.BOTTOM_RIGHT]!.push(this.controls_element_locate);
+      this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM]!.push(this.controls_element_locate);
 
       //https://github.com/mapbox/supercluster#readme
       this.markerClusterer = new MarkerClusterer({

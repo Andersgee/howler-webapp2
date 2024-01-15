@@ -8,15 +8,15 @@ import { JSONE } from "#src/utils/jsone";
 import Link from "next/link";
 import { createPortal } from "react-dom";
 
-export function InfoWindow() {
+export function ControlInfoWindow() {
   const googleMaps = useStore.use.googleMaps();
-  if (!googleMaps?.infoWindowElement) {
+  if (!googleMaps?.controls_element_infowindow) {
     return null;
   }
-  return createPortal(<InfowindowContent />, googleMaps.infoWindowElement);
+  return createPortal(<Content />, googleMaps.controls_element_infowindow);
 }
 
-function InfowindowContent() {
+function Content() {
   const googleMapsExploreSelectedEventId = useStore.use.googleMapsExploreSelectedEventId();
 
   const { data: event, isLoading } = api.event.getById.useQuery(

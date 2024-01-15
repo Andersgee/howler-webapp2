@@ -1,7 +1,6 @@
 "use client";
 
 import { type RouterOutputs, api } from "#src/hooks/api";
-import { IconLoadingSpinner } from "#src/icons/special";
 import { useStore } from "#src/store";
 import { setGoogleMapsExploreSelectedEventId } from "#src/store/actions";
 import { trimSearchOperators } from "#src/trpc/routers/eventSchema";
@@ -10,20 +9,18 @@ import { InputWithAutocomplete3 } from "#src/ui/input-with-autocomplete3";
 import { Switch } from "#src/ui/switch";
 import { datetimelocalString } from "#src/utils/date";
 import { hashidFromId } from "#src/utils/hashid";
-import { JSONE } from "#src/utils/jsone";
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 
-export function ExploreFilterControl() {
+export function ControlSearch() {
   const googleMaps = useStore.use.googleMaps();
   if (!googleMaps?.controls_element_search) {
     return null;
   }
-  return createPortal(<ExploreFilterControlContent />, googleMaps.controls_element_search);
+  return createPortal(<Content />, googleMaps.controls_element_search);
 }
 
-function ExploreFilterControlContent() {
+function Content() {
   const googleMaps = useStore.use.googleMaps();
   const [text, setText] = useState("");
   const [checked, setChecked] = useState(true);
