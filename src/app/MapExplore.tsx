@@ -89,6 +89,7 @@ export function MapExplore({ initialEvents }: Props) {
                   });
                 } else {
                   console.log("seleced event has no location");
+                  googleMaps.infoWindow.setPosition(null);
                   googleMaps.infoWindow.close();
                 }
               } else {

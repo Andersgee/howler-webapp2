@@ -56,6 +56,8 @@ export class GoogleMapsClass {
   setMode(mode: "pick-location" | "view-event" | "explore") {
     this.markerClusterer.clearMarkers();
     this.primaryMarker.position = null;
+    this.infoWindow.setPosition(null);
+    this.infoWindow.close();
 
     this.mode = mode;
   }
