@@ -90,15 +90,19 @@ export class GoogleMapsClass {
         maxZoom: MAX_ZOOM,
         clickableIcons: false,
         //https://developers.google.com/maps/documentation/javascript/controls#ControlModification
-        zoomControl: true,
-        mapTypeControl: true,
+        fullscreenControl: false,
+        zoomControl: false,
         streetViewControl: false,
         rotateControl: false,
         scaleControl: false,
-        fullscreenControl: true,
-        mapTypeControlOptions: {
-          position: google.maps.ControlPosition.BOTTOM_CENTER,
-        },
+        mapTypeControl: false,
+        //mapTypeControlOptions: {
+        //  position: google.maps.ControlPosition.BOTTOM_CENTER,
+        //  style: google.maps.MapTypeControlStyle.DEFAULT,
+        //  //https://developers.google.com/maps/documentation/javascript/maptypes#BasicMapTypes
+        //  //mapTypeIds: ["roadmap", "satellite", "hybrid", "terrain"],
+        //  mapTypeIds: ["roadmap", "satellite"],
+        //},
       });
 
       this.primaryPin = new PinElement({

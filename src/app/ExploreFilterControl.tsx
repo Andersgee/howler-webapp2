@@ -65,6 +65,9 @@ function ExploreFilterControlContent() {
     <div>
       <div>what / where</div>
       <InputWithAutocomplete3
+        //suggestions={
+        //  data?.events && data.withScore ? data.events.filter((x) => x.score! > 0).map(suggestionFromEvent) : []
+        //}
         suggestions={
           data?.events
             ? data.withScore
