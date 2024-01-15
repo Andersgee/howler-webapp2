@@ -1,4 +1,3 @@
-import { commandScore } from "#src/utils/command-score";
 import { Command } from "cmdk";
 import { type Key } from "react";
 
@@ -14,17 +13,9 @@ type Props = {
   onChange: (search: string, key: Key | undefined) => void;
 };
 
-/*
-tldr:
-the Command.Input value filteres what Command.List to only show Command.Item with value
-*/
-
-//suggestions: { label: string; value: string; key: Key }[];
-
 export function InputWithAutocomplete3({ className, suggestions, value, onChange }: Props) {
-  //const [value, setValue] = useState("");
   return (
-    <Command label="Command Menu" /*filter={(value, search) => commandScore(value, search)}*/>
+    <Command>
       <Command.Input
         className="bg-color-neutral-0 text-color-neutral-1000"
         value={value}
