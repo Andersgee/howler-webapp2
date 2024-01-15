@@ -1,16 +1,15 @@
 import { Command } from "cmdk";
-import { type Key } from "react";
 
 type Props = {
   className?: string;
-  suggestions: { key: Key; value: string; label: string }[];
+  suggestions: { key: bigint; value: string; label: string }[];
   value: string;
   /**
    * called whenever search input changes in any way
    *
    * also key will be defined if change was triggered by selecting a suggestion
-   * */
-  onChange: (search: string, key: Key | undefined) => void;
+   */
+  onChange: (search: string, key: bigint | undefined) => void;
 };
 
 export function InputWithAutocomplete3({ className, suggestions, value, onChange }: Props) {
@@ -22,6 +21,7 @@ export function InputWithAutocomplete3({ className, suggestions, value, onChange
         //when typing in search field (not triggered when selecting an option)
         onValueChange={(search) => onChange(search, undefined)}
       />
+
       <Command.List>
         <Command.Group heading="Suggestions">
           {suggestions.map((x) => (

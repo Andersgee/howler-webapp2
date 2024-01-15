@@ -69,6 +69,7 @@ export class GoogleMapsClass {
       const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary(
         "marker"
       )) as google.maps.MarkerLibrary;
+      const { Size } = (await google.maps.importLibrary("core")) as google.maps.CoreLibrary;
 
       //this.Map = Map;
       //this.InfoWindow = InfoWindow;
@@ -99,6 +100,8 @@ export class GoogleMapsClass {
       this.infoWindow = new google.maps.InfoWindow({
         content: this.infoWindowElement,
         disableAutoPan: true,
+        //position: null,
+        pixelOffset: new google.maps.Size(0, -36), //offset relative to position
       });
       this.infoWindow.addListener("closeclick", () => {
         setGoogleMapsExploreSelectedEventId(null);
@@ -145,18 +148,21 @@ export class GoogleMapsClass {
         scale: 1.5, //default looks like 24px, recommended is atleast 44px, lets do 36? adjust pin.svg accordingly
       });
 
+      const latLng = { lat: event.location!.coordinates[0], lng: event.location!.coordinates[1] };
       const marker = new google.maps.marker.AdvancedMarkerElement({
-        position: { lat: event.location!.coordinates[0], lng: event.location!.coordinates[1] },
+        position: latLng,
         content: pinGlyph.element,
       });
 
       marker.addListener("click", () => {
         setGoogleMapsExploreSelectedEventId(event.id);
-        this.infoWindow.open({
-          map: this.map,
-          anchor: marker,
-          //shouldFocus: true,
-        });
+        this.infoWindow.setPosition(latLng);
+        this.infoWindow.open({ map: this.map, shouldFocus: true });
+        //this.infoWindow.open({
+        //  map: this.map,
+        //  //anchor: marker,
+        //  //shouldFocus: true,
+        //});
       });
 
       return marker;

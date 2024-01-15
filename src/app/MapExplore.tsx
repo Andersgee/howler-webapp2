@@ -11,6 +11,9 @@ import { datetimelocalString } from "#src/utils/date";
 import { Switch } from "#src/ui/switch";
 import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 import { JSONE } from "#src/utils/jsone";
+import { InputWithAutocomplete3 } from "#src/ui/input-with-autocomplete3";
+import { hashidFromId } from "#src/utils/hashid";
+import { setGoogleMapsExploreSelectedEventId } from "#src/store/actions";
 
 type Props = {
   initialEvents: RouterOutputs["event"]["getAll"];
@@ -54,29 +57,45 @@ export function MapExplore({ initialEvents }: Props) {
     }
   }, [data, googleMaps]);
 
-  const suggestions =
-    data?.events.map((e) => {
-      //const label = `${event.id}`;
-      //const value = `${event.id}`;
-      //const key = `${event.id}`;
-      //return { label, value, key };
-      return {
-        title: e.title,
-        value: e.locationName ? `${e.title} ${e.locationName}` : e.title,
-        label: e.locationName ? `${e.title} @ ${e.locationName} ${e.id}` : `${e.title} ${e.id}`,
-        key: e.id,
-      };
-    }) ?? [];
-
   return (
     <div>
       <div>
         <div>what / where</div>
-        <InputWithAutocomplete
-          placeholder="anything and anywhere..."
-          suggestions={suggestions}
+        <InputWithAutocomplete3
+          //placeholder="anything and anywhere..."
+          suggestions={
+            data?.events.map((e) => ({
+              key: e.id,
+              label: `${e.title} ${e.locationName ?? ""}`.trim(),
+              value: `${e.title} ${e.locationName ?? ""} ${hashidFromId(e.id)}`.trim(),
+            })) ?? []
+          }
           value={text}
-          onChange={setText}
+          onChange={(s, id) => {
+            setText(s);
+            if (id !== undefined) {
+              //selected a suggestion
+              const ev = data?.events.find((x) => x.id === id);
+              if (googleMaps) {
+                if (ev?.location) {
+                  setGoogleMapsExploreSelectedEventId(id);
+                  const latLng = { lat: ev.location.coordinates[0], lng: ev.location.coordinates[1] };
+                  googleMaps.infoWindow.setPosition(latLng);
+                  googleMaps.infoWindow.open({ map: googleMaps.map, shouldFocus: false });
+                  googleMaps.map.setOptions({
+                    center: latLng,
+                    heading: 0,
+                    zoom: 11,
+                  });
+                } else {
+                  console.log("seleced event has no location");
+                  googleMaps.infoWindow.close();
+                }
+              } else {
+                console.log("no google maps");
+              }
+            }
+          }}
         />
         <div>
           <p>when</p>
