@@ -12,6 +12,7 @@ import { Switch } from "#src/ui/switch";
 import { InputWithAutocomplete3 } from "#src/ui/input-with-autocomplete3";
 import { hashidFromId } from "#src/utils/hashid";
 import { setGoogleMapsExploreSelectedEventId } from "#src/store/actions";
+import { ExploreFilterControl } from "./ExploreFilterControl";
 
 type Props = {
   initialEvents: RouterOutputs["event"]["getAll"];
@@ -114,6 +115,7 @@ export function MapExplore({ initialEvents }: Props) {
         <GoogleMaps />
       </div>
       <InfoWindow />
+      <ExploreFilterControl />
     </div>
   );
 }

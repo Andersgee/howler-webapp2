@@ -41,6 +41,7 @@ export class GoogleMapsClass {
   markerClusterer!: MarkerClusterer;
   infoWindowElement!: HTMLDivElement;
   infoWindow!: google.maps.InfoWindow;
+  filterControlsElement!: HTMLDivElement;
 
   mode: "pick-location" | "view-event" | "explore";
 
@@ -71,7 +72,10 @@ export class GoogleMapsClass {
       const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary(
         "marker"
       )) as google.maps.MarkerLibrary;
-      const { Size } = (await google.maps.importLibrary("core")) as google.maps.CoreLibrary;
+      const { Size, ControlPosition } = (await google.maps.importLibrary("core")) as google.maps.CoreLibrary;
+
+      ControlPosition.TOP_CENTER;
+      //const {ControlPosition} = await google.maps.importLibrary("core")
 
       //this.Map = Map;
       //this.InfoWindow = InfoWindow;
@@ -85,6 +89,16 @@ export class GoogleMapsClass {
         minZoom: MIN_ZOOM,
         maxZoom: MAX_ZOOM,
         clickableIcons: false,
+        //https://developers.google.com/maps/documentation/javascript/controls#ControlModification
+        zoomControl: true,
+        mapTypeControl: true,
+        streetViewControl: false,
+        rotateControl: false,
+        scaleControl: false,
+        fullscreenControl: true,
+        mapTypeControlOptions: {
+          position: google.maps.ControlPosition.BOTTOM_CENTER,
+        },
       });
 
       this.primaryPin = new PinElement({
@@ -105,9 +119,10 @@ export class GoogleMapsClass {
         //position: null,
         pixelOffset: new google.maps.Size(0, -36), //offset relative to position
       });
-      this.infoWindow.addListener("closeclick", () => {
-        setGoogleMapsExploreSelectedEventId(null);
-      });
+
+      //https://developers.google.com/maps/documentation/javascript/controls#ControlPositioning
+      this.filterControlsElement = document.createElement("div");
+      this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.filterControlsElement);
 
       //https://github.com/mapbox/supercluster#readme
       this.markerClusterer = new MarkerClusterer({
@@ -115,8 +130,9 @@ export class GoogleMapsClass {
         algorithm: new SuperClusterAlgorithm({ radius: 40, minZoom: MIN_ZOOM, maxZoom: MAX_ZOOM }),
       });
 
-      //const a= new SuperCl
-      //this.markerClusterer.addMarkers()
+      this.infoWindow.addListener("closeclick", () => {
+        setGoogleMapsExploreSelectedEventId(null);
+      });
 
       this.map.addListener("click", (e: EventClick) => {
         //click on map (not infowindow)
