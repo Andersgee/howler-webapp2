@@ -45,8 +45,8 @@ export function InputWithAutocomplete3({ className, suggestions, value, onChange
       />
       <Command.List
         className={cn(
-          "m-0 max-h-72 overflow-x-hidden overflow-y-scroll rounded-b-lg bg-color-neutral-0",
-          open ? "opacity-100" : "opacity-0"
+          "m-0 max-h-72 overflow-x-hidden overflow-y-scroll rounded-b-lg bg-color-neutral-0"
+          //open ? "opacity-100" : "opacity-0"
         )}
       >
         {suggestions.map((x) => (
