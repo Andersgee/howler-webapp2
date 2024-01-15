@@ -51,6 +51,7 @@ export const eventRouter = createTRPCRouter({
       .selectFrom("Event")
       .select(["id", "location"])
       .where("location", "is not", null)
+      .$narrowType<{ location: GeoJSON["Point"] }>() //for typescript, make location not null
       .orderBy("id desc")
       //.where("date",">", new Date())
       .execute();

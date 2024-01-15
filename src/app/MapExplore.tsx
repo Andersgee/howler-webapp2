@@ -12,7 +12,7 @@ type Props = {
 
 export function MapExplore({ initialEvents }: Props) {
   return (
-    <div className="h-96 w-full">
+    <div className="h-screen w-full">
       <GoogleMaps />
       <ControlSearch />
       <ControlInfoWindow />

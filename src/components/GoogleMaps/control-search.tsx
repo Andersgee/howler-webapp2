@@ -32,6 +32,7 @@ function Content() {
     },
     {
       //enabled: trimSearchOperators(text).length >= 3,
+      staleTime: 10000, //just for testing
     }
   );
 
