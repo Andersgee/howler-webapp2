@@ -63,7 +63,7 @@ export function MapExplore({ initialEvents }: Props) {
       return {
         title: e.title,
         value: e.locationName ? `${e.title} ${e.locationName}` : e.title,
-        label: e.locationName ? `${e.title} @ ${e.locationName}` : e.title,
+        label: e.locationName ? `${e.title} @ ${e.locationName} ${e.id}` : `${e.title} ${e.id}`,
         key: e.id,
       };
     }) ?? [];
