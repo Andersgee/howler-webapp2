@@ -26,10 +26,12 @@ function Content() {
   const [text, setText] = useState("");
   const [advancedSearch, setAdvancedSearch] = useState(false);
   const [minDate, setMinDate] = useState<Date>(new Date());
+  const [maxDate, setMaxDate] = useState<Date>(new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7));
   const { data } = api.event.getExplore.useQuery(
     {
       titleOrLocationName: trimSearchOperators(text).length >= 3 ? trimSearchOperators(text) : undefined,
       minDate: advancedSearch ? minDate : undefined,
+      maxDate: advancedSearch ? maxDate : undefined,
     },
     {
       //enabled: trimSearchOperators(text).length >= 3,
@@ -97,7 +99,9 @@ function Content() {
 
       <CollapsibleContent className="mt-2 rounded-lg bg-color-neutral-50 p-2">
         <div>
-          <Label htmlFor="earliest-date">Earliest date</Label>
+          <div className="mb-1 mt-3">
+            <Label htmlFor="earliest-date">Earliest date</Label>
+          </div>
           <Input
             id="earliest-date"
             type="datetime-local"
@@ -106,6 +110,19 @@ function Content() {
             onChange={(e) => {
               if (!e.target.value) return;
               setMinDate(new Date(e.target.value));
+            }}
+          />
+          <div className="mb-1 mt-3">
+            <Label htmlFor="latest-date">Latest date</Label>
+          </div>
+          <Input
+            id="latest-date"
+            type="datetime-local"
+            className="w-full border-none outline-none"
+            value={datetimelocalString(maxDate)}
+            onChange={(e) => {
+              if (!e.target.value) return;
+              setMaxDate(new Date(e.target.value));
             }}
           />
         </div>
