@@ -21,12 +21,14 @@ export function ControlSearch() {
   return createPortal(<Content />, googleMaps.controls_element_search);
 }
 
+const MS_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
+
 function Content() {
   const googleMaps = useStore.use.googleMaps();
   const [text, setText] = useState("");
   const [advancedSearch, setAdvancedSearch] = useState(false);
   const [minDate, setMinDate] = useState<Date>(new Date());
-  const [maxDate, setMaxDate] = useState<Date>(new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7));
+  const [maxDate, setMaxDate] = useState<Date>(new Date(Date.now() + MS_ONE_WEEK));
   const { data } = api.event.getExplore.useQuery(
     {
       titleOrLocationName: trimSearchOperators(text).length >= 3 ? trimSearchOperators(text) : undefined,

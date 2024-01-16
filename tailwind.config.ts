@@ -642,6 +642,8 @@ export default {
       "min": "min-content",
       "max": "max-content",
       "fit": "fit-content",
+      //special
+      "full-minus-nav": "calc(100% - 61px)",
     }),
     hueRotate: {
       0: "0deg",

@@ -20,10 +20,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   void apiRsc(); //preload, see https://react.dev/reference/react/cache#preload-data
   return (
     <html lang="en" className={fontSans.variable}>
-      <body>
+      <body className="m-0 p-0">
         <Providers>
           <Topnav />
-          <div className="mx-4">{children}</div>
+          {children}
         </Providers>
         <Toaster />
       </body>

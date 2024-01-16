@@ -6,7 +6,7 @@ export async function Topnav() {
   const { user } = await apiRsc();
   //const user = useStore.use.user();
   return (
-    <div className="m-2 flex justify-between">
+    <div className="flex justify-between p-2">
       <div>
         <div className="flex">
           <TopnavLink label="Explore" href="/" />
