@@ -29,12 +29,7 @@ const INITIAL_ZOOM = 5;
 const INITIAL_CENTER = { lat: 55.49, lng: 13.04 };
 
 export class GoogleMapsClass {
-  //Map!: typeof google.maps.Map;
-  //AdvancedMarkerElement!: typeof google.maps.marker.AdvancedMarkerElement;
-  //PinElement!: typeof google.maps.marker.PinElement;
-  //InfoWindow!: typeof google.maps.InfoWindow;
-
-  map!: google.maps.Map; //| null;
+  map!: google.maps.Map;
   primaryPin!: google.maps.marker.PinElement;
   primaryMarker!: google.maps.marker.AdvancedMarkerElement;
   exploreMarkers!: google.maps.marker.AdvancedMarkerElement[];
@@ -48,9 +43,6 @@ export class GoogleMapsClass {
 
   constructor() {
     console.log("GoogleMapsClass, constructor");
-    //this.map = null;
-    //this.markerClusterer = null;
-    //this.primaryMarker = null
     this.mode = "view-event";
   }
 
@@ -114,7 +106,6 @@ export class GoogleMapsClass {
           mapTypeIds: ["roadmap", "styled_map"],
         },
       });
-      //const styledMapType = makeMapTypeStyle();
       const styledMapType = new google.maps.StyledMapType(CUSTOM_DARK_MODE, { name: "Styled map" });
       this.map.mapTypes.set("styled_map", styledMapType);
 
