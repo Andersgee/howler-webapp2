@@ -1,8 +1,9 @@
-import { X } from "#src/icons";
-import { Button } from "#src/ui/button";
+import { ChevronDown, X } from "#src/icons";
+import { Button, buttonVariants } from "#src/ui/button";
 import { cn } from "#src/utils/cn";
 import { Command } from "cmdk";
 import { useState } from "react";
+import { Trigger as CollapsibleTrigger } from "@radix-ui/react-collapsible";
 
 type Props = {
   className?: string;
@@ -14,9 +15,10 @@ type Props = {
    * also key will be defined if change was triggered by selecting a suggestion
    */
   onChange: (search: string, key: bigint | undefined) => void;
+  isAdvanced?: boolean;
 };
 
-export function InputSearch({ className, suggestions, value, onChange }: Props) {
+export function InputSearch({ className, suggestions, value, onChange, isAdvanced = true }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -37,7 +39,7 @@ export function InputSearch({ className, suggestions, value, onChange }: Props) 
             }
           }}
           className={cn(
-            "flex w-full border-none bg-color-neutral-0 px-3 py-6 outline-none placeholder:text-color-neutral-500",
+            "flex w-full border-none bg-color-neutral-0 px-3 py-5 outline-none placeholder:text-color-neutral-500",
             open ? "rounded-t-lg" : "rounded-lg",
             className
           )}
@@ -47,7 +49,7 @@ export function InputSearch({ className, suggestions, value, onChange }: Props) 
         />
         {value.length > 0 && (
           <Button
-            className="absolute right-1 top-4"
+            className="absolute right-14 top-3"
             variant="icon"
             aria-label="clear"
             onClick={() => onChange("", undefined)}
@@ -55,6 +57,15 @@ export function InputSearch({ className, suggestions, value, onChange }: Props) 
             <X />
           </Button>
         )}
+        <CollapsibleTrigger
+          className={buttonVariants({
+            variant: "icon",
+            className: "group absolute right-1 top-3",
+          })}
+          aria-label="advanced-search"
+        >
+          <ChevronDown className="transition-transform duration-200 group-data-state-open:rotate-180" />
+        </CollapsibleTrigger>
       </div>
       {open && (
         <Command.List className="m-0 max-h-72 overflow-x-hidden overflow-y-scroll rounded-b-lg bg-color-neutral-0">

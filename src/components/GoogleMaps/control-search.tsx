@@ -5,12 +5,13 @@ import { useStore } from "#src/store";
 import { setGoogleMapsExploreSelectedEventId } from "#src/store/actions";
 import { trimSearchOperators } from "#src/trpc/routers/eventSchema";
 import { Input } from "#src/ui/input";
-import { Switch } from "#src/ui/switch";
 import { datetimelocalString } from "#src/utils/date";
 import { hashidFromId } from "#src/utils/hashid";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { InputSearch } from "./InputSearch";
+import { Collapsible, CollapsibleContent } from "@radix-ui/react-collapsible";
+import { Label } from "#src/ui/label";
 
 export function ControlSearch() {
   const googleMaps = useStore.use.googleMaps();
@@ -23,16 +24,17 @@ export function ControlSearch() {
 function Content() {
   const googleMaps = useStore.use.googleMaps();
   const [text, setText] = useState("");
-  const [checked, setChecked] = useState(true);
+  const [advancedSearch, setAdvancedSearch] = useState(false);
   const [minDate, setMinDate] = useState<Date>(new Date());
   const { data } = api.event.getExplore.useQuery(
     {
       titleOrLocationName: trimSearchOperators(text).length >= 3 ? trimSearchOperators(text) : undefined,
-      minDate: !checked ? minDate : undefined,
+      minDate: advancedSearch ? minDate : undefined,
     },
     {
       //enabled: trimSearchOperators(text).length >= 3,
-      staleTime: 10000, //just for testing
+      //staleTime: 10000, //just for testing
+      //notifyOnChangeProps: ["data"]
     }
   );
 
@@ -60,24 +62,7 @@ function Content() {
   }, [data, googleMaps]);
 
   return (
-    <div className="m-2">
-      <div className="mb-2 rounded-lg bg-color-neutral-0 p-2">
-        <div className="flex w-auto items-center gap-2 ">
-          <Switch checked={checked} onCheckedChange={setChecked} />
-          <div className="text-lg text-color-neutral-500">{checked ? "anytime" : "only after this date"}</div>
-        </div>
-        {!checked && (
-          <Input
-            type="datetime-local"
-            value={datetimelocalString(minDate)}
-            onChange={(e) => {
-              if (!e.target.value) return;
-              setMinDate(new Date(e.target.value));
-            }}
-          />
-        )}
-      </div>
-
+    <Collapsible open={advancedSearch} onOpenChange={setAdvancedSearch} className="m-2">
       <InputSearch
         suggestions={
           data?.events
@@ -109,7 +94,23 @@ function Content() {
           }
         }}
       />
-    </div>
+
+      <CollapsibleContent className="mt-2 rounded-lg bg-color-neutral-50 p-2">
+        <div>
+          <Label htmlFor="earliest-date">Earliest date</Label>
+          <Input
+            id="earliest-date"
+            type="datetime-local"
+            className="w-full border-none outline-none"
+            value={datetimelocalString(minDate)}
+            onChange={(e) => {
+              if (!e.target.value) return;
+              setMinDate(new Date(e.target.value));
+            }}
+          />
+        </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 }
 
