@@ -2,6 +2,7 @@ import { type RouterOutputs } from "#src/hooks/api";
 import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#src/store/actions";
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
+import { CUSTOM_DARK_MODE, CUSTOM_LIGHT_MODE } from "./google-maps-themes";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -113,7 +114,8 @@ export class GoogleMapsClass {
           mapTypeIds: ["roadmap", "styled_map"],
         },
       });
-      const styledMapType = makeMapTypeStyle();
+      //const styledMapType = makeMapTypeStyle();
+      const styledMapType = new google.maps.StyledMapType(CUSTOM_DARK_MODE, { name: "Styled map" });
       this.map.mapTypes.set("styled_map", styledMapType);
 
       const media = window.matchMedia("(prefers-color-scheme: dark)");
