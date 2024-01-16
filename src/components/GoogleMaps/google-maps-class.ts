@@ -82,16 +82,6 @@ export class GoogleMapsClass {
       //this.AdvancedMarkerElement = AdvancedMarkerElement;
       //this.PinElement = PinElement;
 
-      const media = window.matchMedia("(prefers-color-scheme: dark)");
-      const isDarkMode = media.matches;
-      media.addEventListener("change", (ev) => {
-        if (ev.matches) {
-          console.log("is now dark mode");
-        } else {
-          console.log("is now light mode");
-        }
-      });
-
       this.map = new google.maps.Map(element, {
         zoom: INITIAL_ZOOM,
         center: INITIAL_CENTER,
@@ -105,7 +95,7 @@ export class GoogleMapsClass {
         streetViewControl: false,
         rotateControl: false,
         scaleControl: false,
-        mapTypeControl: false,
+        //mapTypeControl: false,
         //mapTypeControlOptions: {
         //  position: google.maps.ControlPosition.BOTTOM_CENTER,
         //  style: google.maps.MapTypeControlStyle.DEFAULT,
@@ -116,6 +106,31 @@ export class GoogleMapsClass {
         //styling
         //https://developers.google.com/maps/documentation/javascript/style-reference#stylers
         //styles: STYLES_DARK,
+
+        mapTypeControl: false,
+        mapTypeControlOptions: {
+          position: google.maps.ControlPosition.BOTTOM_CENTER,
+          mapTypeIds: ["roadmap", "styled_map"],
+        },
+      });
+      const styledMapType = makeMapTypeStyle();
+      this.map.mapTypes.set("styled_map", styledMapType);
+
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const isDarkMode = media.matches;
+      if (isDarkMode) {
+        this.map.setMapTypeId("styled_map");
+      } else {
+        this.map.setMapTypeId("roadmap");
+      }
+      media.addEventListener("change", (ev) => {
+        if (ev.matches) {
+          console.log("is now dark mode");
+          this.map.setMapTypeId("styled_map");
+        } else {
+          console.log("is now light mode");
+          this.map.setMapTypeId("roadmap");
+        }
       });
 
       this.primaryPin = new PinElement({
@@ -212,6 +227,123 @@ export class GoogleMapsClass {
 
 //any way to
 type EventClick = { latLng: google.maps.LatLng };
+
+function makeMapTypeStyle() {
+  //https://developers.google.com/maps/documentation/javascript/examples/maptype-styled-simple
+  return new google.maps.StyledMapType(
+    [
+      { elementType: "geometry", stylers: [{ color: "#ebe3cd" }] },
+      { elementType: "labels.text.fill", stylers: [{ color: "#523735" }] },
+      { elementType: "labels.text.stroke", stylers: [{ color: "#f5f1e6" }] },
+      {
+        featureType: "administrative",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#c9b2a6" }],
+      },
+      {
+        featureType: "administrative.land_parcel",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#dcd2be" }],
+      },
+      {
+        featureType: "administrative.land_parcel",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#ae9e90" }],
+      },
+      {
+        featureType: "landscape.natural",
+        elementType: "geometry",
+        stylers: [{ color: "#dfd2ae" }],
+      },
+      {
+        featureType: "poi",
+        elementType: "geometry",
+        stylers: [{ color: "#dfd2ae" }],
+      },
+      {
+        featureType: "poi",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#93817c" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "geometry.fill",
+        stylers: [{ color: "#a5b076" }],
+      },
+      {
+        featureType: "poi.park",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#447530" }],
+      },
+      {
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [{ color: "#f5f1e6" }],
+      },
+      {
+        featureType: "road.arterial",
+        elementType: "geometry",
+        stylers: [{ color: "#fdfcf8" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "geometry",
+        stylers: [{ color: "#f8c967" }],
+      },
+      {
+        featureType: "road.highway",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#e9bc62" }],
+      },
+      {
+        featureType: "road.highway.controlled_access",
+        elementType: "geometry",
+        stylers: [{ color: "#e98d58" }],
+      },
+      {
+        featureType: "road.highway.controlled_access",
+        elementType: "geometry.stroke",
+        stylers: [{ color: "#db8555" }],
+      },
+      {
+        featureType: "road.local",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#806b63" }],
+      },
+      {
+        featureType: "transit.line",
+        elementType: "geometry",
+        stylers: [{ color: "#dfd2ae" }],
+      },
+      {
+        featureType: "transit.line",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#8f7d77" }],
+      },
+      {
+        featureType: "transit.line",
+        elementType: "labels.text.stroke",
+        stylers: [{ color: "#ebe3cd" }],
+      },
+      {
+        featureType: "transit.station",
+        elementType: "geometry",
+        stylers: [{ color: "#dfd2ae" }],
+      },
+      {
+        featureType: "water",
+        elementType: "geometry.fill",
+        stylers: [{ color: "#b9d3c2" }],
+      },
+      {
+        featureType: "water",
+        elementType: "labels.text.fill",
+        stylers: [{ color: "#92998d" }],
+      },
+    ],
+    { name: "Styled Map" }
+  );
+}
 
 ////https://developers.google.com/maps/documentation/javascript/examples/style-array#maps_style_array-typescript
 const STYLES_DARK: google.maps.MapTypeStyle[] = [
