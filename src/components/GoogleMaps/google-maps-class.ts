@@ -1,4 +1,3 @@
-import { type GeoJSON } from "#src/db/geojson-types";
 import { type RouterOutputs } from "#src/hooks/api";
 import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#src/store/actions";
 import { absUrl } from "#src/utils/url";
@@ -82,6 +81,16 @@ export class GoogleMapsClass {
       //this.InfoWindow = InfoWindow;
       //this.AdvancedMarkerElement = AdvancedMarkerElement;
       //this.PinElement = PinElement;
+
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const isDarkMode = media.matches;
+      media.addEventListener("change", (ev) => {
+        if (ev.matches) {
+          console.log("is now dark mode");
+        } else {
+          console.log("is now light mode");
+        }
+      });
 
       this.map = new google.maps.Map(element, {
         zoom: INITIAL_ZOOM,

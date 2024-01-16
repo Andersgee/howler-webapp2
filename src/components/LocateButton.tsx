@@ -30,7 +30,7 @@ export function LocateButton({ className, onLocated }: Props) {
           toast({
             variant: "default",
             title: "Can not locate",
-            description: "Browser doesn't support Geolocation.",
+            description: "Browser does not support geolocation.",
           });
         }
       }}
