@@ -2,7 +2,7 @@ import { type RouterOutputs } from "#src/hooks/api";
 import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#src/store/actions";
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
-import { DARK_MODE_ANDY, DARK_MODE_EXAMPLE } from "./google-maps-themes";
+import { DARK_MODE_ANDY, DARK_MODE_ANDY_HUE, DARK_MODE_EXAMPLE } from "./google-maps-themes";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -103,7 +103,7 @@ export class GoogleMapsClass {
         mapTypeControl: true,
         mapTypeControlOptions: {
           position: google.maps.ControlPosition.BOTTOM_CENTER,
-          mapTypeIds: ["roadmap", "example_dm", "andy_dm"],
+          mapTypeIds: ["roadmap", "example_dm", "andy_dm", "andy_dm_hue"],
         },
       });
       const example_dm = new google.maps.StyledMapType(DARK_MODE_EXAMPLE, { name: "example dm" });
@@ -111,6 +111,9 @@ export class GoogleMapsClass {
 
       const andy_dm = new google.maps.StyledMapType(DARK_MODE_ANDY, { name: "andy dm" });
       this.map.mapTypes.set("andy_dm", andy_dm);
+
+      const andy_dm_hue = new google.maps.StyledMapType(DARK_MODE_ANDY_HUE, { name: "andy dm hue" });
+      this.map.mapTypes.set("andy_dm_hue", andy_dm_hue);
 
       /*
       const media = window.matchMedia("(prefers-color-scheme: dark)");

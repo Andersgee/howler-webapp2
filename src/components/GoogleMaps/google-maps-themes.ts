@@ -141,7 +141,7 @@ const ORANGE = {
   "800": "#9a3412",
   "900": "#7c2d12",
   "950": "#431407",
-};
+} as const;
 
 const GREEN = {
   "50": "#f0fdf4",
@@ -155,17 +155,13 @@ const GREEN = {
   "800": "#166534",
   "900": "#14532d",
   "950": "#052e16",
-};
+} as const;
 //this should look approx like the example dark mode.
 export const DARK_MODE_ANDY: google.maps.MapTypeStyle[] = [
   //some defaults (without featureType selected)
   { elementType: "geometry", stylers: [{ color: NEUTRAL[800] }] },
   { elementType: "labels.text.stroke", stylers: [{ color: NEUTRAL[800] }] },
   { elementType: "labels.text.fill", stylers: [{ color: NEUTRAL[400] }] },
-  //test
-  //{featureType: "landscape.man_made", elementType: "geometry"} //this selects "area" where buildings are (not actual building)
-
-  //good:
   {
     featureType: "administrative.locality",
     elementType: "labels.text.fill",
@@ -374,4 +370,111 @@ export const CUSTOM_LIGHT_MODE_FIRST_TRY: google.maps.MapTypeStyle[] = [
     elementType: "geometry",
     stylers: [{ color: PRIMARY[500] }],
   },
+];
+
+/*
+WHAT I HAVE LEARNED
+for exakt color specification, they recommend using "color" 
+HOWEVER, it is not possible to set color=functions(zoom) from javascript
+  - that is only possible in the cloud map style editor in javascript
+  - the default style has these kinds of functions, eg for making buildings appear at certain zoom
+
+lets figure out what they use for building appearance
+not hue
+not saturation
+not lightness
+
+
+*/
+const H = 100; // (-100..100) where -100 is washed out (gray?), and +100 is vivid
+const L = 0; // (-100..100) where -100 is black and +100 is white
+const G = 1; // (0..10) where 1 is no correction
+export const DARK_MODE_ANDY_HUE: google.maps.MapTypeStyle[] = [
+  //some defaults (without featureType selected)
+  { elementType: "geometry", stylers: [{ color: NEUTRAL[500] }] },
+  //{ elementType: "geometry", stylers: [{ hue: NEUTRAL[500] }] },
+  //{ elementType: "geometry", stylers: [{ saturation: H }] },
+  //{ elementType: "geometry", stylers: [{ lightness: L }] },
+  //{ elementType: "geometry", stylers: [{ gamma: G }] },
+
+  /*
+  { elementType: "geometry", stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }] },
+  { elementType: "labels.text.stroke", stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }] },
+  { elementType: "labels.text.fill", stylers: [{ hue: NEUTRAL[400], saturation: H, lightness: L, gamma: G }] },
+  {
+    featureType: "administrative.locality",
+    elementType: "labels.text.fill",
+    stylers: [{ hue: ORANGE[400], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ hue: ORANGE[400], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [{ hue: GREEN[700], saturation: H, lightness: L, gamma: G }], //"green"
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ hue: NEUTRAL[700], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [{ hue: NEUTRAL[300], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ hue: NEUTRAL[500], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [{ hue: NEUTRAL[900], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "labels.text.fill",
+    stylers: [{ hue: ORANGE[200], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "transit.station",
+    elementType: "labels.text.fill",
+    stylers: [{ hue: ORANGE[300], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ hue: NEUTRAL[900], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [{ hue: NEUTRAL[400], saturation: H, lightness: L, gamma: G }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.stroke",
+    stylers: [{ hue: NEUTRAL[900], saturation: H, lightness: L, gamma: G }],
+  },
+  */
 ];
