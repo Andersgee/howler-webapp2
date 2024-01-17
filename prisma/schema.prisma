@@ -3,6 +3,11 @@ datasource db {
     url      = env("DATABASE_MYSQL_URL")
 }
 
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["fullTextIndex"]
+}
+
 model User {
     id            BigInt   @default(autoincrement()) @db.UnsignedBigInt
     email         String   @unique //allow multiple sign in methods, but same email would be same user.
@@ -60,6 +65,7 @@ model Event {
     //I added this aswell (btw, found out apparently prisma has @@fulltext if enabling preview feature)
     //ALTER TABLE `Event` ADD FULLTEXT `Event_title_locationName_fulltextidx` (`title`, `locationName`)
     @@id([id])
+    @@fulltext([title, locationName])
 }
 
 //model Event {

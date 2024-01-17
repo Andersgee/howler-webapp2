@@ -29,9 +29,13 @@ const pulledPrismaPath = join(cwd, "prisma", "pulled.prisma");
 const typescriptTypesPath = join(cwd, "src", "db", "types.ts");
 
 async function main() {
-  let introspectresult = await introspect(db);
-  await writeFile(pulledPrismaPath, generatePrismaSchema(introspectresult));
+  //let introspectresult = await introspect(db);
+  //await writeFile(pulledPrismaPath, generatePrismaSchema(introspectresult));
   const prismadiffsql = prismadiff(pulledPrismaPath, schemaPrismaPath);
+
+  console.log({ prismadiffsql });
+  return;
+  /*
 
   console.log("applying prismadiffsql");
   await apply(prismadiffsql);
@@ -48,6 +52,7 @@ async function main() {
   console.log(`saved ${typescriptTypesPath}`);
 
   console.log("Done.");
+  */
 }
 
 async function apply(sqls: string[]) {
