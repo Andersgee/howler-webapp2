@@ -1,8 +1,6 @@
 import { apiRsc } from "#src/trpc/api-rsc";
 import { idFromHashid } from "#src/utils/hashid";
-import { notFound } from "next/navigation";
-import { Eventinfo } from "./Eventinfo";
-import { EventActions } from "./EventActions";
+import { notFound, redirect } from "next/navigation";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -17,12 +15,13 @@ export default async function Page({ params }: Props) {
   const { api, user } = await apiRsc();
   const event = await api.event.getById({ id });
 
+  if (!user?.id || user.id !== event.creatorId) redirect(`/event/${params.hashid}`);
+
   return (
     <div className="container mx-auto flex justify-center">
       <div className="flex w-full flex-col items-center">
-        <h1>Event</h1>
-        <Eventinfo event={event} />
-        <EventActions event={event} isCreator={user?.id === event.creatorId} />
+        <h1>Edit Event</h1>
+        <div>todo</div>
       </div>
     </div>
   );
