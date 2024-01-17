@@ -2,7 +2,7 @@ import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
-import { schemaCreate, schemaFilter, split_whitespace, trimSearchOperators } from "./eventSchema";
+import { schemaCreate, schemaFilter, schemaUpdate, split_whitespace, trimSearchOperators } from "./eventSchema";
 import { type SqlBool, sql } from "kysely";
 import { type GeoJSON } from "#src/db/geojson-types";
 
@@ -28,6 +28,16 @@ export const eventRouter = createTRPCRouter({
       .executeTakeFirstOrThrow();
 
     return { ...insertResult, hashid: hashidFromId(insertResult.insertId!) };
+  }),
+  update: protectedProcedure.input(schemaUpdate).mutation(async ({ input, ctx }) => {
+    const updateResult = await dbfetch()
+      .updateTable("Event")
+      .where("id", "=", input.id)
+      .where("creatorId", "=", ctx.user.id)
+      .set(input)
+      .executeTakeFirstOrThrow();
+
+    return { ...updateResult, hashid: hashidFromId(input.id) };
   }),
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
     return await dbfetch({ next: { revalidate: 10 } })
