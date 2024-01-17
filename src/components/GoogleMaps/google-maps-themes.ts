@@ -386,95 +386,121 @@ not lightness
 
 
 */
-const H = 100; // (-100..100) where -100 is washed out (gray?), and +100 is vivid
+const H = 100; // (-100..100) where -100 is washed out (grayscale), and +100 is vivid
 const L = 0; // (-100..100) where -100 is black and +100 is white
 const G = 1; // (0..10) where 1 is no correction
 export const DARK_MODE_ANDY_HUE: google.maps.MapTypeStyle[] = [
-  //some defaults (without featureType selected)
-  { elementType: "geometry", stylers: [{ color: NEUTRAL[500] }] },
-  //{ elementType: "geometry", stylers: [{ hue: NEUTRAL[500] }] },
-  //{ elementType: "geometry", stylers: [{ saturation: H }] },
-  //{ elementType: "geometry", stylers: [{ lightness: L }] },
-  //{ elementType: "geometry", stylers: [{ gamma: G }] },
+  //administrative
+  { featureType: "administrative.country", elementType: "", stylers: [] },
+  { featureType: "administrative.land_parcel", elementType: "", stylers: [] },
+  { featureType: "administrative.locality", elementType: "", stylers: [] },
+  { featureType: "administrative.neighborhood", elementType: "", stylers: [] },
+  { featureType: "administrative.province", elementType: "", stylers: [] },
+  //landscape
+  { featureType: "landscape.man_made", elementType: "", stylers: [] },
+  { featureType: "landscape.natural", elementType: "", stylers: [] },
+  { featureType: "landscape.natural.landcover", elementType: "", stylers: [] },
+  { featureType: "landscape.natural.terrain", elementType: "", stylers: [] },
+  //poi
+  { featureType: "poi.attraction", elementType: "", stylers: [] },
+  { featureType: "poi.business", elementType: "", stylers: [] },
+  { featureType: "poi.government", elementType: "", stylers: [] },
+  { featureType: "poi.medical", elementType: "", stylers: [] },
+  { featureType: "poi.park", elementType: "", stylers: [] },
+  { featureType: "poi.place_of_worship", elementType: "", stylers: [] },
+  { featureType: "poi.school", elementType: "", stylers: [] },
+  { featureType: "poi.sports_complex", elementType: "", stylers: [] },
+  //road
+  { featureType: "road.arterial", elementType: "", stylers: [] },
+  { featureType: "road.highway", elementType: "", stylers: [] },
+  { featureType: "road.highway.controlled_access", elementType: "", stylers: [] },
+  { featureType: "road.local", elementType: "", stylers: [] },
+  //transit
+  { featureType: "transit.line", elementType: "", stylers: [] },
+  { featureType: "transit.station", elementType: "", stylers: [] },
+  { featureType: "transit.station.airport", elementType: "", stylers: [] },
+  { featureType: "transit.station.bus", elementType: "", stylers: [] },
+  { featureType: "transit.station.rail", elementType: "", stylers: [] },
+  //water
+  { featureType: "water", elementType: "", stylers: [] },
 
+  //{featureType: "", elementType: "", stylers: []},
   /*
-  { elementType: "geometry", stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }] },
-  { elementType: "labels.text.stroke", stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }] },
-  { elementType: "labels.text.fill", stylers: [{ hue: NEUTRAL[400], saturation: H, lightness: L, gamma: G }] },
+  { elementType: "labels.text.fill", stylers: [{ color: NEUTRAL[400] }] },
   {
     featureType: "administrative.locality",
     elementType: "labels.text.fill",
-    stylers: [{ hue: ORANGE[400], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: ORANGE[400] }],
   },
   {
     featureType: "poi",
     elementType: "labels.text.fill",
-    stylers: [{ hue: ORANGE[400], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: ORANGE[400] }],
   },
   {
     featureType: "poi.park",
     elementType: "geometry",
-    stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[800] }],
   },
   {
     featureType: "poi.park",
     elementType: "labels.text.fill",
-    stylers: [{ hue: GREEN[700], saturation: H, lightness: L, gamma: G }], //"green"
+    stylers: [{ color: GREEN[700] }], //"green"
   },
   {
     featureType: "road",
     elementType: "geometry",
-    stylers: [{ hue: NEUTRAL[700], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[700] }],
   },
   {
     featureType: "road",
     elementType: "geometry.stroke",
-    stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[800] }],
   },
   {
     featureType: "road",
     elementType: "labels.text.fill",
-    stylers: [{ hue: NEUTRAL[300], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[300] }],
   },
   {
     featureType: "road.highway",
     elementType: "geometry",
-    stylers: [{ hue: NEUTRAL[500], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[500] }],
   },
   {
     featureType: "road.highway",
     elementType: "geometry.stroke",
-    stylers: [{ hue: NEUTRAL[900], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[900] }],
   },
   {
     featureType: "road.highway",
     elementType: "labels.text.fill",
-    stylers: [{ hue: ORANGE[200], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: ORANGE[200] }],
   },
   {
     featureType: "transit",
     elementType: "geometry",
-    stylers: [{ hue: NEUTRAL[800], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[800] }],
   },
   {
     featureType: "transit.station",
     elementType: "labels.text.fill",
-    stylers: [{ hue: ORANGE[300], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: ORANGE[300] }],
   },
   {
     featureType: "water",
     elementType: "geometry",
-    stylers: [{ hue: NEUTRAL[900], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[900] }],
   },
   {
     featureType: "water",
     elementType: "labels.text.fill",
-    stylers: [{ hue: NEUTRAL[400], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[400] }],
   },
   {
     featureType: "water",
     elementType: "labels.text.stroke",
-    stylers: [{ hue: NEUTRAL[900], saturation: H, lightness: L, gamma: G }],
+    stylers: [{ color: NEUTRAL[900] }],
   },
   */
 ];

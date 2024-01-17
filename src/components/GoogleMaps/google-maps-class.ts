@@ -3,6 +3,7 @@ import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
 import { DARK_MODE_ANDY, DARK_MODE_ANDY_HUE, DARK_MODE_EXAMPLE } from "./google-maps-themes";
+import { FULL_TEST_THEME } from "./kek";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -25,8 +26,10 @@ https://developers.google.com/maps/documentation/javascript/coordinates
 
 const MIN_ZOOM = 3;
 const MAX_ZOOM = 18;
-const INITIAL_ZOOM = 5;
-const INITIAL_CENTER = { lat: 55.49, lng: 13.04 };
+//const INITIAL_ZOOM = 5;
+//const INITIAL_CENTER = { lat: 55.49, lng: 13.04 };
+const INITIAL_ZOOM = 17;
+const INITIAL_CENTER = { lat: 59.9124033, lng: 16.3235665 };
 
 export class GoogleMapsClass {
   map!: google.maps.Map;
@@ -103,17 +106,15 @@ export class GoogleMapsClass {
         mapTypeControl: true,
         mapTypeControlOptions: {
           position: google.maps.ControlPosition.BOTTOM_CENTER,
-          mapTypeIds: ["roadmap", "example_dm", "andy_dm", "andy_dm_hue"],
+          mapTypeIds: ["roadmap", "andy_dm", "full_test"],
         },
       });
-      const example_dm = new google.maps.StyledMapType(DARK_MODE_EXAMPLE, { name: "example dm" });
-      this.map.mapTypes.set("example_dm", example_dm);
-
       const andy_dm = new google.maps.StyledMapType(DARK_MODE_ANDY, { name: "andy dm" });
       this.map.mapTypes.set("andy_dm", andy_dm);
 
-      const andy_dm_hue = new google.maps.StyledMapType(DARK_MODE_ANDY_HUE, { name: "andy dm hue" });
-      this.map.mapTypes.set("andy_dm_hue", andy_dm_hue);
+      const full_test = new google.maps.StyledMapType(FULL_TEST_THEME, { name: "full test" });
+      this.map.mapTypes.set("full_test", full_test);
+      this.map.setMapTypeId("full_test");
 
       /*
       const media = window.matchMedia("(prefers-color-scheme: dark)");
