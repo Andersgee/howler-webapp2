@@ -5,73 +5,7 @@ full list here:
 https://developers.google.com/maps/documentation/javascript/style-reference
 */
 
-const x = {
-  a: "#ebe3cd",
-  b: "#523735",
-  c: "#f5f1e6",
-  d: "#c9b2a6",
-  e: "#dcd2be",
-  f: "#ae9e90",
-  g: "#dfd2ae",
-  h: "#93817c",
-  i: "#a5b076",
-  j: "#447530",
-  k: "#fdfcf8",
-  l: "#f8c967",
-  m: "#e9bc62",
-  o: "#e98d58",
-  p: "#db8555",
-  q: "#806b63",
-  r: "#8f7d77",
-  s: "#b9d3c2",
-  t: "#92998d",
-} as const;
-
-//tailwind stone, aka light mode color-neutral-x
-const NEUTRAL = {
-  "0": "#ffffff",
-  "50": "#fafaf9",
-  "100": "#f5f5f4",
-  "200": "#e7e5e4",
-  "300": "#d6d3d1",
-  "400": "#a8a29e",
-  "500": "#78716c",
-  "600": "#57534e",
-  "700": "#44403c",
-  "800": "#292524",
-  "900": "#1c1917",
-  "950": "#0c0a09",
-  "1000": "#000000",
-} as const;
-
-const HIGHLIGHT = {
-  "50": "#fdf4ff",
-  "100": "#fae8ff",
-  "200": "#f5d0fe",
-  "300": "#f0abfc",
-  "400": "#e879f9",
-  "500": "#d946ef",
-  "600": "#c026d3",
-  "700": "#a21caf",
-  "800": "#86198f",
-  "900": "#701a75",
-  "950": "#4a044e",
-} as const;
-
-const PRIMARY = {
-  "50": "#ecfeff",
-  "100": "#cffafe",
-  "200": "#a5f3fc",
-  "300": "#67e8f9",
-  "400": "#22d3ee",
-  "500": "#06b6d4",
-  "600": "#0891b2",
-  "700": "#0e7490",
-  "800": "#155e75",
-  "900": "#164e63",
-  "950": "#083344",
-} as const;
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 type Hmm = {
   /** the features to select for this style modification. Features are geographic characteristics on the map, including roads, parks, bodies of water, and more. If you don't specify a feature, all features are selected. */
   featureType?: string;
@@ -83,7 +17,7 @@ type Hmm = {
 
 //copy paste from https://developers.google.com/maps/documentation/javascript/examples/style-array
 //which looks like what the "dark mode on android" is
-export const CUSTOM_DARK_MODE: google.maps.MapTypeStyle[] = [
+export const DARK_MODE_EXAMPLE: google.maps.MapTypeStyle[] = [
   { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
   { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
   { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
@@ -164,12 +98,160 @@ export const CUSTOM_DARK_MODE: google.maps.MapTypeStyle[] = [
   },
 ];
 
-export const CUSTOM_LIGHT_MODE: google.maps.MapTypeStyle[] = [
-  //some defaults (not selecting featureType)
-  { elementType: "geometry", stylers: [{ hue: "#a5f3fc" }] },
-  //{ elementType: "labels.text.fill", stylers: [{ hue: NEUTRAL[900] }] },
-  //{ elementType: "labels.text.stroke", stylers: [{ hue: NEUTRAL[50] }] },
+//tailwind stone, aka light mode color-neutral-x
+const NEUTRAL = {
+  "0": "#ffffff",
+  "50": "#fafaf9",
+  "100": "#f5f5f4",
+  "200": "#e7e5e4",
+  "300": "#d6d3d1",
+  "400": "#a8a29e",
+  "500": "#78716c",
+  "600": "#57534e",
+  "700": "#44403c",
+  "800": "#292524",
+  "900": "#1c1917",
+  "950": "#0c0a09",
+  "1000": "#000000",
+} as const;
+
+const PRIMARY = {
+  "50": "#ecfeff",
+  "100": "#cffafe",
+  "200": "#a5f3fc",
+  "300": "#67e8f9",
+  "400": "#22d3ee",
+  "500": "#06b6d4",
+  "600": "#0891b2",
+  "700": "#0e7490",
+  "800": "#155e75",
+  "900": "#164e63",
+  "950": "#083344",
+} as const;
+
+const ORANGE = {
+  "50": "#fff7ed",
+  "100": "#ffedd5",
+  "200": "#fed7aa",
+  "300": "#fdba74",
+  "400": "#fb923c",
+  "500": "#f97316",
+  "600": "#ea580c",
+  "700": "#c2410c",
+  "800": "#9a3412",
+  "900": "#7c2d12",
+  "950": "#431407",
+};
+
+const GREEN = {
+  "50": "#f0fdf4",
+  "100": "#dcfce7",
+  "200": "#bbf7d0",
+  "300": "#86efac",
+  "400": "#4ade80",
+  "500": "#22c55e",
+  "600": "#16a34a",
+  "700": "#15803d",
+  "800": "#166534",
+  "900": "#14532d",
+  "950": "#052e16",
+};
+//this should look approx like the example dark mode.
+export const DARK_MODE_ANDY: google.maps.MapTypeStyle[] = [
+  //some defaults (without featureType selected)
+  { elementType: "geometry", stylers: [{ color: NEUTRAL[800] }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: NEUTRAL[800] }] },
+  { elementType: "labels.text.fill", stylers: [{ color: NEUTRAL[400] }] },
+  {
+    featureType: "administrative.locality",
+    elementType: "labels.text.fill",
+    stylers: [{ color: ORANGE[400] }], //"orange"
+  },
+  {
+    featureType: "poi",
+    elementType: "labels.text.fill",
+    stylers: [{ color: ORANGE[400] }], //"orange"
+  },
+  {
+    featureType: "poi.park",
+    elementType: "geometry",
+    stylers: [{ color: NEUTRAL[800] }], //"neutral"
+  },
+  {
+    featureType: "poi.park",
+    elementType: "labels.text.fill",
+    stylers: [{ color: GREEN[700] }], //"green"
+  },
+  {
+    featureType: "road",
+    elementType: "geometry",
+    stylers: [{ color: NEUTRAL[700] }],
+  },
+  {
+    featureType: "road",
+    elementType: "geometry.stroke",
+    stylers: [{ color: NEUTRAL[800] }],
+  },
+  {
+    featureType: "road",
+    elementType: "labels.text.fill",
+    stylers: [{ color: NEUTRAL[300] }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry",
+    stylers: [{ color: NEUTRAL[500] }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "geometry.stroke",
+    stylers: [{ color: NEUTRAL[900] }],
+  },
+  {
+    featureType: "road.highway",
+    elementType: "labels.text.fill",
+    stylers: [{ color: ORANGE[200] }],
+  },
+  {
+    featureType: "transit",
+    elementType: "geometry",
+    stylers: [{ color: NEUTRAL[800] }],
+  },
+  {
+    featureType: "transit.station",
+    elementType: "labels.text.fill",
+    stylers: [{ color: ORANGE[300] }],
+  },
+  {
+    featureType: "water",
+    elementType: "geometry",
+    stylers: [{ color: NEUTRAL[900] }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.fill",
+    stylers: [{ color: NEUTRAL[400] }],
+  },
+  {
+    featureType: "water",
+    elementType: "labels.text.stroke",
+    stylers: [{ color: NEUTRAL[900] }],
+  },
 ];
+
+const HIGHLIGHT = {
+  "50": "#fdf4ff",
+  "100": "#fae8ff",
+  "200": "#f5d0fe",
+  "300": "#f0abfc",
+  "400": "#e879f9",
+  "500": "#d946ef",
+  "600": "#c026d3",
+  "700": "#a21caf",
+  "800": "#86198f",
+  "900": "#701a75",
+  "950": "#4a044e",
+} as const;
 
 //https://developers.google.com/maps/documentation/javascript/style-reference#style-features
 export const CUSTOM_LIGHT_MODE_FIRST_TRY: google.maps.MapTypeStyle[] = [

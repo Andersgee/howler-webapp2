@@ -2,7 +2,7 @@ import { type RouterOutputs } from "#src/hooks/api";
 import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#src/store/actions";
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
-import { CUSTOM_DARK_MODE } from "./google-maps-themes";
+import { DARK_MODE_ANDY, DARK_MODE_EXAMPLE } from "./google-maps-themes";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -100,15 +100,19 @@ export class GoogleMapsClass {
         //https://developers.google.com/maps/documentation/javascript/style-reference#stylers
         //styles: STYLES_DARK,
 
-        mapTypeControl: false,
+        mapTypeControl: true,
         mapTypeControlOptions: {
           position: google.maps.ControlPosition.BOTTOM_CENTER,
-          mapTypeIds: ["roadmap", "styled_map"],
+          mapTypeIds: ["roadmap", "example_dm", "andy_dm"],
         },
       });
-      const styledMapType = new google.maps.StyledMapType(CUSTOM_DARK_MODE, { name: "Styled map" });
-      this.map.mapTypes.set("styled_map", styledMapType);
+      const example_dm = new google.maps.StyledMapType(DARK_MODE_EXAMPLE, { name: "example dm" });
+      this.map.mapTypes.set("example_dm", example_dm);
 
+      const andy_dm = new google.maps.StyledMapType(DARK_MODE_ANDY, { name: "andy dm" });
+      this.map.mapTypes.set("andy_dm", andy_dm);
+
+      /*
       const media = window.matchMedia("(prefers-color-scheme: dark)");
       const isDarkMode = media.matches;
       if (isDarkMode) {
@@ -125,6 +129,7 @@ export class GoogleMapsClass {
           this.map.setMapTypeId("roadmap");
         }
       });
+      */
 
       this.primaryPin = new PinElement({
         //scale: 1.5,
