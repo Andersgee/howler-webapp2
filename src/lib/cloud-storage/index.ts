@@ -62,6 +62,7 @@ const BASE_URL = "https://storage.googleapis.com/howler-event-images/";
 
 //https://cloud.google.com/storage/docs/access-control/signing-urls-with-helpers#client-libraries_1
 
+/** fileName is the name inside the bucket, we return imageUrl which is the complete url */
 export async function generateV4UploadSignedUrl(fileName: string, contentType: string) {
   const [signedUploadUrl] = await bucketEventImages.file(fileName).getSignedUrl({
     version: "v4",
@@ -82,6 +83,7 @@ export async function getBucketMetadata() {
   return JSON.stringify(metadata, null, 2);
 }
 
+/** imageUrl is the complete url (not the file name inside the bucket) */
 export async function deleteImageFromBucket(imageUrl: string) {
   //const imageUrl = `https://storage.googleapis.com/howler-event-images/${fileName}`;
 

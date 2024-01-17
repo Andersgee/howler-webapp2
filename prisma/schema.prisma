@@ -58,6 +58,7 @@ model Event {
     locationName String?               @db.VarChar(55)
     creatorId    BigInt                @db.UnsignedBigInt
     image        String?               @db.VarChar(100)
+    imageAspect  Float                 @default(1) @db.Float()
 
     User           User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
     UserEventPivot UserEventPivot[]

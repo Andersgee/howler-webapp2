@@ -2,8 +2,8 @@ import type { Generated } from "kysely";
 import type { GeoJSON } from "./geojson-types";
   
 export type DB = {
-  UserEventPivot: UserEventPivot;
   Event: Event;
+  UserEventPivot: UserEventPivot;
   User: User;
   Post: Post;
 };
@@ -27,6 +27,8 @@ export type Event = {
   locationName: string | null;
   /** dbtype: 'varchar(100)', eg string with max 100 chars */
   image: string | null;
+  /** default: 1, dbtype: 'float' */
+  imageAspect: Generated<number>;
 };
 
 export type Post = {

@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { api } from "#src/hooks/api";
+import { z } from "zod";
+import { JSONE } from "#src/utils/jsone";
+import { errorMessageFromUnkown } from "#src/utils/errormessage";
 
 /*
 1. check file type and size
@@ -12,17 +14,12 @@ import { api } from "#src/hooks/api";
 
 const MAX_SIZE_BYTES = 10000000;
 
-type Input = {
-  eventId: bigint;
-};
-
 type Options = {
-  onSuccess?: ({ imageUrl, aspectRatio }: { imageUrl: string; aspectRatio: number }) => void;
+  onSuccess?: ({ image, imageAspect }: { image: string; imageAspect: number }) => void;
   onError?: (msg: string) => void;
 };
 
-export function useImageUpload(input: Input, options?: Options) {
-  const { mutateAsync: getSignedUrl } = api.gcs.signedUrl.useMutation();
+export function useImageUpload(eventId: bigint, options?: Options) {
   const [isUploading, setIsUploading] = useState(false);
 
   const uploadFile = useCallback(
@@ -37,21 +34,17 @@ export function useImageUpload(input: Input, options?: Options) {
       }
 
       setIsUploading(true);
-      const gcs = await getSignedUrl({ eventId: input.eventId, contentType: file.type });
-      if (!gcs) {
-        options?.onError?.("Something went wrong. Try again.");
-        return;
-      }
-
-      let aspectRatio = 1;
       try {
-        aspectRatio = await getImageAspectRatio(file);
-      } catch {
-        console.log("using default image aspectRatio of 1.");
-      }
+        const imageAspect = await getImageAspectRatio(file);
 
-      try {
-        const res = await fetch(gcs.signedUploadUrl, {
+        //get signed
+        const url = `/api/gcs?eventId=${eventId}&contentType=${file.type}`;
+        const { signedUploadUrl, imageUrl } = z
+          .object({ signedUploadUrl: z.string(), imageUrl: z.string() })
+          .parse(await fetch(url, { method: "GET" }).then((res) => res.json()));
+
+        //upload to bucket, headers must match bucket config
+        const bucketres = await fetch(signedUploadUrl, {
           method: "PUT",
           headers: {
             "Content-Type": file.type,
@@ -60,18 +53,27 @@ export function useImageUpload(input: Input, options?: Options) {
           },
           body: file,
         });
-        if (res.ok) {
-          options?.onSuccess?.({ imageUrl: gcs.imageUrl, aspectRatio });
-        } else {
-          options?.onError?.("Something went wrong. Try again.");
+        if (!bucketres) {
+          throw new Error("could not upload");
         }
-      } catch (error) {
-        console.log(error);
-      }
 
+        //update
+        const res = await fetch("/api/gcs", {
+          method: "POST",
+          body: JSONE.stringify({ eventId, imageUrl, imageAspect }),
+        });
+        if (!res.ok) {
+          throw new Error("uploaded but could not update event");
+        }
+
+        options?.onSuccess?.({ image: imageUrl, imageAspect });
+      } catch (err) {
+        console.error(errorMessageFromUnkown(err));
+        options?.onError?.("Something went wrong.");
+      }
       setIsUploading(false);
     },
-    [input, options, getSignedUrl]
+    [eventId, options]
   );
 
   return { uploadFile, isUploading };
