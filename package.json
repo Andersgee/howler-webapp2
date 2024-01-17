@@ -12,6 +12,7 @@
     "dbpull": "tsx scripts/dbpull.ts"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.7.0",
     "@googlemaps/markerclusterer": "^2.5.2",
     "@hookform/resolvers": "^3.3.4",
     "@radix-ui/react-accordion": "^1.1.2",

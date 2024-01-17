@@ -23,6 +23,9 @@ export const envSchema = z.object({
   DATABASE_HTTP_AUTH_HEADER: z.string(),
   NEXT_PUBLIC_HASHIDS_SALT: z.string(),
   NEXT_PUBLIC_ABSURL: z.string(),
+  GOOGLE_ANDYFX_SERVICE_ACCOUNT_PROJECT_ID: z.string(),
+  GOOGLE_ANDYFX_SERVICE_ACCOUNT_CLIENT_EMAIL: z.string(),
+  GOOGLE_ANDYFX_SERVICE_ACCOUNT_PRIVATE_KEY: z.string(),
 });
 
 /**

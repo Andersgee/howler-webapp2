@@ -17,9 +17,9 @@ model Event {
 
   UserEventPivot_eventId_fkey UserEventPivot[]
 
+  @@id([id])
   @@index([creatorId])
   @@index([title, locationName])
-  @@id([id])
 }
 
 model Post {
@@ -31,8 +31,8 @@ model Post {
 
   Post_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  @@index([userId])
   @@id([id])
+  @@index([userId])
 }
 
 model User {
@@ -51,10 +51,10 @@ model User {
   UserEventPivot_userId_fkey UserEventPivot[]
 
   @@id([id])
-  @@unique([discordUserId])
   @@unique([email])
-  @@unique([githubUserId])
   @@unique([googleUserSub])
+  @@unique([discordUserId])
+  @@unique([githubUserId])
 }
 
 model UserEventPivot {
