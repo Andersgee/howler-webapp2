@@ -144,7 +144,15 @@ async function getTableRelations(db: DB) {
 async function getTableIndexing(db: DB) {
   const STATISTICS = await db
     .selectFrom("information_schema.STATISTICS as s")
-    .select(["s.COLUMN_NAME", "s.TABLE_NAME", "s.INDEX_NAME", "s.SEQ_IN_INDEX", "s.NON_UNIQUE", "s.NULLABLE"])
+    .select([
+      "s.COLUMN_NAME",
+      "s.TABLE_NAME",
+      "s.INDEX_NAME",
+      "s.SEQ_IN_INDEX",
+      "s.NON_UNIQUE",
+      "s.NULLABLE",
+      "s.INDEX_TYPE",
+    ])
     .where("s.TABLE_SCHEMA", "=", sql`database()`)
     .execute();
 
@@ -162,7 +170,15 @@ async function getTableIndexing(db: DB) {
 
           const isNullable = first.NULLABLE === "YES";
           const isUnique = first.NON_UNIQUE === 0;
-          const prismaindextype = first.INDEX_NAME === "PRIMARY" ? "id" : isUnique ? "unique" : "index";
+
+          const prismaindextype =
+            first.INDEX_TYPE === "FULLTEXT"
+              ? "fulltext"
+              : first.INDEX_NAME === "PRIMARY"
+                ? "id"
+                : isUnique
+                  ? "unique"
+                  : "index";
           const prismastring = `@@${prismaindextype}([${colNames.map((s) => s).join(", ")}])`;
 
           return {

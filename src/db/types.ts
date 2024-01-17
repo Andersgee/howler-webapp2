@@ -25,6 +25,8 @@ export type Event = {
   creatorId: bigint;
   /** indexed: (title, locationName), dbtype: 'varchar(55)', eg string with max 55 chars */
   locationName: string | null;
+  /** dbtype: 'varchar(100)', eg string with max 100 chars */
+  image: string | null;
 };
 
 export type Post = {

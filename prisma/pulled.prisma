@@ -1,22 +1,21 @@
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_MYSQL_URL")
+  url = env("DATABASE_MYSQL_URL")
 }
-
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
   previewFeatures = ["fullTextIndex"]
 }
 
 model Event {
-  id           BigInt                @default(autoincrement()) @db.UnsignedBigInt
-  createdAt    DateTime              @default(now()) @db.DateTime(3)
-  updatedAt    DateTime              @default(now()) @updatedAt @db.DateTime(3)
-  title        String                @db.VarChar(55)
-  date         DateTime              @default(now()) @db.DateTime(3)
-  location     Unsupported("point")?
-  creatorId    BigInt                @db.UnsignedBigInt
-  locationName String?               @db.VarChar(55)
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  createdAt DateTime @db.DateTime(3) @default(now())
+  updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
+  title String @db.VarChar(55)
+  date DateTime @db.DateTime(3) @default(now())
+  location Unsupported("point")?
+  creatorId BigInt @db.UnsignedBigInt
+  locationName String? @db.VarChar(55)
 
   Event_creatorId_fkey User @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
@@ -28,11 +27,11 @@ model Event {
 }
 
 model Post {
-  id        BigInt   @default(autoincrement()) @db.UnsignedBigInt
-  text      String
-  createdAt DateTime @default(now()) @db.DateTime(3)
-  updatedAt DateTime @default(now()) @updatedAt @db.DateTime(3)
-  userId    BigInt   @db.UnsignedBigInt
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  text String
+  createdAt DateTime @db.DateTime(3) @default(now())
+  updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
+  userId BigInt @db.UnsignedBigInt
 
   Post_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
@@ -41,18 +40,18 @@ model Post {
 }
 
 model User {
-  id            BigInt   @default(autoincrement()) @db.UnsignedBigInt
-  email         String
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  email String
   googleUserSub String?
   discordUserId String?
-  githubUserId  Int?
-  image         String?
-  name          String
-  createdAt     DateTime @default(now()) @db.DateTime(3)
-  updatedAt     DateTime @default(now()) @updatedAt @db.DateTime(3)
+  githubUserId Int?
+  image String?
+  name String
+  createdAt DateTime @db.DateTime(3) @default(now())
+  updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
 
-  Event_creatorId_fkey       Event[]
-  Post_userId_fkey           Post[]
+  Event_creatorId_fkey Event[]
+  Post_userId_fkey Post[]
   UserEventPivot_userId_fkey UserEventPivot[]
 
   @@id([id])
@@ -63,13 +62,14 @@ model User {
 }
 
 model UserEventPivot {
-  userId   BigInt   @db.UnsignedBigInt
-  eventId  BigInt   @db.UnsignedBigInt
-  joinDate DateTime @default(now()) @db.DateTime(3)
+  userId BigInt @db.UnsignedBigInt
+  eventId BigInt @db.UnsignedBigInt
+  joinDate DateTime @db.DateTime(3) @default(now())
 
-  UserEventPivot_userId_fkey  User  @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  UserEventPivot_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   UserEventPivot_eventId_fkey Event @relation(fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   @@id([eventId, userId])
   @@index([userId])
 }
+

@@ -7,7 +7,7 @@ export function generatePrismaSchema({
   tableRelations,
   opposingTableRelations,
 }: IntrospectResult): string {
-  let s = `datasource db {\n  provider = "mysql"\n  url = env("DATABASE_MYSQL_URL")\n}\n\n`;
+  let s = prelude();
   //better...
   for (const [tableName, columns] of Object.entries(tableTypes).sort((a, b) => a[0].localeCompare(b[0]))) {
     s += `model ${tableName} {\n`;
@@ -48,4 +48,15 @@ export function generatePrismaSchema({
   }
 
   return s;
+}
+
+function prelude() {
+  return `datasource db {
+  provider = "mysql"
+  url = env("DATABASE_MYSQL_URL")
+}
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextIndex"]
+}\n\n`;
 }
