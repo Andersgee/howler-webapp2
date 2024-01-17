@@ -25,7 +25,7 @@ function MountGoogleMaps() {
   const element = useStore.use.googleMapsElement();
   useEffect(() => {
     const el = document.createElement("div");
-    el.setAttribute("style", "width:100%;height:100%;");
+    el.setAttribute("style", "width:100%;height:100%;background-color: hsl(var(--color-neutral-50));");
     setGoogleMapsElement(el);
   }, []);
 

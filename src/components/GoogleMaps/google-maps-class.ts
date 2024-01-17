@@ -4,6 +4,7 @@ import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
 import { DARK_MODE_ANDY, DARK_MODE_ANDY_HUE, DARK_MODE_EXAMPLE } from "./google-maps-themes";
 import { FULL_TEST_THEME } from "./kek";
+import { HOWLER_MAP_DARK, HOWLER_MAP_LIGHT } from "./custom-theme";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -103,37 +104,36 @@ export class GoogleMapsClass {
         //https://developers.google.com/maps/documentation/javascript/style-reference#stylers
         //styles: STYLES_DARK,
 
-        mapTypeControl: true,
+        mapTypeControl: false,
         mapTypeControlOptions: {
           position: google.maps.ControlPosition.BOTTOM_CENTER,
-          mapTypeIds: ["roadmap", "andy_dm", "full_test"],
+          //mapTypeIds: ["roadmap", "andy_lm", "andy_dm"],
+          mapTypeIds: ["andy_lm", "andy_dm"],
         },
       });
-      const andy_dm = new google.maps.StyledMapType(DARK_MODE_ANDY, { name: "andy dm" });
+
+      const andy_lm = new google.maps.StyledMapType(HOWLER_MAP_LIGHT, { name: "light mode" });
+      this.map.mapTypes.set("andy_lm", andy_lm);
+
+      const andy_dm = new google.maps.StyledMapType(HOWLER_MAP_DARK, { name: "dark mode" });
       this.map.mapTypes.set("andy_dm", andy_dm);
 
-      const full_test = new google.maps.StyledMapType(FULL_TEST_THEME, { name: "full test" });
-      this.map.mapTypes.set("full_test", full_test);
-      this.map.setMapTypeId("full_test");
-
-      /*
       const media = window.matchMedia("(prefers-color-scheme: dark)");
       const isDarkMode = media.matches;
       if (isDarkMode) {
-        this.map.setMapTypeId("styled_map");
+        this.map.setMapTypeId("andy_dm");
       } else {
-        this.map.setMapTypeId("roadmap");
+        this.map.setMapTypeId("andy_lm");
       }
       media.addEventListener("change", (ev) => {
         if (ev.matches) {
           console.log("is now dark mode");
-          this.map.setMapTypeId("styled_map");
+          this.map.setMapTypeId("andy_dm");
         } else {
           console.log("is now light mode");
-          this.map.setMapTypeId("roadmap");
+          this.map.setMapTypeId("andy_lm");
         }
       });
-      */
 
       this.primaryPin = new PinElement({
         //scale: 1.5,
