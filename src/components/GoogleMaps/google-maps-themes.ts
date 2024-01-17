@@ -162,20 +162,24 @@ export const DARK_MODE_ANDY: google.maps.MapTypeStyle[] = [
   { elementType: "geometry", stylers: [{ color: NEUTRAL[800] }] },
   { elementType: "labels.text.stroke", stylers: [{ color: NEUTRAL[800] }] },
   { elementType: "labels.text.fill", stylers: [{ color: NEUTRAL[400] }] },
+  //test
+  //{featureType: "landscape.man_made", elementType: "geometry"} //this selects "area" where buildings are (not actual building)
+
+  //good:
   {
     featureType: "administrative.locality",
     elementType: "labels.text.fill",
-    stylers: [{ color: ORANGE[400] }], //"orange"
+    stylers: [{ color: ORANGE[400] }],
   },
   {
     featureType: "poi",
     elementType: "labels.text.fill",
-    stylers: [{ color: ORANGE[400] }], //"orange"
+    stylers: [{ color: ORANGE[400] }],
   },
   {
     featureType: "poi.park",
     elementType: "geometry",
-    stylers: [{ color: NEUTRAL[800] }], //"neutral"
+    stylers: [{ color: NEUTRAL[800] }],
   },
   {
     featureType: "poi.park",
