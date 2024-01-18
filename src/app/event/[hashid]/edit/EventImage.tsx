@@ -6,7 +6,7 @@ import { cn } from "#src/utils/cn";
 import { imageSizes } from "#src/utils/image-sizes";
 import { useState } from "react";
 import Image from "next/image";
-import { IconImage } from "#src/icons";
+import { IconImage } from "#src/icons/Image";
 import { IconLoadingSpinner } from "#src/icons/special";
 import { useToast } from "#src/ui/use-toast";
 import { buttonVariants } from "#src/ui/button";

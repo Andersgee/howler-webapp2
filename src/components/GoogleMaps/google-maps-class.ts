@@ -63,13 +63,15 @@ export class GoogleMapsClass {
     try {
       //load relevant libs
       //https://developers.google.com/maps/documentation/javascript/libraries#libraries-for-dynamic-library-import
-      const { Map, InfoWindow } = (await google.maps.importLibrary("maps")) as google.maps.MapsLibrary;
-      const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary(
-        "marker"
-      )) as google.maps.MarkerLibrary;
-      const { Size, ControlPosition } = (await google.maps.importLibrary("core")) as google.maps.CoreLibrary;
+      //const { Map, InfoWindow } = (await google.maps.importLibrary("maps")) as google.maps.MapsLibrary;
+      //const { AdvancedMarkerElement, PinElement } = (await google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
+      //const { Size, ControlPosition } = (await google.maps.importLibrary("core")) as google.maps.CoreLibrary;
+      await Promise.all([
+        google.maps.importLibrary("maps"),
+        google.maps.importLibrary("marker"),
+        google.maps.importLibrary("core"),
+      ]);
 
-      ControlPosition.TOP_CENTER;
       //const {ControlPosition} = await google.maps.importLibrary("core")
 
       //this.Map = Map;
@@ -133,7 +135,7 @@ export class GoogleMapsClass {
         }
       });
 
-      this.primaryPin = new PinElement({
+      this.primaryPin = new google.maps.marker.PinElement({
         //scale: 1.5,
         scale: 1,
       });
