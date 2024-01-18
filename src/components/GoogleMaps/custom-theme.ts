@@ -1,3 +1,12 @@
+/*
+https://developers.google.com/maps/documentation/javascript/examples/style-array#maps_style_array-typescript
+
+https://developers.google.com/maps/documentation/javascript/examples/style-array
+
+full list here:
+https://developers.google.com/maps/documentation/javascript/style-reference
+*/
+
 //tailwind stone, aka light mode color-neutral-x
 const NEUTRAL = {
   "0": "#ffffff",
@@ -31,58 +40,56 @@ const NEUTRAL_DARK = {
   "0": "#0c0a09",
 };
 
-type Hmm = typeof NEUTRAL;
-
 export const HOWLER_MAP_LIGHT = makeTheme(NEUTRAL);
 export const HOWLER_MAP_DARK = makeTheme(NEUTRAL_DARK, true);
 
-function makeTheme(NEUTRAL: Hmm, isDark = false): google.maps.MapTypeStyle[] {
+function makeTheme(c: typeof NEUTRAL, isDark = false): google.maps.MapTypeStyle[] {
   let r = [
     //this is general ground color..
-    f("landscape.natural", "geometry.fill", NEUTRAL[50]), //groud color
-    f("landscape.natural.landcover", "geometry.fill", NEUTRAL[50]), //ground color.. when zoomed out a bit
-    f("landscape.natural.terrain", "geometry.fill", NEUTRAL[50]), //hills ish
+    f("landscape.natural", "geometry.fill", c[50]), //groud color
+    f("landscape.natural.landcover", "geometry.fill", c[50]), //ground color.. when zoomed out a bit
+    f("landscape.natural.terrain", "geometry.fill", c[50]), //hills ish
 
     //honestly. might aswell treat all points as equals..
-    f("poi", "labels.icon", NEUTRAL[900]), //ikonen
-    f("poi", "labels.text", NEUTRAL[900]),
-    f("poi", "labels.text.stroke", NEUTRAL[0]), //also icon stroke?
-    f("poi", "geometry.fill", NEUTRAL[100]), //färg på lekplats etc
-    f("poi", "geometry.stroke", NEUTRAL[0]), //hmm
+    f("poi", "labels.icon", c[900]), //ikonen
+    f("poi", "labels.text", c[900]),
+    f("poi", "labels.text.stroke", c[0]), //also icon stroke?
+    f("poi", "geometry.fill", c[100]), //färg på lekplats etc
+    f("poi", "geometry.stroke", c[0]), //hmm
 
     //transit, honestly. style the same..
-    f("transit", "geometry.fill", NEUTRAL[500]), //railroad etc
-    f("transit", "geometry.stroke", NEUTRAL[200]),
-    f("transit", "labels.icon", NEUTRAL[900]),
-    f("transit", "labels.text", NEUTRAL[900]),
-    f("transit", "labels.text.stroke", NEUTRAL[0]),
+    f("transit", "geometry.fill", c[500]), //railroad etc
+    f("transit", "geometry.stroke", c[200]),
+    f("transit", "labels.icon", c[900]),
+    f("transit", "labels.text", c[900]),
+    f("transit", "labels.text.stroke", c[0]),
     //f("transit", "labels.text.fill", "#ff00ff"),
 
     //road
-    f("road", "labels.text", NEUTRAL[700]),
-    f("road", "labels.text.stroke", NEUTRAL[0]),
+    f("road", "labels.text", c[700]),
+    f("road", "labels.text.stroke", c[0]),
     //f("road", "labels.text.fill", NEUTRAL[700]),
     //f("road", "labels.icon", "")
-    f("road.arterial", "geometry.fill", NEUTRAL[0]), //landsväg
-    f("road.arterial", "geometry.stroke", NEUTRAL[200]),
+    f("road.arterial", "geometry.fill", c[0]), //landsväg
+    f("road.arterial", "geometry.stroke", c[200]),
 
-    f("road.highway", "geometry.fill", NEUTRAL[0]), //motorväg
-    f("road.highway", "geometry.stroke", NEUTRAL[200]),
+    f("road.highway", "geometry.fill", c[0]), //motorväg
+    f("road.highway", "geometry.stroke", c[200]),
 
-    f("road.highway.controlled_access", "geometry.fill", NEUTRAL[300]),
-    f("road.highway.controlled_access", "geometry.stroke", NEUTRAL[200]),
+    f("road.highway.controlled_access", "geometry.fill", c[300]),
+    f("road.highway.controlled_access", "geometry.stroke", c[200]),
 
-    f("road.local", "geometry.fill", NEUTRAL[0]),
-    f("road.local", "geometry.stroke", NEUTRAL[200]),
+    f("road.local", "geometry.fill", c[0]),
+    f("road.local", "geometry.stroke", c[200]),
 
-    f("administrative", "labels.text", NEUTRAL[900]),
-    f("administrative", "labels.text.stroke", NEUTRAL[200]),
+    f("administrative", "labels.text", c[900]),
+    f("administrative", "labels.text.stroke", c[200]),
 
-    f("administrative.country", "geometry.stroke", NEUTRAL[1000]),
-    f("administrative.land_parcel", "geometry.stroke", NEUTRAL[1000]),
-    f("administrative.locality", "geometry.stroke", NEUTRAL[1000]),
-    f("administrative.neighborhood", "geometry.stroke", NEUTRAL[1000]),
-    f("administrative.province", "geometry.stroke", NEUTRAL[1000]),
+    f("administrative.country", "geometry.stroke", c[1000]),
+    f("administrative.land_parcel", "geometry.stroke", c[1000]),
+    f("administrative.locality", "geometry.stroke", c[1000]),
+    f("administrative.neighborhood", "geometry.stroke", c[1000]),
+    f("administrative.province", "geometry.stroke", c[1000]),
 
     //set these on map base style instead (can not set "building color" and "urban area color" separately from javascript)
     //I disabled urban area and put buildings as pure black. should work for both light/dark mode...
@@ -92,9 +99,9 @@ function makeTheme(NEUTRAL: Hmm, isDark = false): google.maps.MapTypeStyle[] {
   ];
   if (isDark) {
     r = r.concat([
-      f("water", "geometry.fill", NEUTRAL[300]),
-      f("water", "labels.text", NEUTRAL[700]),
-      f("water", "labels.text.stroke", NEUTRAL[0]),
+      f("water", "geometry.fill", c[300]),
+      f("water", "labels.text", c[700]),
+      f("water", "labels.text.stroke", c[0]),
     ]);
   }
 
@@ -108,6 +115,7 @@ type FeatureType =
   | "administrative.locality"
   | "administrative.neighborhood"
   | "administrative.province"
+  | "landscape"
   | "landscape.man_made"
   | "landscape.natural"
   | "landscape.natural.landcover"

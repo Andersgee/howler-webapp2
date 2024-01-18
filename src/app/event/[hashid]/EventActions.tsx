@@ -4,7 +4,8 @@ import { GoogleMaps } from "#src/components/GoogleMaps";
 import { ShareButton } from "#src/components/ShareButton";
 import { type GeoJSON } from "#src/db/geojson-types";
 import { type RouterOutputs } from "#src/hooks/api";
-import { Edit, IconWhere } from "#src/icons";
+import { IconEdit } from "#src/icons/Edit";
+import { IconWhere } from "#src/icons/Where";
 import { useStore } from "#src/store";
 import { Button, buttonVariants } from "#src/ui/button";
 import { hashidFromId } from "#src/utils/hashid";
@@ -29,7 +30,7 @@ export function EventActions({ isCreator, event }: Props) {
         )}
         {isCreator && (
           <Link href={`/event/${hashidFromId(event.id)}/edit`} className={buttonVariants({ variant: "icon" })}>
-            <Edit /> Edit
+            <IconEdit /> Edit
           </Link>
         )}
         <ShareButton title={event.title} />

@@ -11,7 +11,7 @@ import {
   CommandList,
   CommandLoading,
 } from "#src/ui/command";
-import { Check } from "#src/icons";
+import { IconCheck } from "#src/icons/Check";
 
 export function AutoCompleteDemo() {
   const options: Option[] = [
@@ -148,7 +148,7 @@ function AutoComplete({
                         onSelect={() => handleSelectOption(option)}
                         className={cn("flex w-full items-center gap-2", !isSelected ? "pl-8" : null)}
                       >
-                        {isSelected ? <Check className="w-4" /> : null}
+                        {isSelected ? <IconCheck className="w-4" /> : null}
                         {option.label}
                       </CommandItem>
                     );

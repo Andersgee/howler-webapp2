@@ -1,4 +1,5 @@
-import { ChevronDown, X } from "#src/icons";
+import { IconChevronDown } from "#src/icons/ChevronDown";
+import { IconClose } from "#src/icons/Close";
 import { Button, buttonVariants } from "#src/ui/button";
 import { cn } from "#src/utils/cn";
 import { Command } from "cmdk";
@@ -15,10 +16,9 @@ type Props = {
    * also key will be defined if change was triggered by selecting a suggestion
    */
   onChange: (search: string, key: bigint | undefined) => void;
-  isAdvanced?: boolean;
 };
 
-export function InputSearch({ className, suggestions, value, onChange, isAdvanced = true }: Props) {
+export function InputSearch({ className, suggestions, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -54,7 +54,7 @@ export function InputSearch({ className, suggestions, value, onChange, isAdvance
             aria-label="clear"
             onClick={() => onChange("", undefined)}
           >
-            <X />
+            <IconClose />
           </Button>
         )}
         <CollapsibleTrigger
@@ -64,7 +64,7 @@ export function InputSearch({ className, suggestions, value, onChange, isAdvance
           })}
           aria-label="advanced-search"
         >
-          <ChevronDown className="transition-transform duration-200 group-data-state-open:rotate-180" />
+          <IconChevronDown className="transition-transform duration-200 group-data-state-open:rotate-180" />
         </CollapsibleTrigger>
       </div>
       {open && (

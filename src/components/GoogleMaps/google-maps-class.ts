@@ -2,8 +2,6 @@ import { type RouterOutputs } from "#src/hooks/api";
 import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#src/store/actions";
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
-import { DARK_MODE_ANDY, DARK_MODE_ANDY_HUE, DARK_MODE_EXAMPLE } from "./google-maps-themes";
-import { FULL_TEST_THEME } from "./kek";
 import { HOWLER_MAP_DARK, HOWLER_MAP_LIGHT } from "./custom-theme";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps

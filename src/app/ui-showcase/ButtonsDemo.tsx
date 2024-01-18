@@ -1,4 +1,6 @@
-import { Check, Edit, Trash } from "#src/icons";
+import { IconCheck } from "#src/icons/Check";
+import { IconTrash } from "#src/icons/Trash";
+import { IconEdit } from "#src/icons/Edit";
 import { Button } from "#src/ui/button";
 
 export function ButtonsDemo() {
@@ -17,23 +19,23 @@ export function ButtonsDemo() {
       </div>
       <div>
         <Button variant="danger">
-          <Trash /> Danger
+          <IconTrash /> Danger
         </Button>
       </div>
       <div>
         <Button variant="positive">
-          <Check /> Positive
+          <IconCheck /> Positive
         </Button>
         <div>hello after button</div>
       </div>
       <div>
         <Button variant="icon">
-          <Edit />
+          <IconEdit />
         </Button>
       </div>
       <div>
         <Button variant="icon">
-          <Edit /> Edit
+          <IconEdit /> Edit
         </Button>
       </div>
       <div>

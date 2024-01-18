@@ -6,7 +6,6 @@ import { Command as CommandPrimitive } from "cmdk";
 
 import { cn } from "#src/utils/cn";
 import { Dialog, DialogContent } from "#src/ui/dialog";
-import { Search } from "#src/icons";
 import { inputElementStyles } from "./input";
 
 export const CommandLoading = CommandPrimitive.Loading;
@@ -46,7 +45,6 @@ const CommandInput = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof CommandPrimitive.Input>
 >(({ className, ...props }, ref) => (
   <div className="flex items-center" cmdk-input-wrapper="">
-    {/*<Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />*/}
     <CommandPrimitive.Input
       ref={ref}
       className={cn(

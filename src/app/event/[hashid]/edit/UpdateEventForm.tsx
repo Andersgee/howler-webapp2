@@ -15,7 +15,10 @@ import { GoogleMaps } from "#src/components/GoogleMaps";
 import { useStore } from "#src/store";
 import { useEffect, useRef, useState } from "react";
 import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
-import { IconWhat, IconWhen, IconWhere, IconWho } from "#src/icons";
+import { IconWhat } from "#src/icons/What";
+import { IconWhen } from "#src/icons/When";
+import { IconWhere } from "#src/icons/Where";
+import { IconWho } from "#src/icons/Who";
 import { cn } from "#src/utils/cn";
 
 //pretty much copy paste of <CreateEventFrom/>

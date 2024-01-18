@@ -1,10 +1,9 @@
 "use client";
 
-import { Check, ChevronsUpDown } from "#src/icons";
-import { Button } from "#src/ui/button";
+import { IconCheck } from "#src/icons/Check";
+
 import { cn } from "#src/utils/cn";
-import { Popover, PopoverTrigger, PopoverContent, PopoverAnchor } from "#src/ui/popover";
-import { Command, CommandInput, CommandEmpty, CommandGroup, CommandItem, CommandList } from "#src/ui/command";
+import { Command, CommandInput, CommandGroup, CommandItem, CommandList } from "#src/ui/command";
 import { useState } from "react";
 //import { CommandList } from "cmdk";
 
@@ -38,7 +37,6 @@ const frameworks = [
 export function AutoCompleteDemo2() {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [value, setValue] = useState("");
 
   return (
     <Command className="w-56">
@@ -81,7 +79,9 @@ export function AutoCompleteDemo2() {
                         //setOpen(false);
                       }}
                     >
-                      <Check className={cn("mr-2 h-4 w-4", search === framework.value ? "opacity-100" : "opacity-0")} />
+                      <IconCheck
+                        className={cn("mr-2 h-4 w-4", search === framework.value ? "opacity-100" : "opacity-0")}
+                      />
                       {framework.label}
                     </CommandItem>
                   ))}

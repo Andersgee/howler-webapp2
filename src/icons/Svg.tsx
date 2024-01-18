@@ -12,8 +12,8 @@ export function Svg({ className, children, ...props }: Props & { children: React
       strokeLinecap="round"
       strokeLinejoin="round"
       viewBox="0 0 24 24"
-      {...props}
       className={cn("h-6 w-6", className)}
+      {...props}
     >
       {children}
     </svg>

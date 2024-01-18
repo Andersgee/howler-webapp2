@@ -1,6 +1,9 @@
 import { PrettyDate } from "#src/components/PrettyDate";
 import { type RouterOutputs } from "#src/hooks/api";
-import { IconWhat, IconWhere, IconWhen, IconWho } from "#src/icons";
+import { IconWhat } from "#src/icons/What";
+import { IconWhen } from "#src/icons/When";
+import { IconWhere } from "#src/icons/Where";
+import { IconWho } from "#src/icons/Who";
 import { cn } from "#src/utils/cn";
 
 type Props = {
