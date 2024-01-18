@@ -43,7 +43,7 @@ export function EventImage({ event, className }: Props) {
         ) : (
           <>
             <IconImage />
-            add image
+            {img.image ? "edit image" : "add image"}
           </>
         )}
       </label>
@@ -53,7 +53,7 @@ export function EventImage({ event, className }: Props) {
           src={img.image}
           alt={event.title}
           sizes={imageSizes("w-64", { md: "w-96" })}
-          className="h-auto w-64 md:w-96"
+          className="mb-8 h-auto w-64 md:w-96"
           //width and height only for aspect ratio purpose
           width={256}
           height={Math.round(256 / img.imageAspect)}
