@@ -25,7 +25,7 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "storage.googleapis.com",
-        pathname: "/some-bucket-name-with-images/**",
+        pathname: "/howler-event-images/**",
       },
     ],
   },
