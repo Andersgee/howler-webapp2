@@ -2,9 +2,8 @@
 
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
-
 import { cn } from "#src/utils/cn";
-import { X } from "#src/icons";
+import { IconClose } from "#src/icons/Close";
 import { buttonVariants } from "./button";
 
 const Dialog = DialogPrimitive.Root;
@@ -46,7 +45,7 @@ const DialogContent = React.forwardRef<
     >
       {children}
       <DialogPrimitive.Close className={buttonVariants({ variant: "icon", className: "absolute right-2 top-2" })}>
-        <X />
+        <IconClose />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>

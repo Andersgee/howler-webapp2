@@ -3,7 +3,7 @@
 import { absUrl } from "#src/utils/url";
 import { usePathname } from "next/navigation";
 import { useToast } from "#src/ui/use-toast";
-import { Share } from "#src/icons";
+import { IconShare } from "#src/icons/Share";
 import { Button } from "#src/ui/button";
 
 type Props = {
@@ -48,7 +48,7 @@ export function ShareButton({ className, title }: Props) {
         }
       }}
     >
-      <Share className="mr-0" /> Share
+      <IconShare className="mr-0" /> Share
     </Button>
   );
 }

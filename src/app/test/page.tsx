@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown } from "#src/icons";
+import { IconChevronDown } from "#src/icons/ChevronDown";
 import { buttonVariants } from "#src/ui/button";
 import * as Collapsible from "@radix-ui/react-collapsible";
 import { cn } from "#src/utils/cn";
@@ -14,7 +14,7 @@ export default function Page() {
       <Collapsible.Root open={advancedSearch} onOpenChange={setAdvancedSearch}>
         <Collapsible.Trigger className={buttonVariants({ variant: "trigger", className: "group flex" })}>
           advanced
-          <ChevronDown className={cn("transition-transform duration-200 group-data-state-open:rotate-180")} />
+          <IconChevronDown className={cn("transition-transform duration-200 group-data-state-open:rotate-180")} />
         </Collapsible.Trigger>
         <Collapsible.Content>
           <div> some content here</div>

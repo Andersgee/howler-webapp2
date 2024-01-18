@@ -2,11 +2,11 @@
 
 import { CommandGroup, CommandItem, CommandList, CommandInput } from "#src/ui/command";
 import { Command as CommandPrimitive } from "cmdk";
-import { useState, useRef, useCallback, type KeyboardEvent, Key } from "react";
+import { useState, useRef, useCallback, type KeyboardEvent } from "react";
 
 //import { Skeleton } from "./ui/skeleton"
 import { cn } from "#src/utils/cn";
-import { Check } from "#src/icons";
+import { IconCheck } from "#src/icons/Check";
 //import { Check } from "lucide-react"
 
 export type Option = Record<"value" | "label", string> & Record<string, string | bigint>;
@@ -128,7 +128,7 @@ export const AutoCompleteTest = ({
                         onSelect={() => handleSelectOption(option)}
                         className={cn("flex w-full items-center gap-2", !isSelected ? "pl-8" : null)}
                       >
-                        {isSelected ? <Check className="w-4" /> : null}
+                        {isSelected ? <IconCheck className="w-4" /> : null}
                         {option.label}
                       </CommandItem>
                     );

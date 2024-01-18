@@ -1,7 +1,8 @@
 import { cn } from "#src/utils/cn";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "#src/ui/card";
 import { Button } from "#src/ui/button";
-import { Bell, Check } from "#src/icons";
+import { IconCheck } from "#src/icons/Check";
+import { IconBell } from "#src/icons/Bell";
 import { Switch } from "#src/ui/switch";
 
 const notifications = [
@@ -30,7 +31,7 @@ export function CardDemo({ className, ...props }: CardProps) {
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className=" flex items-center space-x-4 rounded-md border p-4">
-          <Bell />
+          <IconBell />
           <div className="flex-1 space-y-1">
             <p className="text-sm font-medium leading-none">Push Notifications</p>
             <p className="text-sm text-color-neutral-500">Send notifications to device.</p>
@@ -51,7 +52,7 @@ export function CardDemo({ className, ...props }: CardProps) {
       </CardContent>
       <CardFooter>
         <Button className="w-full">
-          <Check className="mr-2 h-4 w-4" /> Mark all as read
+          <IconCheck className="mr-2 h-4 w-4" /> Mark all as read
         </Button>
       </CardFooter>
     </Card>

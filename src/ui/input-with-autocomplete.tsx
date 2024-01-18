@@ -1,7 +1,7 @@
-import { Check } from "#src/icons";
+import { IconCheck } from "#src/icons/Check";
 import { cn } from "#src/utils/cn";
 import { Command, CommandInput, CommandGroup, CommandItem, CommandList } from "#src/ui/command";
-import { type Key, forwardRef, useState } from "react";
+import { forwardRef, useState } from "react";
 
 type Props = React.ComponentPropsWithoutRef<typeof CommandInput> & {
   suggestions: { label: string; value: string }[];
@@ -68,7 +68,7 @@ const InputWithAutocomplete = forwardRef<React.ElementRef<typeof CommandInput>, 
                         onChange?.(val);
                       }}
                     >
-                      <Check
+                      <IconCheck
                         className={cn("mr-2 h-4 w-4", search === suggestion.value ? "opacity-100" : "opacity-0")}
                       />
                       {suggestion.label}

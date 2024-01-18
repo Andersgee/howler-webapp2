@@ -37,6 +37,7 @@ function nameList(data: ReverseGeoCodingResponse) {
   return Array.from(s);
 }
 
+/*
 function findSimpleName(data: ReverseGeoCodingResponse) {
   //could use the "formatted_adress" but its a bit to formal
   for (const result of data.results) {
@@ -57,6 +58,7 @@ function findSimpleName(data: ReverseGeoCodingResponse) {
   return null;
 }
 
+
 function hasNumbers(str: string) {
   return str
     .split(" ")
@@ -68,3 +70,4 @@ function startsWithLetter(str: string) {
   if (str.length < 1) return false;
   return isNaN(Number(str[0]));
 }
+*/

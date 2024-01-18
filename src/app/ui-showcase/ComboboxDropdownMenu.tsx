@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Calendar, MoreHorizontal, Tags, Trash, User } from "#src/icons";
-
+import { IconTrash } from "#src/icons/Trash";
 import { Button } from "#src/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "#src/ui/command";
 import {
@@ -35,27 +34,16 @@ export function ComboboxDropdownMenu() {
       </p>
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
-          <Button variant="icon">
-            <MoreHorizontal />
-          </Button>
+          <Button variant="icon">more</Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-[200px]">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              Assign to...
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Calendar className="mr-2 h-4 w-4" />
-              Set due date...
-            </DropdownMenuItem>
+            <DropdownMenuItem>Assign to...</DropdownMenuItem>
+            <DropdownMenuItem>Set due date...</DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <Tags className="mr-2 h-4 w-4" />
-                Apply label
-              </DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>Apply label</DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="p-0">
                 <Command>
                   <CommandInput placeholder="Filter label..." autoFocus={true} />
@@ -80,7 +68,7 @@ export function ComboboxDropdownMenu() {
             </DropdownMenuSub>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-color-accent-danger-600">
-              <Trash className="mr-2 h-4 w-4" />
+              <IconTrash className="mr-2 h-4 w-4" />
               Delete
               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
             </DropdownMenuItem>

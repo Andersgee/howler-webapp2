@@ -9,7 +9,7 @@ export type MapSlice = {
   googleMapsExploreSelectedEventId: bigint | null;
 };
 
-export const createMapSlice: StateCreator<MapSlice, [], [], MapSlice> = (set, get) => ({
+export const createMapSlice: StateCreator<MapSlice, [], [], MapSlice> = (_set, _get) => ({
   googleMaps: null,
   googleMapsElement: null,
   googleMapsPickedPoint: null,

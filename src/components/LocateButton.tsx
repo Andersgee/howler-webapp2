@@ -1,4 +1,4 @@
-import { Locate } from "#src/icons";
+import { IconLocate } from "#src/icons/Locate";
 import { Button } from "#src/ui/button";
 import { useToast } from "#src/ui/use-toast";
 
@@ -35,7 +35,7 @@ export function LocateButton({ className, onLocated }: Props) {
         }
       }}
     >
-      <Locate />
+      <IconLocate />
     </Button>
   );
 }

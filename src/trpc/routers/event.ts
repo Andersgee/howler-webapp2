@@ -3,7 +3,7 @@ import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
 import { schemaCreate, schemaFilter, schemaUpdate, split_whitespace, trimSearchOperators } from "./eventSchema";
-import { type SqlBool, sql } from "kysely";
+import { sql } from "kysely";
 import { type GeoJSON } from "#src/db/geojson-types";
 
 export const eventRouter = createTRPCRouter({

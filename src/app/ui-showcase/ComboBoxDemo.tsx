@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, ChevronsUpDown } from "#src/icons";
+import { IconCheck } from "#src/icons/Check";
+import { IconChevronsUpDown } from "#src/icons/ChevronsUpDown";
 import { Button } from "#src/ui/button";
 import { cn } from "#src/utils/cn";
 import { Popover, PopoverTrigger, PopoverContent } from "#src/ui/popover";
@@ -40,7 +41,7 @@ export function ComboboxDemo() {
       <PopoverTrigger asChild>
         <Button variant="trigger" role="combobox" aria-expanded={open} className="w-52 justify-between">
           {value ? frameworks.find((framework) => framework.value === value)?.label : "Select framework..."}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <IconChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-52 p-0">
@@ -58,7 +59,7 @@ export function ComboboxDemo() {
                     setOpen(false);
                   }}
                 >
-                  <Check className={cn("mr-2 h-4 w-4", value === framework.value ? "opacity-100" : "opacity-0")} />
+                  <IconCheck className={cn("mr-2 h-4 w-4", value === framework.value ? "opacity-100" : "opacity-0")} />
                   {framework.label}
                 </CommandItem>
               ))}
