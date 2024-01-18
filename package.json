@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "analyze": "ANALYZE=true next build",
     "start": "next start",
     "bs": "next build && next start",
     "lint": "next lint && tsc --noEmit",
@@ -47,6 +48,7 @@
     "zustand": "^4.4.6"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^14.0.4",
     "@types/eslint": "^8.56.1",
     "@types/google.maps": "^3.54.10",
     "@types/node": "^20.9.2",

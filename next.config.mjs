@@ -1,5 +1,6 @@
 import "./src/utils/validate-process-env.mjs";
 import { NEXTCONFIG_imageSizes, NEXTCONFIG_deviceSizes } from "./src/utils/image-sizes-constants.mjs";
+import withBundleAnalyzer from "@next/bundle-analyzer";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -42,4 +43,4 @@ const nextConfig = {
   //},
 };
 
-export default nextConfig;
+export default withBundleAnalyzer({ enabled: process.env.ANALYZE === "true" })(nextConfig);
