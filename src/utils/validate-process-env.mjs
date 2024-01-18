@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 
 // import this file in next.config.mjs to validate process.env at build time
 // also update envSchema when changing .env

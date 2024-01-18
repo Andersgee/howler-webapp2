@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { schemaPoint } from "#src/db/geojson-types";
 import { getGoogleReverseGeocoding } from "#src/lib/geocoding";

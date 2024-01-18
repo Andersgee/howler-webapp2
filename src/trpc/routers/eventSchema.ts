@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 import { schemaPoint } from "#src/db/geojson-types";
 
 export const schemaCreate = z.object({

@@ -2,7 +2,7 @@
 //geojson spec: https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.2
 //types: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/geojson/index.d.ts
 
-import { z } from "zod";
+import * as z from "zod";
 
 //geojson also has "feature" equivalents that can have "properties" but mysql dont have those
 //mysql only allows 2d positions
