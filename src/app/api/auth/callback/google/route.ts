@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     // so just grab the payload part of the Base64-encoded object
     const id_token_payload = token.id_token.split(".")[1];
     if (!id_token_payload) throw new Error("no id token");
-    const userInfo = GOOGLE_USERINFO.parse(JSON.parse(Buffer.from(id_token_payload, "base64").toString()));
+    const userInfo = GOOGLE_USERINFO.parse(JSON.parse(Buffer.from(id_token_payload, "base64url").toString()));
 
     // Authenticate the user
     const existingUser = await db.selectFrom("User").selectAll().where("email", "=", userInfo.email).executeTakeFirst();

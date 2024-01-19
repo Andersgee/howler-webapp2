@@ -3,9 +3,12 @@ export const SESSION_COOKIE_NAME = "__Host-session";
 export const USER_COOKIE_NAME = "__Host-user";
 export const USER_COOKIE_MAXAGE = 2592000; //in seconds. 2592000 is 30 days, prob avoid anything longer than that
 
-/** remove with token="null" and maxAge=0 */
 export function userCookieString(token: string, maxAge: number) {
   return `${USER_COOKIE_NAME}=${token}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=${maxAge}`;
+}
+/** userCookieString with token="null" and maxAge=0 */
+export function userCookieRemoveString() {
+  return userCookieString("null", 0);
 }
 
 export function sessionCookieString(token: string) {

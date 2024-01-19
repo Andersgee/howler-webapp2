@@ -10,10 +10,10 @@ cookie prefixes are not technically needed but makes the browser assert some thi
 "__Host-" is the strongest assertion: secure and only for this domain.
 
 not setting "Max-Age" or "Expires" makes it a session cookie aka deleted when browser determines "session ends". 
-(side note: the particula browser chooses when "session ends" and there might be session restoration going on)
+(side note: the particular browser chooses when "session ends" and there might be session restoration going on)
 
-SameSite Lax and Strict only sends cookie with requests to this domain and nowhere else.
-but Strict also requires that the request itself comes from this domain.
+both SameSite=Lax and SameSite=Strict only sends cookie with requests to this domain and nowhere else.
+but SameSite=Strict also requires that the request itself comes from this domain.
 */
 
 export const dynamic = "force-dynamic";
