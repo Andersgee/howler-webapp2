@@ -60,7 +60,7 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
       router.push(`/event/${hashid}`);
     },
     onError: (_error, _variables, _context) => {
-      toast({ variant: "warn", title: "Couldnt update event", description: "Try again" });
+      toast({ variant: "warn", title: "Could not update event", description: "Try again" });
     },
   });
 
