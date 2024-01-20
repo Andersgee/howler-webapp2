@@ -27,18 +27,6 @@ type Props = {
 };
 
 export function CreateEventForm({ isSignedIn }: Props) {
-  const [showMap, setShowMap] = useState(false);
-  const dialogAction = useStore.use.dialogAction();
-  const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
-  const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
-    { point: googleMapsPickedPoint! },
-    {
-      enabled: isSignedIn && Boolean(googleMapsPickedPoint),
-      notifyOnChangeProps: ["data"],
-    }
-  );
-
-  const router = useRouter();
   const form = useForm<FormData>({
     resolver: zodResolver(schemaCreate),
     defaultValues: {
@@ -49,6 +37,24 @@ export function CreateEventForm({ isSignedIn }: Props) {
       who: "",
     },
   });
+  const [showMap, setShowMap] = useState(false);
+  const dialogAction = useStore.use.dialogAction();
+  const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
+  const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
+    { point: googleMapsPickedPoint! },
+    {
+      enabled: isSignedIn && Boolean(googleMapsPickedPoint),
+      notifyOnChangeProps: ["data"],
+    }
+  );
+  useEffect(() => {
+    if (googleMapsPickedPoint) {
+      console.log({ googleMapsPickedPoint });
+      form.setValue("location", googleMapsPickedPoint);
+    }
+  }, [googleMapsPickedPoint, form]);
+
+  const router = useRouter();
 
   const { toast } = useToast();
 
@@ -62,13 +68,6 @@ export function CreateEventForm({ isSignedIn }: Props) {
       toast({ variant: "warn", title: "Could not create event", description: "Try again" });
     },
   });
-
-  useEffect(() => {
-    if (googleMapsPickedPoint) {
-      console.log({ googleMapsPickedPoint });
-      form.setValue("location", googleMapsPickedPoint);
-    }
-  }, [googleMapsPickedPoint, form]);
 
   const onValid = (data: FormData) => {
     if (!isSignedIn) {
@@ -183,16 +182,20 @@ export function CreateEventForm({ isSignedIn }: Props) {
           )}
         />
 
-        {isSignedIn ? (
-          <Button type="submit" disabled={eventCreate.isPending}>
-            Howl
-          </Button>
-        ) : (
-          <div>
-            <p>(must sign in to create events)</p>
-            <Button onClick={() => dialogAction({ type: "show", name: "profilebutton" })}>Sign in</Button>
-          </div>
-        )}
+        <div className="flex gap-2 py-4">
+          {isSignedIn ? (
+            <Button variant="positive" type="submit" disabled={eventCreate.isPending}>
+              Create
+            </Button>
+          ) : (
+            <>
+              <Button variant="positive" onClick={() => dialogAction({ type: "show", name: "profilebutton" })}>
+                Create
+              </Button>
+              <p className="text-color-neutral-700">must sign in to create events</p>
+            </>
+          )}
+        </div>
       </form>
     </Form>
   );
