@@ -19,6 +19,7 @@ import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
 import { IconWho } from "#src/icons/Who";
+import { dialogAction } from "#src/store/slices/dialog";
 
 type FormData = z.infer<typeof schemaCreate>;
 
@@ -38,7 +39,6 @@ export function CreateEventForm({ isSignedIn }: Props) {
     },
   });
   const [showMap, setShowMap] = useState(false);
-  const dialogAction = useStore.use.dialogAction();
   const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
   //const googleMapsPickedPoint = useStore((s) => s.googleMapsPickedPoint);
   const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
