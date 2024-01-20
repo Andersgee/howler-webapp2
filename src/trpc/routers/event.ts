@@ -61,7 +61,9 @@ export const eventRouter = createTRPCRouter({
       .execute();
   }),
   getExplore: publicProcedure.input(schemaFilter).query(async ({ input }) => {
-    const withScore = !!input.titleOrLocationName;
+    const searchstring = input.titleOrLocationName ? trimSearchOperators(input.titleOrLocationName) : "";
+    const withScore = searchstring?.length >= 3;
+
     let q = dbfetch()
       .selectFrom("Event")
       .select(["id", "location", "locationName", "title"])
@@ -72,9 +74,10 @@ export const eventRouter = createTRPCRouter({
         //search = `>${search}`;
         //search = `${search}*`;
 
-        let search = input.titleOrLocationName!;
-        search = splitWhitespace(search).join("* ").concat("*");
+        //let search = input.titleOrLocationName!;
+        let search = splitWhitespace(searchstring).join("* ").concat("*");
         search = `>${search}`;
+        console.log(`search: '${search}'`);
         return qb
           .select(sql<number>`MATCH (title,locationName) AGAINST (${search} IN BOOLEAN MODE)`.as("score"))
           .orderBy("score desc");
@@ -91,10 +94,15 @@ export const eventRouter = createTRPCRouter({
 
     q = q
       .orderBy("id desc") //finally order by id desc aka latest created first
-      .limit(10);
+      .limit(5);
 
     //.orderBy("location", sql`IS NULL`).orderBy("location asc") //this is how to do null last
-    const result = await q.execute();
+    let result = await q.execute();
+
+    //Im sure its possible to do this conditional filter in the query itself... but this is fine
+    if (withScore) {
+      result = result.filter((x) => x.score! > 0);
+    }
 
     return { events: result, withScore };
   }),

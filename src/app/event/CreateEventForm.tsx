@@ -19,17 +19,22 @@ import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
 import { IconWho } from "#src/icons/Who";
-import { cn } from "#src/utils/cn";
 
 type FormData = z.infer<typeof schemaCreate>;
 
-export function CreateEventForm({ className }: { className?: string }) {
+type Props = {
+  isSignedIn: boolean;
+};
+
+export function CreateEventForm({ isSignedIn }: Props) {
   const [showMap, setShowMap] = useState(false);
+  const dialogAction = useStore.use.dialogAction();
   const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
   const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
     { point: googleMapsPickedPoint! },
     {
-      enabled: !!googleMapsPickedPoint,
+      enabled: isSignedIn && Boolean(googleMapsPickedPoint),
+      notifyOnChangeProps: ["data"],
     }
   );
 
@@ -65,9 +70,17 @@ export function CreateEventForm({ className }: { className?: string }) {
     }
   }, [googleMapsPickedPoint, form]);
 
+  const onValid = (data: FormData) => {
+    if (!isSignedIn) {
+      dialogAction({ type: "show", name: "profilebutton" });
+    } else {
+      eventCreate.mutate(data);
+    }
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((data) => eventCreate.mutate(data))} className={cn("space-y-2", className)}>
+      <form onSubmit={form.handleSubmit(onValid)} className="space-y-2">
         <FormField
           control={form.control}
           name="title"
@@ -170,9 +183,16 @@ export function CreateEventForm({ className }: { className?: string }) {
           )}
         />
 
-        <Button type="submit" disabled={eventCreate.isPending}>
-          Howl
-        </Button>
+        {isSignedIn ? (
+          <Button type="submit" disabled={eventCreate.isPending}>
+            Howl
+          </Button>
+        ) : (
+          <div>
+            <p>(must sign in to create events)</p>
+            <Button onClick={() => dialogAction({ type: "show", name: "profilebutton" })}>Sign in</Button>
+          </div>
+        )}
       </form>
     </Form>
   );
@@ -183,14 +203,8 @@ function Map({ show }: { show: boolean }) {
   const googleMaps = useStore.use.googleMaps();
   useEffect(() => {
     if (!googleMaps || didRun.current) return;
-
     googleMaps.setMode("pick-location");
     didRun.current = true;
-    //googleMaps.map.setOptions({
-    //  center: latLng,
-    //  heading: 0,
-    //  zoom: 11,
-    //});
   }, [googleMaps]);
 
   return show ? (

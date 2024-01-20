@@ -48,15 +48,20 @@ export const schemaUpdate = z.object({
 });
 
 export const schemaFilter = z.object({
-  titleOrLocationName: z.preprocess(
-    (x) => (typeof x === "string" ? trimSearchOperators(x) : x),
-    z
-      .string()
-      .min(3, { message: "must be at least 3 characters" })
-      .max(55, { message: "must be less than 55 characters" })
-      .optional()
-      .or(emptyStringAsUndefined)
-  ),
+  //titleOrLocationName: z.preprocess(
+  //  (x) => (typeof x === "string" ? trimSearchOperators(x) : x),
+  //  z
+  //    .string()
+  //    .min(3, { message: "must be at least 3 characters" })
+  //    .max(55, { message: "must be less than 55 characters" })
+  //    .optional()
+  //    .or(emptyStringAsUndefined)
+  //),
+  titleOrLocationName: z
+    .string()
+    .max(55, { message: "must be less than 55 characters" })
+    .optional()
+    .or(emptyStringAsUndefined),
   minDate: z.date().optional(),
   maxDate: z.date().optional(),
 });

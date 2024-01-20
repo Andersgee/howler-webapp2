@@ -3,15 +3,16 @@
 import { type RouterOutputs, api } from "#src/hooks/api";
 import { useStore } from "#src/store";
 import { setGoogleMapsExploreSelectedEventId } from "#src/store/actions";
-import { trimSearchOperators } from "#src/trpc/routers/eventSchema";
+
 import { Input } from "#src/ui/input";
 import { datetimelocalString } from "#src/utils/date";
 import { hashidFromId } from "#src/utils/hashid";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { InputSearch } from "./InputSearch";
 import { Collapsible, CollapsibleContent } from "@radix-ui/react-collapsible";
 import { Label } from "#src/ui/label";
+import { schemaFilter, trimSearchOperators } from "#src/trpc/routers/eventSchema";
 
 export function ControlSearch() {
   const googleMaps = useStore.use.googleMaps();
@@ -25,17 +26,23 @@ const MS_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
 
 function Content() {
   const googleMaps = useStore.use.googleMaps();
-  const [text, setText] = useState("");
+  const [titleOrLocationName, setTitleOrLocationName] = useState("");
   const [advancedSearch, setAdvancedSearch] = useState(false);
   const [minDate, setMinDate] = useState<Date>(new Date());
   const [maxDate, setMaxDate] = useState<Date>(new Date(Date.now() + MS_ONE_WEEK));
+  //const enabled = useMemo(()=>{
+  //  const trimmed = trimSearchOperators(titleOrLocationName)
+  //  return trimmed.length === 0 || trimmed.length>=3
+  //},[titleOrLocationName])
+
   const { data } = api.event.getExplore.useQuery(
     {
-      titleOrLocationName: text,
+      titleOrLocationName,
       minDate: advancedSearch ? minDate : undefined,
       maxDate: advancedSearch ? maxDate : undefined,
     },
     {
+      //enabled: titleOrLocationName.length
       //enabled: trimSearchOperators(text).length >= 3,
       //staleTime: 10000, //just for testing
       notifyOnChangeProps: ["data"], //not sure if needed.. default is smart-tracking but what does that mean?
@@ -44,40 +51,22 @@ function Content() {
 
   useEffect(() => {
     if (!googleMaps) return;
-
     googleMaps.setMode("explore");
-    //googleMaps.addEventsAsMarkers(initialEvents);
-    //googleMaps.map.setOptions({
-    //  center: latLng,
-    //  heading: 0,
-    //  zoom: 11,
-    //});
   }, [googleMaps]);
 
   useEffect(() => {
     if (!data || !googleMaps) return;
     googleMaps.markerClusterer.clearMarkers();
-    if (data.withScore) {
-      googleMaps.addEventsAsMarkers(data.events.filter((x) => x.score! > 0));
-    } else {
-      //no search string filter... just show all
-      googleMaps.addEventsAsMarkers(data.events);
-    }
+    googleMaps.addEventsAsMarkers(data.events);
   }, [data, googleMaps]);
 
   return (
     <Collapsible open={advancedSearch} onOpenChange={setAdvancedSearch} className="m-2">
       <InputSearch
-        suggestions={
-          data?.events
-            ? data.withScore
-              ? data.events.filter((x) => x.score! > 0).map(suggestionFromEvent)
-              : data.events.map(suggestionFromEvent)
-            : []
-        }
-        value={text}
+        suggestions={data?.events.map(suggestionFromEvent) ?? []}
+        value={titleOrLocationName}
         onChange={(s, id) => {
-          setText(s);
+          setTitleOrLocationName(s);
           if (id !== undefined) {
             //selected a suggestion
             const ev = data?.events.find((x) => x.id === id);
