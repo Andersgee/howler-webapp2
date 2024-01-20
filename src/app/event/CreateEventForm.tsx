@@ -40,6 +40,7 @@ export function CreateEventForm({ isSignedIn }: Props) {
   const [showMap, setShowMap] = useState(false);
   const dialogAction = useStore.use.dialogAction();
   const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
+  //const googleMapsPickedPoint = useStore((s) => s.googleMapsPickedPoint);
   const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
     { point: googleMapsPickedPoint! },
     {

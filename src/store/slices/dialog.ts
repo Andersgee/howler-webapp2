@@ -1,4 +1,5 @@
 import type { StateCreator } from "zustand";
+import { useStore } from "..";
 
 type Type = "show" | "hide" | "toggle";
 type Name = "profilebutton" | "notifications" | "warning";
@@ -21,3 +22,13 @@ export const createDialogSlice: StateCreator<DialogSlice, [], [], DialogSlice> =
       }
     }),
 });
+
+export function dialogAction(action: { type: Type; name: Name }) {
+  useStore.setState((prev) => {
+    if (action.type === "show" || (action.type === "toggle" && action.name !== prev.dialogValue)) {
+      return { dialogValue: action.name };
+    } else {
+      return { dialogValue: "none" };
+    }
+  });
+}
