@@ -2,12 +2,12 @@
 
 import { type RouterOutputs, api } from "#src/hooks/api";
 import { useStore } from "#src/store";
-import { setGoogleMapsExploreSelectedEventId } from "#src/store/actions";
+import { setGoogleMapsExploreSelectedEventId } from "#src/store/slices/map";
 
 import { Input } from "#src/ui/input";
 import { datetimelocalString } from "#src/utils/date";
 import { hashidFromId } from "#src/utils/hashid";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { InputSearch } from "./InputSearch";
 import { Collapsible, CollapsibleContent } from "@radix-ui/react-collapsible";

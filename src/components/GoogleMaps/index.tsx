@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useStore } from "#src/store";
 import { absUrl } from "#src/utils/url";
 import { ReversePortal } from "#src/lib/reverse-portal";
-import { initGoogleMaps, setGoogleMapsElement } from "#src/store/actions";
+import { initGoogleMaps, setGoogleMapsElement } from "#src/store/slices/map";
 
 /** parent decides size */
 export function GoogleMaps() {

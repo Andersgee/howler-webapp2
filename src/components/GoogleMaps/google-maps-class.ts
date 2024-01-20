@@ -1,5 +1,5 @@
 import { type RouterOutputs } from "#src/hooks/api";
-import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#src/store/actions";
+import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#src/store/slices/map";
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
 import { HOWLER_MAP_DARK, HOWLER_MAP_LIGHT } from "./custom-theme";
