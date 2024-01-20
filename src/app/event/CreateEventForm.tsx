@@ -52,7 +52,8 @@ export function CreateEventForm({ className }: { className?: string }) {
       form.reset();
       router.push(`/event/${hashid}`);
     },
-    onError: (_error, _variables, _context) => {
+    onError: (error, variables, context) => {
+      console.log({ error, variables, context });
       toast({ variant: "warn", title: "Could not create event", description: "Try again" });
     },
   });

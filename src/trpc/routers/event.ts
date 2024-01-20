@@ -2,7 +2,7 @@ import * as z from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
-import { schemaCreate, schemaFilter, schemaUpdate, split_whitespace, trimSearchOperators } from "./eventSchema";
+import { schemaCreate, schemaFilter, schemaUpdate, splitWhitespace, trimSearchOperators } from "./eventSchema";
 import { sql } from "kysely";
 import { type GeoJSON } from "#src/db/geojson-types";
 
@@ -18,13 +18,7 @@ export const eventRouter = createTRPCRouter({
   create: protectedProcedure.input(schemaCreate).mutation(async ({ input, ctx }) => {
     const insertResult = await dbfetch()
       .insertInto("Event")
-      .values({
-        creatorId: ctx.user.id,
-        title: input.title,
-        date: input.date,
-        location: input.location,
-        locationName: input.locationName ? input.locationName : undefined,
-      })
+      .values({ creatorId: ctx.user.id, ...input })
       .executeTakeFirstOrThrow();
 
     return { ...insertResult, hashid: hashidFromId(insertResult.insertId!) };
@@ -68,34 +62,44 @@ export const eventRouter = createTRPCRouter({
   }),
   getExplore: publicProcedure.input(schemaFilter).query(async ({ input }) => {
     const withScore = !!input.titleOrLocationName;
-    const result = await dbfetch()
+    let q = dbfetch()
       .selectFrom("Event")
       .select(["id", "location", "locationName", "title"])
       .$if(withScore, (qb) => {
-        let search = trimSearchOperators(input.titleOrLocationName!);
-        search = split_whitespace(search).join("* ").concat("*");
+        //let search = input.titleOrLocationName!;
+        //let search = trimSearchOperators(input.titleOrLocationName!);
+        //search = split_whitespace(search).join("* ").concat("*");
+        //search = `>${search}`;
+        //search = `${search}*`;
+
+        let search = input.titleOrLocationName!;
+        search = splitWhitespace(search).join("* ").concat("*");
         search = `>${search}`;
         return qb
           .select(sql<number>`MATCH (title,locationName) AGAINST (${search} IN BOOLEAN MODE)`.as("score"))
           .orderBy("score desc");
       })
       .where("location", "is not", null)
-      .$narrowType<{ location: GeoJSON["Point"] }>() //for typescript, make location not null
-      .$if(!!input.minDate, (qb) => {
-        return qb.where("date", ">", input.minDate!);
-      })
-      .$if(!!input.maxDate, (qb) => {
-        return qb.where("date", "<", input.maxDate!);
-      })
-      //.orderBy("location", sql`IS NULL`).orderBy("location asc") //this is how to do null last
+      .$narrowType<{ location: GeoJSON["Point"] }>(); //for typescript, make location not null
+
+    if (input.minDate) {
+      q = q.where("date", ">", input.minDate);
+    }
+    if (input.maxDate) {
+      q = q.where("date", "<", input.maxDate);
+    }
+
+    q = q
       .orderBy("id desc") //finally order by id desc aka latest created first
-      .limit(10)
-      .execute();
+      .limit(10);
+
+    //.orderBy("location", sql`IS NULL`).orderBy("location asc") //this is how to do null last
+    const result = await q.execute();
 
     return { events: result, withScore };
   }),
 
-  getFiltered: publicProcedure.input(schemaFilter).query(async ({ input }) => {
+  testingfulltext: publicProcedure.input(schemaFilter).query(async ({ input }) => {
     let q = dbfetch().selectFrom("Event").select(["title", "locationName", "id", "location"]);
 
     if (input.titleOrLocationName) {
@@ -103,7 +107,7 @@ export const eventRouter = createTRPCRouter({
       //TODO: play with actual search string a bit. perhaps add a "<" in front of last word
       //or smth to decrease its contribution since it might be an incomplete word, or add ">" to first word perhaps?..
       //see: https://dev.mysql.com/doc/refman/8.0/en/fulltext-boolean.html
-      search = split_whitespace(search).join("* ").concat("*");
+      //search = split_whitespace(search).join("* ").concat("*");
       search = `>${search}`;
 
       q = q

@@ -31,14 +31,14 @@ function Content() {
   const [maxDate, setMaxDate] = useState<Date>(new Date(Date.now() + MS_ONE_WEEK));
   const { data } = api.event.getExplore.useQuery(
     {
-      titleOrLocationName: trimSearchOperators(text).length >= 3 ? trimSearchOperators(text) : undefined,
+      titleOrLocationName: text,
       minDate: advancedSearch ? minDate : undefined,
       maxDate: advancedSearch ? maxDate : undefined,
     },
     {
       //enabled: trimSearchOperators(text).length >= 3,
       //staleTime: 10000, //just for testing
-      //notifyOnChangeProps: ["data"]
+      notifyOnChangeProps: ["data"], //not sure if needed.. default is smart-tracking but what does that mean?
     }
   );
 
