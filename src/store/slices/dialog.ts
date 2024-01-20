@@ -13,7 +13,7 @@ export const createDialogSlice: StateCreator<DialogSlice, [], [], DialogSlice> =
 
 type Action = { type: "show" | "hide" | "toggle"; name: Name };
 
-export function dialogAction(action: Action) {
+export function dialogDispatch(action: Action) {
   useStore.setState((prev) => {
     if (action.type === "show" || (action.type === "toggle" && action.name !== prev.dialogValue)) {
       return { dialogValue: action.name };

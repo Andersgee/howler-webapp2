@@ -20,16 +20,28 @@ import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
 import { IconWho } from "#src/icons/Who";
 import { cn } from "#src/utils/cn";
+import { ControlUnpickPoint } from "#src/components/GoogleMaps/control-unpick-point";
 
 //pretty much copy paste of <CreateEventFrom/>
 
-type FormData = z.infer<typeof schemaUpdate>;
+type FormData = z.input<typeof schemaUpdate>;
 type Props = {
   className?: string;
   initialEvent: RouterOutputs["event"]["getById"];
 };
 
 export function UpdateEventForm({ className, initialEvent }: Props) {
+  const form = useForm<FormData>({
+    resolver: zodResolver(schemaUpdate),
+    defaultValues: {
+      id: initialEvent.id,
+      title: initialEvent.title,
+      date: initialEvent.date,
+      location: initialEvent.location,
+      locationName: initialEvent.locationName ?? "",
+      //who: initialEvent.who ?? undefined
+    },
+  });
   const [showMap, setShowMap] = useState(false);
   const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
   const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
@@ -40,17 +52,6 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
   );
 
   const router = useRouter();
-  const form = useForm<FormData>({
-    resolver: zodResolver(schemaUpdate),
-    defaultValues: {
-      id: initialEvent.id,
-      title: initialEvent.title,
-      date: initialEvent.date,
-      location: initialEvent.location ?? undefined,
-      locationName: initialEvent.locationName ?? undefined,
-      //who: initialEvent.who ?? undefined
-    },
-  });
 
   const { toast } = useToast();
 
@@ -65,10 +66,7 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
   });
 
   useEffect(() => {
-    if (googleMapsPickedPoint) {
-      console.log({ googleMapsPickedPoint });
-      form.setValue("location", googleMapsPickedPoint);
-    }
+    form.setValue("location", googleMapsPickedPoint);
   }, [googleMapsPickedPoint, form]);
 
   return (
@@ -200,8 +198,11 @@ function Map({ show }: { show: boolean }) {
   }, [googleMaps]);
 
   return show ? (
-    <div className="h-96 w-full">
-      <GoogleMaps />
-    </div>
+    <>
+      <div className="h-96 w-full">
+        <GoogleMaps />
+      </div>
+      <ControlUnpickPoint />
+    </>
   ) : null;
 }

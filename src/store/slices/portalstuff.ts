@@ -1,11 +1,14 @@
 import type { StateCreator } from "zustand";
+import { useStore } from "..";
 
 export type PortastuffSlice = {
   portalstuffElement: HTMLDivElement | null;
-  portalstuffSetElement: (el: HTMLDivElement) => void;
 };
 
 export const portalstuffSlice: StateCreator<PortastuffSlice, [], [], PortastuffSlice> = (set, _get) => ({
   portalstuffElement: null,
-  portalstuffSetElement: (el) => set({ portalstuffElement: el }),
 });
+
+export function setPortalstuffElement(el: HTMLDivElement) {
+  useStore.setState({ portalstuffElement: el });
+}

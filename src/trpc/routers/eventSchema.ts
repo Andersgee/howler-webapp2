@@ -1,67 +1,79 @@
 import * as z from "zod";
 import { schemaPoint } from "#src/db/geojson-types";
 
-const emptyStringAsUndefined = z.literal("").transform(() => undefined);
-const emptyStringAsNull = z.literal("").transform(() => null);
-
-const trimString = (x: unknown) => (typeof x === "string" ? x.trim() : x);
-
 export const schemaCreate = z.object({
-  title: z.preprocess(
-    trimString,
-    z
-      .string()
-      .min(3, { message: "must be at least 3 characters" })
-      .max(55, { message: "must be less than 55 characters" })
-  ),
+  title: z
+    .string()
+    .transform((x) => x.trim())
+    .pipe(
+      z
+        .string()
+        .min(3, { message: "must be at least 3 characters" })
+        .max(55, { message: "must be less than 55 characters" })
+    ),
   date: z.date().optional(),
   location: schemaPoint.optional(),
-  locationName: z.preprocess(
-    trimString,
-    z.string().min(3, { message: "must be at least 3 characters (or empty)" }).optional().or(emptyStringAsUndefined)
-  ),
-  who: z.preprocess(
-    trimString,
-    z.string().min(3, { message: "must be at least 3 characters (or empty)" }).optional().or(emptyStringAsUndefined)
-  ),
+  locationName: z
+    .string()
+    .transform((s) => {
+      const r = s.trim();
+      return r === "" ? undefined : r;
+    })
+    .pipe(z.string().min(3, { message: "must be at least 3 characters (or empty)" }).optional()),
+  who: z
+    .string()
+    .transform((s) => {
+      const r = s.trim();
+      return r === "" ? undefined : r;
+    })
+    .pipe(z.string().min(3, { message: "must be at least 3 characters (or empty)" }).optional()),
 });
 
 export const schemaUpdate = z.object({
   id: z.bigint(),
-  title: z.preprocess(
-    trimString,
-    z
-      .string()
-      .min(3, { message: "must be at least 3 characters" })
-      .max(55, { message: "must be less than 55 characters" })
-  ),
+  title: z
+    .string()
+    .transform((x) => x.trim())
+    .pipe(
+      z
+        .string()
+        .min(3, { message: "must be at least 3 characters" })
+        .max(55, { message: "must be less than 55 characters" })
+    ),
   date: z.date().optional(),
-  location: schemaPoint.optional(),
-  locationName: z.preprocess(
-    trimString,
-    z.string().min(3, { message: "must be at least 3 characters (or empty)" }).optional().or(emptyStringAsNull)
-  ),
-  who: z.preprocess(
-    trimString,
-    z.string().min(3, { message: "must be at least 3 characters (or empty)" }).optional().or(emptyStringAsNull)
-  ),
+  location: schemaPoint.nullable(),
+  locationName: z
+    .string()
+    .transform((s) => {
+      //if (!s) return null;
+      const r = s.trim();
+      return r === "" ? null : r;
+    })
+    .pipe(z.string().min(3, { message: "must be at least 3 characters (or empty)" }).nullable()),
+  who: z
+    .string()
+    .transform((s) => {
+      //if (!s) return null;
+      const r = s.trim();
+      return r === "" ? null : r;
+    })
+    .pipe(z.string().min(3, { message: "must be at least 3 characters (or empty)" }).nullable()),
 });
 
 export const schemaFilter = z.object({
-  //titleOrLocationName: z.preprocess(
-  //  (x) => (typeof x === "string" ? trimSearchOperators(x) : x),
-  //  z
-  //    .string()
-  //    .min(3, { message: "must be at least 3 characters" })
-  //    .max(55, { message: "must be less than 55 characters" })
-  //    .optional()
-  //    .or(emptyStringAsUndefined)
-  //),
   titleOrLocationName: z
     .string()
-    .max(55, { message: "must be less than 55 characters" })
-    .optional()
-    .or(emptyStringAsUndefined),
+    .transform((s) => {
+      const r = trimSearchOperators(s);
+      return r === "" ? undefined : r;
+    })
+    .pipe(
+      z
+        .string()
+        .min(3, { message: "must be at least 3 characters" })
+        .max(55, { message: "must be less than 55 characters" })
+        .optional()
+    ),
   minDate: z.date().optional(),
   maxDate: z.date().optional(),
 });

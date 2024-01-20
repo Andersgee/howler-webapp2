@@ -19,9 +19,9 @@ import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
 import { IconWho } from "#src/icons/Who";
-import { dialogAction } from "#src/store/slices/dialog";
+import { dialogDispatch } from "#src/store/slices/dialog";
 
-type FormData = z.infer<typeof schemaCreate>;
+type FormData = z.input<typeof schemaCreate>;
 
 type Props = {
   isSignedIn: boolean;
@@ -72,7 +72,7 @@ export function CreateEventForm({ isSignedIn }: Props) {
 
   const onValid = (data: FormData) => {
     if (!isSignedIn) {
-      dialogAction({ type: "show", name: "profilebutton" });
+      dialogDispatch({ type: "show", name: "profilebutton" });
     } else {
       eventCreate.mutate(data);
     }
@@ -190,7 +190,7 @@ export function CreateEventForm({ isSignedIn }: Props) {
             </Button>
           ) : (
             <>
-              <Button variant="positive" onClick={() => dialogAction({ type: "show", name: "profilebutton" })}>
+              <Button variant="positive" onClick={() => dialogDispatch({ type: "show", name: "profilebutton" })}>
                 Create
               </Button>
               <p className="text-color-neutral-700">must sign in to create events</p>
