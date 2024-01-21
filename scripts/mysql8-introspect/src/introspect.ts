@@ -252,9 +252,26 @@ async function getTableTypes(db: DB) {
           const tsstring = `${ts_type_from_col(column)}${isNullable ? " | null" : ""}`;
 
           const isNullish = isGenerated && isNullable; //.nullish() aka null | undefined
-          const zodstring = `${zod_type_from_col(column)}${
-            isNullish ? ".nullish()" : isNullable ? ".nullable()" : isGenerated ? ".optional()" : ""
+          //basic "INSERT" schema
+          //const zod_insertstring = `${zod_type_from_col(column)}${
+          //  isNullish ? ".nullish()" : isNullable ? ".nullable()" : isGenerated ? ".optional()" : ""
+          //}`;
+          //actually, a "required but nullable col without default" will still default to NULL if not provided on insert
+          //https://dev.mysql.com/doc/refman/8.0/en/data-type-defaults.html quote:
+          //"If the column can take NULL as a value, the column is defined with an explicit DEFAULT NULL clause."
+          //but they mean "implicit". because my nullable cols dont have any explicit default values. typos in reference manuals are fun.
+          //
+          //anyway, for "INSERT" isNullable implies .nullish() ( not .nullable() ) in zod schema terms
+          //since it can be omitted and still get its NULL value
+          const zod_insertstring = `${zod_type_from_col(column)}${
+            isNullish ? ".nullish()" : isNullable ? ".nullish()" : isGenerated ? ".optional()" : ""
           }`;
+          //basic "UPDATE" schema (everything is .optional() meaning .nullable() becomes nullish() aka T | null | undefined
+          const zod_updatestring = `${zod_type_from_col(column)}${isNullable ? ".nullish()" : ".optional()"}`;
+
+          let prismastring = `${column.COLUMN_NAME} ${type}${
+            isNullable ? "?" : ""
+          } ${dbtype} ${atDefault} ${atUpdatedAt}`.trim();
 
           //special care for "prisma enum", which is defined separately eg "table level" in prisma but on "column level" in db and typescript types
           const isEnum = column.DATA_TYPE === "enum";
@@ -266,17 +283,9 @@ async function getTableTypes(db: DB) {
               enumName,
               variants,
             });
-            return {
-              ...column,
-              tableName,
-              colName,
-              defaultValue,
-              prismastring: `${column.COLUMN_NAME} ${enumName}${
-                isNullable ? "?" : ""
-              } ${atDefault} ${atUpdatedAt}`.trim(),
-              tsstring: `${colName}: ${isGenerated ? `Generated<${tsstring}>` : tsstring}`,
-              zodstring: `${colName}: ${zodstring}`,
-            };
+            prismastring = `${column.COLUMN_NAME} ${enumName}${
+              isNullable ? "?" : ""
+            } ${atDefault} ${atUpdatedAt}`.trim();
           }
 
           return {
@@ -284,11 +293,10 @@ async function getTableTypes(db: DB) {
             tableName,
             colName,
             defaultValue,
-            prismastring: `${column.COLUMN_NAME} ${type}${
-              isNullable ? "?" : ""
-            } ${dbtype} ${atDefault} ${atUpdatedAt}`.trim(),
+            prismastring,
             tsstring: `${colName}: ${isGenerated ? `Generated<${tsstring}>` : tsstring}`,
-            zodstring: `${colName}: ${zodstring}`,
+            zod_insertstring: `${colName}: ${zod_insertstring}`,
+            zod_updatestring: `${colName}: ${zod_updatestring}`,
           };
         }),
       ] as const;

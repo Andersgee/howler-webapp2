@@ -35,7 +35,14 @@ export function useImageUpload(eventId: bigint, options?: Options) {
 
       setIsUploading(true);
       try {
-        const imageAspect = await getImageAspectRatio(file);
+        const { imageAspect, width } = await getImageAspectRatio(file);
+
+        const sharp = (await import("sharp")).default;
+
+        const optimizedFileBuffer = await sharp(await file.arrayBuffer())
+          .resize(Math.min(384, width))
+          .webp()
+          .toBuffer();
 
         //get signed
         const url = `/api/gcs?eventId=${eventId}&contentType=${file.type}`;
@@ -51,7 +58,8 @@ export function useImageUpload(eventId: bigint, options?: Options) {
             "Cache-Control": "public, max-age=2592000",
             "X-Goog-Content-Length-Range": "0,10000000",
           },
-          body: file,
+          //body: file,
+          body: optimizedFileBuffer,
         });
         if (!bucketres) {
           throw new Error("could not upload");
@@ -79,13 +87,13 @@ export function useImageUpload(eventId: bigint, options?: Options) {
   return { uploadFile, isUploading };
 }
 
-async function getImageAspectRatio(file: File): Promise<number> {
+async function getImageAspectRatio(file: File): Promise<{ width: number; height: number; imageAspect: number }> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
-      const aspectRatio = img.width / img.height;
+      const data = { width: img.width, height: img.height, imageAspect: img.width / img.height };
       URL.revokeObjectURL(img.src);
-      resolve(aspectRatio);
+      resolve(data);
     };
     img.onerror = reject;
     img.src = URL.createObjectURL(file);
