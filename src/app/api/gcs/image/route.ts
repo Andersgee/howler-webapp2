@@ -1,9 +1,8 @@
 import { dbfetch } from "#src/db";
 import { deleteImageFromBucket, generateV4UploadSignedUrl } from "#src/lib/cloud-storage";
 import { hashidFromId } from "#src/utils/hashid";
-import { JSONE } from "#src/utils/jsone";
 import { getUserFromRequestCookie } from "#src/utils/jwt";
-import { type NextRequest, NextResponse } from "next/server";
+import { type NextRequest } from "next/server";
 import sharp from "sharp";
 import * as z from "zod";
 
@@ -65,7 +64,7 @@ export async function POST(request: NextRequest) {
   if (!bucketres.ok) throw new Error("could not upload");
 
   //update image in db
-  const updateResult = await db
+  const _updateResult = await db
     .updateTable("Event")
     .where("id", "=", params.eventId)
     .where("creatorId", "=", user.id)
@@ -82,5 +81,5 @@ export async function POST(request: NextRequest) {
   }
 
   //const ok = updateResult.numUpdatedRows > 0;
-  return new Response(null, { status: 200 });
+  return new Response(imageUrl, { status: 200 });
 }

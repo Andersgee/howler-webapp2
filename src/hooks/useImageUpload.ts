@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import * as z from "zod";
 import { JSONE } from "#src/utils/jsone";
 import { errorMessageFromUnkown } from "#src/utils/errormessage";
+import { encodeParams, urlWithSearchparams } from "#src/utils/url";
 
 /*
 1. check file type and size
@@ -35,21 +36,27 @@ export function useImageUpload(eventId: bigint, options?: Options) {
 
       setIsUploading(true);
       try {
-        const { imageAspect, width } = await getImageAspectRatio(file);
-
+        const { imageAspect, width, height } = await getImageAspectRatio(file);
         /*
-        console.log("importing sharp...");
-        const sharp = (await import("sharp")).default;
-        console.log("...done");
-
-        console.log("optimizing image...");
-        const optimizedFileBuffer = await sharp(await file.arrayBuffer())
-          .resize(Math.min(384, width))
-          .webp()
-          .toBuffer();
-        console.log("...done");
+        const params = z
+    .object({
+      eventId: z.coerce.bigint(),
+      contentType: z.enum(["image/png", "image/jpeg"]),
+      w: z.coerce.number(),
+      h: z.coerce.number(),
+    })
         */
+        const fileBuffer = await file.arrayBuffer();
+        const url = `/api/gcs/image?${encodeParams({
+          eventId: eventId.toString(),
+          contentType: file.type,
+          w: width,
+          h: height,
+        })}`;
+        const imageUrl = await fetch(url, { method: "POST", body: fileBuffer }).then((res) => res.text());
 
+        options?.onSuccess?.({ image: imageUrl, imageAspect });
+        /*
         //get signed
         const url = `/api/gcs?eventId=${eventId}&contentType=${file.type}`;
         const { signedUploadUrl, imageUrl } = z
@@ -81,6 +88,7 @@ export function useImageUpload(eventId: bigint, options?: Options) {
         }
 
         options?.onSuccess?.({ image: imageUrl, imageAspect });
+        */
       } catch (err) {
         console.error(errorMessageFromUnkown(err));
         options?.onError?.("Something went wrong.");
