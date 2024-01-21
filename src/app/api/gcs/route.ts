@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 //also make sure to delete image from bucket
 //it might be worth thinking about optimizing the saved image in bucket? before upload? after upload? on client side?
 //if client side we could actually use dynamic import and not import "sharp" until needed,
-//I think that might be the way to go.
+//I think that might be the way to go. nope. cant use sharp in browser.
 export async function POST(request: NextRequest) {
   const user = await getUserFromRequestCookie(request);
   if (!user) return NextResponse.json("Unauthorized", { status: 401 });

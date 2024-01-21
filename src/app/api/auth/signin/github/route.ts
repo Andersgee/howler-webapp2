@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       //allow_signup: "false", //default is true, which allows a person to create an account aswell
     });
 
-    return new Response(undefined, {
+    return new Response(null, {
       status: 303,
       headers: {
         Location: authRequestUrl.toString(),
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     //console.error(errorMessageFromUnkown(error));
-    return new Response(undefined, {
+    return new Response(null, {
       status: 303,
       headers: {
         Location: absUrl(),

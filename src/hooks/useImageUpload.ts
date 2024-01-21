@@ -19,7 +19,6 @@ type Options = {
   onError?: (msg: string) => void;
 };
 
-/** I think this required runtime node now that we are using "sharp" to optimize image before user sends it to bucket */
 export function useImageUpload(eventId: bigint, options?: Options) {
   const [isUploading, setIsUploading] = useState(false);
 

@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       nonce: crypto.randomUUID(),
     });
 
-    return new Response(undefined, {
+    return new Response(null, {
       status: 303,
       headers: {
         Location: authRequestUrl.toString(),
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     //console.error(errorMessageFromUnkown(error));
-    return new Response(undefined, {
+    return new Response(null, {
       status: 303,
       headers: {
         Location: absUrl(),

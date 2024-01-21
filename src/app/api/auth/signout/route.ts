@@ -7,7 +7,7 @@ export const runtime = "edge";
 
 export function GET(request: NextRequest) {
   const route = request.nextUrl.searchParams.get("route") ?? "";
-  return new Response(undefined, {
+  return new Response(null, {
     status: 303,
     headers: {
       "Location": absUrl(route),

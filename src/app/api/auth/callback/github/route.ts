@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
 
     const userCookie = await createTokenFromUser(tokenUser);
 
-    return new Response(undefined, {
+    return new Response(null, {
       status: 303,
       headers: {
         "Location": absUrl(state.route),
@@ -127,7 +127,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     //console.error(errorMessageFromUnkown(error));
-    return new Response(undefined, {
+    return new Response(null, {
       status: 303,
       headers: {
         Location: absUrl(),
