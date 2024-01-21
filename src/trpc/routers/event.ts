@@ -24,6 +24,7 @@ export const eventRouter = createTRPCRouter({
     return { ...insertResult, hashid: hashidFromId(insertResult.insertId!) };
   }),
   update: protectedProcedure.input(schemaUpdate).mutation(async ({ input, ctx }) => {
+    console.log("api, input:", input);
     const updateResult = await dbfetch()
       .updateTable("Event")
       .where("id", "=", input.id)
@@ -61,8 +62,7 @@ export const eventRouter = createTRPCRouter({
       .execute();
   }),
   getExplore: publicProcedure.input(schemaFilter).query(async ({ input }) => {
-    const searchstring = input.titleOrLocationName ? trimSearchOperators(input.titleOrLocationName) : "";
-    const withScore = searchstring?.length >= 3;
+    const withScore = !!input.titleOrLocationName;
 
     let q = dbfetch()
       .selectFrom("Event")
@@ -75,7 +75,7 @@ export const eventRouter = createTRPCRouter({
         //search = `${search}*`;
 
         //let search = input.titleOrLocationName!;
-        let search = splitWhitespace(searchstring).join("* ").concat("*");
+        let search = splitWhitespace(input.titleOrLocationName!).join("* ").concat("*");
         search = `>${search}`;
         console.log(`search: '${search}'`);
         return qb

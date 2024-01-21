@@ -16,13 +16,23 @@ export function ControlUnpickPoint() {
 
 function Content() {
   const point = useStore.use.googleMapsPickedPoint();
+  const googleMaps = useStore.use.googleMaps();
 
   if (!point) {
     return null;
   }
 
   return (
-    <Button variant="icon" aria-label="unpick-point" onClick={() => setGoogleMapsPickedPoint(null)}>
+    <Button
+      variant="icon"
+      aria-label="unpick-point"
+      onClick={() => {
+        if (googleMaps) {
+          googleMaps.primaryMarker.position = null;
+        }
+        setGoogleMapsPickedPoint(null);
+      }}
+    >
       <IconLocateOff />
     </Button>
   );

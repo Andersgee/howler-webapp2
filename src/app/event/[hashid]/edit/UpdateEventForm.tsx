@@ -2,13 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type z } from "zod";
 import { type RouterOutputs, api } from "#src/hooks/api";
 import { Button } from "#src/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "#src/ui/form";
 import { Input } from "#src/ui/input";
 import { useToast } from "#src/ui/use-toast";
-import { schemaUpdate } from "#src/trpc/routers/eventSchema";
 import { useRouter } from "next/navigation";
 import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
@@ -21,10 +19,11 @@ import { IconWhere } from "#src/icons/Where";
 import { IconWho } from "#src/icons/Who";
 import { cn } from "#src/utils/cn";
 import { ControlUnpickPoint } from "#src/components/GoogleMaps/control-unpick-point";
+import { schemaFormUpdate } from "#src/trpc/routers/eventSchema";
+import { type z } from "zod";
+import { type GeoJSON } from "#src/db/geojson-types";
 
-//pretty much copy paste of <CreateEventFrom/>
-
-type FormData = z.input<typeof schemaUpdate>;
+type FormData = z.input<typeof schemaFormUpdate>;
 type Props = {
   className?: string;
   initialEvent: RouterOutputs["event"]["getById"];
@@ -32,14 +31,14 @@ type Props = {
 
 export function UpdateEventForm({ className, initialEvent }: Props) {
   const form = useForm<FormData>({
-    resolver: zodResolver(schemaUpdate),
+    resolver: zodResolver(schemaFormUpdate),
     defaultValues: {
       id: initialEvent.id,
       title: initialEvent.title,
       date: initialEvent.date,
       location: initialEvent.location,
       locationName: initialEvent.locationName ?? "",
-      //who: initialEvent.who ?? undefined
+      who: "",
     },
   });
   const [showMap, setShowMap] = useState(false);
@@ -67,6 +66,8 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
 
   useEffect(() => {
     form.setValue("location", googleMapsPickedPoint);
+    if (!googleMapsPickedPoint) {
+    }
   }, [googleMapsPickedPoint, form]);
 
   return (
@@ -121,7 +122,7 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
             </FormItem>
           )}
         />
-        <Map show={showMap} />
+        <Map show={showMap} initialLocation={initialEvent.location} />
 
         <FormField
           control={form.control}
@@ -134,7 +135,7 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
                 <FormControl>
                   <Input
                     type="datetime-local"
-                    value={datetimelocalString(field.value!)}
+                    value={datetimelocalString(field.value)}
                     onChange={(e) => {
                       if (!e.target.value) return;
                       form.setValue("date", new Date(e.target.value));
@@ -182,27 +183,31 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
   );
 }
 
-function Map({ show }: { show: boolean }) {
+function Map({ show, initialLocation }: { show: boolean; initialLocation: null | GeoJSON["Point"] }) {
   const didRun = useRef(false);
   const googleMaps = useStore.use.googleMaps();
   useEffect(() => {
     if (!googleMaps || didRun.current) return;
 
     googleMaps.setMode("pick-location");
+    if (initialLocation) {
+      const latLng = { lat: initialLocation.coordinates[0], lng: initialLocation.coordinates[1] };
+      googleMaps.primaryMarker.position = latLng;
+      googleMaps.map.setOptions({
+        center: latLng,
+        heading: 0,
+        zoom: 11,
+      });
+    }
     didRun.current = true;
-    //googleMaps.map.setOptions({
-    //  center: latLng,
-    //  heading: 0,
-    //  zoom: 11,
-    //});
-  }, [googleMaps]);
+  }, [googleMaps, initialLocation]);
 
   return show ? (
     <>
       <div className="h-96 w-full">
         <GoogleMaps />
+        <ControlUnpickPoint />
       </div>
-      <ControlUnpickPoint />
     </>
   ) : null;
 }

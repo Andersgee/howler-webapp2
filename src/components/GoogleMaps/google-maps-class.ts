@@ -161,6 +161,7 @@ export class GoogleMapsClass {
 
       this.controls_element_locate = document.createElement("div");
       this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM]!.push(this.controls_element_locate);
+      this.controls_element_unpick_point = document.createElement("div");
       this.map.controls[google.maps.ControlPosition.TOP_RIGHT]!.push(this.controls_element_unpick_point);
 
       //https://github.com/mapbox/supercluster#readme
