@@ -41,6 +41,17 @@ export const schemaGeometryCollection = z.object({
 });
 export type GeometryCollection = z.infer<typeof schemaGeometryCollection>;
 
+export const schemaGeoJSON = {
+  Point: schemaPoint,
+  LineString: schemaLineString,
+  Polygon: schemaPolygon,
+  Geometry: schemaGeometry,
+  MultiPoint: schemaMultiPoint,
+  MultiLineString: schemaMultiLineString,
+  MultiPolygon: schemaMultiPolygon,
+  GeometryCollection: schemaGeometryCollection,
+};
+
 //export type Position = [x: number, y: number];
 
 //there are only 3 "geometry" types

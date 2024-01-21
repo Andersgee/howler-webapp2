@@ -8,6 +8,7 @@ import {
 import { ts_type_from_col } from "./mysql-typescript-map";
 import { groupBy } from "./utils";
 import type { MysqlDB } from "./mysqldb";
+import { zod_type_from_col } from "./mysql-zod-map";
 
 type DB = Kysely<MysqlDB>;
 
@@ -250,6 +251,11 @@ async function getTableTypes(db: DB) {
           const colName = column.COLUMN_NAME;
           const tsstring = `${ts_type_from_col(column)}${isNullable ? " | null" : ""}`;
 
+          const isNullish = isGenerated && isNullable; //.nullish() aka null | undefined
+          const zodstring = `${zod_type_from_col(column)}${
+            isNullish ? ".nullish()" : isNullable ? ".nullable()" : isGenerated ? ".optional()" : ""
+          }`;
+
           //special care for "prisma enum", which is defined separately eg "table level" in prisma but on "column level" in db and typescript types
           const isEnum = column.DATA_TYPE === "enum";
           if (isEnum) {
@@ -269,6 +275,7 @@ async function getTableTypes(db: DB) {
                 isNullable ? "?" : ""
               } ${atDefault} ${atUpdatedAt}`.trim(),
               tsstring: `${colName}: ${isGenerated ? `Generated<${tsstring}>` : tsstring}`,
+              zodstring: `${colName}: ${zodstring}`,
             };
           }
 
@@ -281,6 +288,7 @@ async function getTableTypes(db: DB) {
               isNullable ? "?" : ""
             } ${dbtype} ${atDefault} ${atUpdatedAt}`.trim(),
             tsstring: `${colName}: ${isGenerated ? `Generated<${tsstring}>` : tsstring}`,
+            zodstring: `${colName}: ${zodstring}`,
           };
         }),
       ] as const;
