@@ -19,6 +19,7 @@ type Options = {
   onError?: (msg: string) => void;
 };
 
+/** I think this required runtime node now that we are using "sharp" to optimize image before user sends it to bucket */
 export function useImageUpload(eventId: bigint, options?: Options) {
   const [isUploading, setIsUploading] = useState(false);
 
@@ -37,12 +38,18 @@ export function useImageUpload(eventId: bigint, options?: Options) {
       try {
         const { imageAspect, width } = await getImageAspectRatio(file);
 
+        /*
+        console.log("importing sharp...");
         const sharp = (await import("sharp")).default;
+        console.log("...done");
 
+        console.log("optimizing image...");
         const optimizedFileBuffer = await sharp(await file.arrayBuffer())
           .resize(Math.min(384, width))
           .webp()
           .toBuffer();
+        console.log("...done");
+        */
 
         //get signed
         const url = `/api/gcs?eventId=${eventId}&contentType=${file.type}`;
@@ -58,8 +65,8 @@ export function useImageUpload(eventId: bigint, options?: Options) {
             "Cache-Control": "public, max-age=2592000",
             "X-Goog-Content-Length-Range": "0,10000000",
           },
-          //body: file,
-          body: optimizedFileBuffer,
+          body: file,
+          //body: optimizedFileBuffer,
         });
         if (!bucketres) {
           throw new Error("could not upload");

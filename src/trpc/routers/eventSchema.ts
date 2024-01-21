@@ -20,13 +20,17 @@ export const schemaCreate = z.object({
       return r === "" ? undefined : r;
     })
     .pipe(z.string().min(3, { message: "must be at least 3 characters (or empty)" }).optional()),
+  //who: z
+  //  .string()
+  //  .transform((s) => {
+  //    const r = s.trim();
+  //    return r === "" ? undefined : r;
+  //  })
+  //  .pipe(z.string().min(3, { message: "must be at least 3 characters (or empty)" }).optional()),
   who: z
     .string()
-    .transform((s) => {
-      const r = s.trim();
-      return r === "" ? undefined : r;
-    })
-    .pipe(z.string().min(3, { message: "must be at least 3 characters (or empty)" }).optional()),
+    .optional()
+    .transform(() => undefined), //didnt add "who" to db yet
 });
 
 //for client side form, dont change type with transforms
