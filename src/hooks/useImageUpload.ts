@@ -18,10 +18,19 @@ const MAX_SIZE_BYTES = 10000000;
 type Options = {
   onSuccess?: ({ image, imageAspect }: { image: string; imageAspect: number }) => void;
   onError?: (msg: string) => void;
+  uploadTimerMs?: number;
 };
 
 export function useImageUpload(eventId: bigint, options?: Options) {
   const [isUploading, setIsUploading] = useState(false);
+  const [abortController] = useState(() => new AbortController());
+
+  const [uploadTimerIsReached, setUploadTimerIsReached] = useState(false);
+
+  const cancelUpload = useCallback(() => {
+    abortController.abort();
+    setUploadTimerIsReached(false);
+  }, [abortController]);
 
   const uploadFile = useCallback(
     async (file: File) => {
@@ -45,8 +54,10 @@ export function useImageUpload(eventId: bigint, options?: Options) {
           .parse(await fetch(url, { method: "GET" }).then((res) => res.json()));
 
         //upload to bucket, headers must match bucket config
+        const timer = setTimeout(() => setUploadTimerIsReached(true), options?.uploadTimerMs ?? 30000);
         const bucketres = await fetch(signedUploadUrl, {
           method: "PUT",
+          signal: abortController.signal,
           headers: {
             "Content-Type": file.type,
             "Cache-Control": "public, max-age=2592000",
@@ -54,6 +65,8 @@ export function useImageUpload(eventId: bigint, options?: Options) {
           },
           body: file,
         });
+        clearTimeout(timer);
+        setUploadTimerIsReached(false);
         if (!bucketres.ok) {
           throw new Error("could not upload");
         }
@@ -69,15 +82,17 @@ export function useImageUpload(eventId: bigint, options?: Options) {
 
         options?.onSuccess?.({ image: imageUrl, imageAspect });
       } catch (err) {
-        console.error(errorMessageFromUnkown(err));
+        abortController.abort();
+        setIsUploading(false);
+        console.log(errorMessageFromUnkown(err));
         options?.onError?.("Something went wrong.");
       }
       setIsUploading(false);
     },
-    [eventId, options]
+    [eventId, options, abortController]
   );
 
-  return { uploadFile, isUploading };
+  return { uploadFile, isUploading, cancelUpload, uploadTimerIsReached };
 }
 
 /**
