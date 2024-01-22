@@ -34,9 +34,9 @@ function Content() {
   //  return trimmed.length === 0 || trimmed.length>=3
   //},[titleOrLocationName])
 
-  const { data } = api.event.getExplore.useQuery(
+  const { data } = api.event.explore.useQuery(
     {
-      titleOrLocationName,
+      titleOrLocationName: titleOrLocationName.trim(),
       minDate: advancedSearch ? minDate : undefined,
       maxDate: advancedSearch ? maxDate : undefined,
     },
@@ -121,7 +121,7 @@ function Content() {
   );
 }
 
-function suggestionFromEvent(e: RouterOutputs["event"]["getExplore"]["events"][number]) {
+function suggestionFromEvent(e: RouterOutputs["event"]["explore"]["events"][number]) {
   return {
     key: e.id,
     label: `${e.title} ${e.locationName ?? ""}`.trim(),

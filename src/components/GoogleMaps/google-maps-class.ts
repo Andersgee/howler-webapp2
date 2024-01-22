@@ -194,7 +194,7 @@ export class GoogleMapsClass {
     }
   }
 
-  addEventsAsMarkers(events: RouterOutputs["event"]["getAll"]) {
+  addEventsAsMarkers(events: RouterOutputs["event"]["explore"]["events"]) {
     const markers = events.map((event) => {
       const glyphImg = document.createElement("img");
       glyphImg.src = absUrl("/icons/pin.svg");
