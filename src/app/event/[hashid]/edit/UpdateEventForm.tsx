@@ -7,7 +7,6 @@ import { Button } from "#src/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "#src/ui/form";
 import { Input } from "#src/ui/input";
 import { useToast } from "#src/ui/use-toast";
-import { useRouter } from "next/navigation";
 import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { useStore } from "#src/store";
@@ -21,8 +20,8 @@ import { cn } from "#src/utils/cn";
 import { ControlUnpickPoint } from "#src/components/GoogleMaps/control-unpick-point";
 import { z } from "zod";
 import { zGeoJsonPoint, type GeoJSON } from "#src/db/geojson-types";
-import { actionUpdate } from "./actions";
-import { hashidFromId } from "#src/utils/hashid";
+import { actionOnSuccess } from "./actions";
+import { setGoogleMapsPickedPoint } from "#src/store/slices/map";
 
 const zFormData = z.object({
   id: z.bigint(),
@@ -49,7 +48,7 @@ type Props = {
 };
 
 export function UpdateEventForm({ className, initialEvent }: Props) {
-  const actionUpdateWithInfo = actionUpdate.bind(null, initialEvent.id.toString());
+  //const actionUpdateWithInfo = actionOnSuccess.bind(null, initialEvent.id.toString());
 
   const form = useForm<FormData>({
     resolver: zodResolver(zFormData),
@@ -62,7 +61,14 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
     },
   });
   const [showMap, setShowMap] = useState(false);
+
+  useEffect(() => {
+    if (initialEvent.location) {
+      setGoogleMapsPickedPoint(initialEvent.location);
+    }
+  }, [initialEvent]);
   const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
+
   const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
     { point: googleMapsPickedPoint! },
     {
@@ -70,15 +76,15 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
     }
   );
 
-  const router = useRouter();
+  //const router = useRouter();
 
   const { toast } = useToast();
 
   const eventUpdate = api.event.update.useMutation({
     onSuccess: ({ hashid }) => {
       //form.reset();
-      //router.push(`/event/${hashid}`); //this does not bust router cache
-      void actionUpdateWithInfo();
+      //router.push(`/event/${hashid}`); //revalidating in route handler does not bust router cache
+      void actionOnSuccess(initialEvent.id.toString()); //so revalidate in server action, and might aswell redirect there aswell
     },
     onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Could not update event", description: "Try again" });

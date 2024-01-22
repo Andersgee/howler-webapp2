@@ -5,9 +5,8 @@ import { hashidFromId } from "#src/utils/hashid";
 import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
-export function actionUpdate(eventIdString: string, _data?: FormData) {
-  //await sleep(1000);
-  console.log("hello from actionUpdate");
+// eslint-disable-next-line @typescript-eslint/require-await
+export async function actionOnSuccess(eventIdString: string) {
   const eventId = BigInt(eventIdString);
   revalidateTag(eventTags.info(eventId));
   //redirect(`/event/${hashidFromId(eventId)}`,RedirectType.push); //default in server actions
