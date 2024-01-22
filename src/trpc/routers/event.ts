@@ -73,7 +73,11 @@ export const eventRouter = createTRPCRouter({
 
       const withScore = trimmedStr.length > 0;
 
-      let q = dbfetch()
+      //I need to show ALL events (that has location) as default scenario
+      //to put that default scenario in cache where no filters are applied
+      const db = !withScore && !input.minDate && !input.maxDate ? dbfetch({ next: { revalidate: 10 } }) : dbfetch();
+
+      let q = db
         .selectFrom("Event")
         .select(["id", "location", "locationName", "title"])
         .$if(withScore, (qb) => {
@@ -93,9 +97,13 @@ export const eventRouter = createTRPCRouter({
         q = q.where("date", "<", input.maxDate);
       }
 
-      q = q
-        .orderBy("id desc") //finally order by id desc aka latest created first
-        .limit(5);
+      q = q.orderBy("id desc"); //finally order by id desc aka latest created first
+
+      if (withScore) {
+        q = q.limit(5);
+      } else {
+        //just grab everything I guess, need to show all on map
+      }
 
       //.orderBy("location", sql`IS NULL`).orderBy("location asc") //this is how to do null last
       let result = await q.execute();

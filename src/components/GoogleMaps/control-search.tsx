@@ -62,7 +62,7 @@ function Content() {
   return (
     <Collapsible open={advancedSearch} onOpenChange={setAdvancedSearch} className="m-2">
       <InputSearch
-        suggestions={data?.events.map(suggestionFromEvent) ?? []}
+        suggestions={data?.events.slice(0, 5).map(suggestionFromEvent) ?? []}
         value={titleOrLocationName}
         onChange={(s, id) => {
           setTitleOrLocationName(s);
