@@ -1,10 +1,13 @@
-import * as z from "zod";
+import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
-import { schemaCreate, schemaFilter, schemaUpdate, splitWhitespace, trimSearchOperators } from "./eventSchema";
+import { schemaFilter, schemaUpdate, splitWhitespace, trimSearchOperators } from "./eventSchema";
 import { sql } from "kysely";
-import { type GeoJSON } from "#src/db/geojson-types";
+import { schemaPoint, type Point } from "#src/db/geojson-types";
+
+/** strings less than 3 chars will not be stored in fulltext indexed */
+const zFulltextString = z.string().min(3).max(55);
 
 export const eventRouter = createTRPCRouter({
   latest: publicProcedure.query(async () => {
@@ -15,14 +18,25 @@ export const eventRouter = createTRPCRouter({
       .limit(10)
       .execute();
   }),
-  create: protectedProcedure.input(schemaCreate).mutation(async ({ input, ctx }) => {
-    const insertResult = await dbfetch()
-      .insertInto("Event")
-      .values({ creatorId: ctx.user.id, ...input })
-      .executeTakeFirstOrThrow();
+  create: protectedProcedure
+    .input(
+      z.object({
+        title: zFulltextString,
+        date: z.date(),
+        location: schemaPoint.nullish(),
+        locationName: zFulltextString.nullish(),
+        //image: z.string().nullish(),
+        //imageAspect: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const insertResult = await dbfetch()
+        .insertInto("Event")
+        .values({ ...input, creatorId: ctx.user.id })
+        .executeTakeFirstOrThrow();
 
-    return { ...insertResult, hashid: hashidFromId(insertResult.insertId!) };
-  }),
+      return { ...insertResult, hashid: hashidFromId(insertResult.insertId!) };
+    }),
   update: protectedProcedure.input(schemaUpdate).mutation(async ({ input, ctx }) => {
     console.log("api, input:", input);
     const updateResult = await dbfetch()
@@ -56,7 +70,7 @@ export const eventRouter = createTRPCRouter({
       .selectFrom("Event")
       .select(["id", "location"])
       .where("location", "is not", null)
-      .$narrowType<{ location: GeoJSON["Point"] }>() //for typescript, make location not null
+      .$narrowType<{ location: Point }>() //for typescript, make location not null
       .orderBy("id desc")
       //.where("date",">", new Date())
       .execute();
@@ -83,7 +97,7 @@ export const eventRouter = createTRPCRouter({
           .orderBy("score desc");
       })
       .where("location", "is not", null)
-      .$narrowType<{ location: GeoJSON["Point"] }>(); //for typescript, make location not null
+      .$narrowType<{ location: Point }>(); //for typescript, make location not null
 
     if (input.minDate) {
       q = q.where("date", ">", input.minDate);

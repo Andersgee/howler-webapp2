@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import * as z from "zod";
+import { z } from "zod";
 import { JSONE } from "#src/utils/jsone";
 import { errorMessageFromUnkown } from "#src/utils/errormessage";
 import { encodeParams } from "#src/utils/url";

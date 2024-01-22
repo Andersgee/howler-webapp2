@@ -1,5 +1,5 @@
 import { revalidateTag } from "next/cache";
-import * as z from "zod";
+import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 

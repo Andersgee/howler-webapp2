@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { type z } from "zod";
+import { z } from "zod";
 import { api } from "#src/hooks/api";
 import { Button } from "#src/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "#src/ui/form";
@@ -21,7 +21,16 @@ import { IconWhere } from "#src/icons/Where";
 import { IconWho } from "#src/icons/Who";
 import { dialogDispatch } from "#src/store/slices/dialog";
 
-type FormData = z.input<typeof schemaCreate>;
+const zFormData = z.object({
+  title: zFulltextString,
+  date: z.date(),
+  location: schemaPoint.nullish(),
+  locationName: zFulltextString.nullish(),
+  //image: z.string().nullish(),
+  //imageAspect: z.number().optional(),
+});
+
+type FormData = z.input<typeof zFormData>;
 
 type Props = {
   isSignedIn: boolean;
@@ -29,7 +38,7 @@ type Props = {
 
 export function CreateEventForm({ isSignedIn }: Props) {
   const form = useForm<FormData>({
-    resolver: zodResolver(schemaCreate),
+    resolver: zodResolver(zFormData),
     defaultValues: {
       title: "",
       date: new Date(),

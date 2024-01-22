@@ -1,4 +1,4 @@
-import * as z from "zod";
+import { z } from "zod";
 import { schemaGeoJSON } from "./geojson-types";
 
 const zTypedArray = z.custom<ArrayBufferView>((value) => ArrayBuffer.isView(value));
@@ -79,4 +79,3 @@ export const schema_update_Post = z.object({
   updatedAt: z.date().optional(),
   userId: z.bigint().optional(),
 });
-

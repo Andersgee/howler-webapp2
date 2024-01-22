@@ -4,7 +4,7 @@ import { hashidFromId } from "#src/utils/hashid";
 import { getUserFromRequestCookie } from "#src/utils/jwt";
 import { type NextRequest } from "next/server";
 import sharp from "sharp";
-import * as z from "zod";
+import { z } from "zod";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
