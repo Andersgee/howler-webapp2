@@ -9,7 +9,7 @@ import Image from "next/image";
 import { IconImage } from "#src/icons/Image";
 import { IconLoadingSpinner } from "#src/icons/special";
 import { useToast } from "#src/ui/use-toast";
-import { buttonVariants } from "#src/ui/button";
+import { Button, buttonVariants } from "#src/ui/button";
 
 type Props = {
   className?: string;
@@ -19,14 +19,32 @@ type Props = {
 export function EventImage({ event, className }: Props) {
   const { toast } = useToast();
   const [img, setImg] = useState({ image: event.image, imageAspect: event.imageAspect });
-  const { isUploading, uploadFile } = useImageUpload(event.id, {
+  const { isUploading, uploadFile, uploadTimerIsReached, cancelUpload } = useImageUpload(event.id, {
     onSuccess: (newImg) => setImg(newImg),
     onError: (msg) => toast({ variant: "warn", title: msg }),
+    uploadTimerMs: 30000,
   });
 
   return (
-    <div className={cn("w-", className)}>
-      <label className={buttonVariants({ variant: "outline", className: "block cursor-pointer" })}>
+    <div className={cn("max-w-[384px]", className)}>
+      {uploadTimerIsReached && (
+        <div className="w-64 md:w-96">
+          <p className="animate-pulse-tmp">
+            upload is taking a while, you might be on a slow connection{" "}
+            <Button variant="outline" className="inline-flex" onClick={cancelUpload}>
+              cancel
+            </Button>
+          </p>
+        </div>
+      )}
+      <label
+        className={cn(
+          "flex h-11 items-center justify-center rounded-md text-sm font-bold outline-none transition-colors focus-visible:focusring disabled:pointer-events-none disabled:opacity-50",
+          "border border-color-neutral-300 bg-color-neutral-50 p-[10px] text-color-neutral-900",
+          !isUploading && "cursor-pointer hover:bg-color-neutral-200 hover:text-color-neutral-1000",
+          "w-64 md:w-96"
+        )}
+      >
         <input
           type="file"
           className="sr-only"
@@ -38,11 +56,14 @@ export function EventImage({ event, className }: Props) {
             }
           }}
         />
+
         {isUploading ? (
-          <IconLoadingSpinner />
+          <>
+            <IconLoadingSpinner className="mr-2" /> uploading...
+          </>
         ) : (
           <>
-            <IconImage />
+            <IconImage className="mr-2" />
             {img.image ? "edit image" : "add image"}
           </>
         )}

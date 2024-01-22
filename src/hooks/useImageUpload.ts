@@ -28,7 +28,7 @@ export function useImageUpload(eventId: bigint, options?: Options) {
   const [uploadTimerIsReached, setUploadTimerIsReached] = useState(false);
 
   const cancelUpload = useCallback(() => {
-    abortController.abort();
+    abortController.abort("user-cancelled");
     setUploadTimerIsReached(false);
   }, [abortController]);
 
@@ -81,13 +81,16 @@ export function useImageUpload(eventId: bigint, options?: Options) {
         }
 
         options?.onSuccess?.({ image: imageUrl, imageAspect });
-      } catch (err) {
-        abortController.abort();
         setIsUploading(false);
-        console.log(errorMessageFromUnkown(err));
-        options?.onError?.("Something went wrong.");
+      } catch (err) {
+        const msg = errorMessageFromUnkown(err);
+        if (msg === "user-cancelled") {
+          //expected, user clicked cancel
+        } else {
+          options?.onError?.("Something went wrong.");
+        }
+        setIsUploading(false);
       }
-      setIsUploading(false);
     },
     [eventId, options, abortController]
   );
