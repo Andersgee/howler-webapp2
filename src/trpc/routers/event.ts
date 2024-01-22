@@ -71,7 +71,8 @@ export const eventRouter = createTRPCRouter({
         .set(input)
         .executeTakeFirstOrThrow();
 
-      revalidateTag(eventTags.info(input.id));
+      //revalidate in server action instead to bust router cache
+      //revalidateTag(eventTags.info(input.id));
 
       return { ...updateResult, hashid: hashidFromId(input.id) };
     }),

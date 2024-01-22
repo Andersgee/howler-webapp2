@@ -21,6 +21,8 @@ import { cn } from "#src/utils/cn";
 import { ControlUnpickPoint } from "#src/components/GoogleMaps/control-unpick-point";
 import { z } from "zod";
 import { zGeoJsonPoint, type GeoJSON } from "#src/db/geojson-types";
+import { actionUpdate } from "./actions";
+import { hashidFromId } from "#src/utils/hashid";
 
 const zFormData = z.object({
   id: z.bigint(),
@@ -47,6 +49,8 @@ type Props = {
 };
 
 export function UpdateEventForm({ className, initialEvent }: Props) {
+  const actionUpdateWithInfo = actionUpdate.bind(null, initialEvent.id.toString());
+
   const form = useForm<FormData>({
     resolver: zodResolver(zFormData),
     defaultValues: {
@@ -73,7 +77,8 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
   const eventUpdate = api.event.update.useMutation({
     onSuccess: ({ hashid }) => {
       //form.reset();
-      router.push(`/event/${hashid}`);
+      //router.push(`/event/${hashid}`); //this does not bust router cache
+      void actionUpdateWithInfo();
     },
     onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Could not update event", description: "Try again" });
@@ -84,9 +89,13 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
     form.setValue("location", googleMapsPickedPoint);
   }, [googleMapsPickedPoint, form]);
 
+  const onValid = (data: FormData) => {
+    eventUpdate.mutate(data);
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit((data) => eventUpdate.mutate(data))} className={cn("space-y-2", className)}>
+      <form onSubmit={form.handleSubmit(onValid)} className={cn("space-y-2", className)}>
         <FormField
           control={form.control}
           name="title"
