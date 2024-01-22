@@ -22,7 +22,7 @@ export function generateZodSchema(r: IntrospectResult): string {
 
 function prelude() {
   return `import * as z from "zod";
-import { schemaGeoJSON } from "./geojson-types"
+import { schemaGeoJSON } from "./geojson-types";
 
 const zTypedArray = z.custom<ArrayBufferView>((value) => ArrayBuffer.isView(value));
 

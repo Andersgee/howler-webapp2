@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { schemaGeoJSON } from "./geojson-types"
+import { schemaGeoJSON } from "./geojson-types";
 
 const zTypedArray = z.custom<ArrayBufferView>((value) => ArrayBuffer.isView(value));
 
