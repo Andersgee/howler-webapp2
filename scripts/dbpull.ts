@@ -11,7 +11,7 @@ const db = dbfetch();
 const cwd = process.cwd();
 const pulledPrismaPath = join(cwd, "prisma", "pulled.prisma");
 const typescriptTypesPath = join(cwd, "src", "db", "types.ts");
-const zodSchemaPath = join(cwd, "src", "db", "zod-schema.ts");
+const zodSchemaPath = join(cwd, "src", "db", "types-zod.ts");
 
 async function main() {
   const introspectresult = await introspect(db);

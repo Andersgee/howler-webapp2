@@ -2,8 +2,8 @@ import type { Generated } from "kysely";
 import type { GeoJSON } from "./geojson-types";
   
 export type DB = {
-  UserEventPivot: UserEventPivot;
   Event: Event;
+  UserEventPivot: UserEventPivot;
   User: User;
   Post: Post;
 };
