@@ -63,6 +63,8 @@ export type User = {
   createdAt: Generated<Date>;
   /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   updatedAt: Generated<Date>;
+  /** default: USER, dbtype: 'enum('USER','ADMIN')' */
+  role: Generated<"USER" | "ADMIN">;
 };
 
 export type UserEventPivot = {

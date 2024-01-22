@@ -18,12 +18,18 @@ model User {
     name          String
     createdAt     DateTime @default(now())
     updatedAt     DateTime @default(now()) @updatedAt
+    role          Role     @default(USER)
 
     Post           Post[]
     Event          Event[]
     UserEventPivot UserEventPivot[]
 
     @@id([id])
+}
+
+enum Role {
+    USER
+    ADMIN
 }
 
 model Post {

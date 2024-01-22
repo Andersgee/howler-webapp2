@@ -5,6 +5,7 @@ import type { NextRequest } from "next/server";
 import { trpcTransformer } from "./transformer";
 import { getUserFromRequestCookie } from "#src/utils/jwt";
 import type { TokenUser } from "#src/utils/jwt/schema";
+import { dbfetch } from "#src/db";
 
 export type Ctx = {
   user: TokenUser | null;
@@ -55,7 +56,19 @@ const hasResHeaders = middleware(({ ctx, next }) => {
   return next({ ctx: { ...ctx, resHeaders: ctx.resHeaders } });
 });
 
+const isAdmin = middleware(async ({ ctx, next }) => {
+  if (!ctx.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  const user = await dbfetch().selectFrom("User").select("role").where("id", "=", ctx.user.id).executeTakeFirst();
+  if (user?.role !== "ADMIN") {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+  return next({ ctx: { ...ctx, user: ctx.user } });
+});
+
 // for convenience
 export const publicProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(hasUser);
+export const adminProcedure = t.procedure.use(isAdmin);
 export const procedureWithResHeaders = t.procedure.use(hasResHeaders);

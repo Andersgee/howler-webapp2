@@ -52,6 +52,7 @@ export const schema_insert_User = z.object({
   name: z.string(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
+  role: z.enum(["USER","ADMIN"]).optional(),
 });
 export const schema_update_User = z.object({
   id: z.bigint().optional(),
@@ -63,6 +64,7 @@ export const schema_update_User = z.object({
   name: z.string().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
+  role: z.enum(["USER","ADMIN"]).optional(),
 });
 
 export const schema_insert_Post = z.object({
@@ -79,3 +81,4 @@ export const schema_update_Post = z.object({
   updatedAt: z.date().optional(),
   userId: z.bigint().optional(),
 });
+
