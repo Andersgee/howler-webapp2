@@ -7,49 +7,51 @@ import { z } from "zod";
 //geojson also has "feature" equivalents that can have "properties" but mysql dont have those
 //mysql only allows 2d positions
 
-export const schemaPosition = z.tuple([z.number(), z.number()]);
-export type Position = z.infer<typeof schemaPosition>;
+export const zGeoJsonPos = z.tuple([z.number(), z.number()]);
+export type Position = z.infer<typeof zGeoJsonPos>;
 
-export const schemaPoint = z.object({ type: z.literal("Point"), coordinates: schemaPosition });
-export type Point = z.infer<typeof schemaPoint>;
+export const zGeoJsonPoint = z.object({ type: z.literal("Point"), coordinates: zGeoJsonPos });
+export type Point = z.infer<typeof zGeoJsonPoint>;
 
-export const schemaLineString = z.object({ type: z.literal("LineString"), coordinates: z.array(schemaPosition) });
-export type LineString = z.infer<typeof schemaLineString>;
+export const zGeoJsonLineString = z.object({ type: z.literal("LineString"), coordinates: z.array(zGeoJsonPos) });
+export type LineString = z.infer<typeof zGeoJsonLineString>;
 
-export const schemaPolygon = z.object({ type: z.literal("Polygon"), coordinates: z.array(z.array(schemaPosition)) });
-export type Polygon = z.infer<typeof schemaPolygon>;
+export const zGeoJsonPolygon = z.object({ type: z.literal("Polygon"), coordinates: z.array(z.array(zGeoJsonPos)) });
+export type Polygon = z.infer<typeof zGeoJsonPolygon>;
 
-export const schemaGeometry = z.union([schemaPoint, schemaLineString, schemaPolygon]);
-export type Geometry = z.infer<typeof schemaGeometry>;
+export const zGeoJsonGeometry = z.union([zGeoJsonPoint, zGeoJsonLineString, zGeoJsonPolygon]);
+export type Geometry = z.infer<typeof zGeoJsonGeometry>;
 
-export const schemaMultiPoint = z.object({ type: z.literal("MultiPoint"), coordinates: z.array(schemaPosition) });
-export type MultiPoint = z.infer<typeof schemaMultiPoint>;
-const schemaMultiLineString = z.object({
+export const zGeoJsonMultiPoint = z.object({ type: z.literal("MultiPoint"), coordinates: z.array(zGeoJsonPos) });
+export type MultiPoint = z.infer<typeof zGeoJsonMultiPoint>;
+
+export const zGeoJsonMultiLineString = z.object({
   type: z.literal("MultiLineString"),
-  coordinates: z.array(z.array(schemaPosition)),
+  coordinates: z.array(z.array(zGeoJsonPos)),
 });
-export type MultiLineString = z.infer<typeof schemaMultiLineString>;
-export const schemaMultiPolygon = z.object({
-  type: z.literal("MultiPolygon"),
-  coordinates: z.array(z.array(z.array(schemaPosition))),
-});
-export type MultiPolygon = z.infer<typeof schemaMultiPolygon>;
+export type MultiLineString = z.infer<typeof zGeoJsonMultiLineString>;
 
-export const schemaGeometryCollection = z.object({
-  type: z.literal("GeometryCollection"),
-  geometries: z.array(schemaGeometry),
+export const zGeoJsonMultiPolygon = z.object({
+  type: z.literal("MultiPolygon"),
+  coordinates: z.array(z.array(z.array(zGeoJsonPos))),
 });
-export type GeometryCollection = z.infer<typeof schemaGeometryCollection>;
+export type MultiPolygon = z.infer<typeof zGeoJsonMultiPolygon>;
+
+export const zGeoJsonGeometryCollection = z.object({
+  type: z.literal("GeometryCollection"),
+  geometries: z.array(zGeoJsonGeometry),
+});
+export type GeometryCollection = z.infer<typeof zGeoJsonGeometryCollection>;
 
 export const schemaGeoJSON = {
-  Point: schemaPoint,
-  LineString: schemaLineString,
-  Polygon: schemaPolygon,
-  Geometry: schemaGeometry,
-  MultiPoint: schemaMultiPoint,
-  MultiLineString: schemaMultiLineString,
-  MultiPolygon: schemaMultiPolygon,
-  GeometryCollection: schemaGeometryCollection,
+  Point: zGeoJsonPoint,
+  LineString: zGeoJsonLineString,
+  Polygon: zGeoJsonPolygon,
+  Geometry: zGeoJsonGeometry,
+  MultiPoint: zGeoJsonMultiPoint,
+  MultiLineString: zGeoJsonMultiLineString,
+  MultiPolygon: zGeoJsonMultiPolygon,
+  GeometryCollection: zGeoJsonGeometryCollection,
 };
 
 //export type Position = [x: number, y: number];

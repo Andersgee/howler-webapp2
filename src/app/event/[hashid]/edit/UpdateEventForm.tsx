@@ -16,14 +16,31 @@ import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
-import { IconWho } from "#src/icons/Who";
+//import { IconWho } from "#src/icons/Who";
 import { cn } from "#src/utils/cn";
 import { ControlUnpickPoint } from "#src/components/GoogleMaps/control-unpick-point";
-import { schemaFormUpdate } from "#src/trpc/routers/eventSchema";
-import { type z } from "zod";
-import { type GeoJSON } from "#src/db/geojson-types";
+import { z } from "zod";
+import { zGeoJsonPoint, type GeoJSON } from "#src/db/geojson-types";
 
-type FormData = z.input<typeof schemaFormUpdate>;
+const zFormData = z.object({
+  id: z.bigint(),
+  title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
+  date: z.date(),
+  location: zGeoJsonPoint.nullish(),
+  locationName: z.union([
+    z.string().trim().length(0, { message: "at least 3 characters - or empty" }),
+    z
+      .string()
+      .trim()
+      .min(3, { message: "at least 3 characters - or empty" })
+      .max(55, { message: "at most 55 characters - or empty" }),
+  ]),
+  //image: z.string().nullish(),
+  //imageAspect: z.number().optional(),
+});
+
+type FormData = z.input<typeof zFormData>;
+
 type Props = {
   className?: string;
   initialEvent: RouterOutputs["event"]["getById"];
@@ -31,14 +48,13 @@ type Props = {
 
 export function UpdateEventForm({ className, initialEvent }: Props) {
   const form = useForm<FormData>({
-    resolver: zodResolver(schemaFormUpdate),
+    resolver: zodResolver(zFormData),
     defaultValues: {
       id: initialEvent.id,
       title: initialEvent.title,
       date: initialEvent.date,
       location: initialEvent.location,
       locationName: initialEvent.locationName ?? "",
-      who: "",
     },
   });
   const [showMap, setShowMap] = useState(false);
@@ -56,7 +72,7 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
 
   const eventUpdate = api.event.update.useMutation({
     onSuccess: ({ hashid }) => {
-      form.reset();
+      //form.reset();
       router.push(`/event/${hashid}`);
     },
     onError: (_error, _variables, _context) => {
@@ -66,8 +82,6 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
 
   useEffect(() => {
     form.setValue("location", googleMapsPickedPoint);
-    if (!googleMapsPickedPoint) {
-    }
   }, [googleMapsPickedPoint, form]);
 
   return (
@@ -146,31 +160,6 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
               </div>
               <FormMessage className="ml-8" />
               {/*<FormDescription>some date.</FormDescription>*/}
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="who"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center gap-2">
-                <IconWho />
-                <FormLabel className="w-11 shrink-0">Who</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="anyone"
-                    autoCapitalize="none"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    {...field}
-                  />
-                </FormControl>
-              </div>
-              <FormMessage className="ml-8" />
-              {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
           )}
         />

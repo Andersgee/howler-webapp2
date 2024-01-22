@@ -2,14 +2,23 @@ import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
-import { schemaFilter, schemaUpdate, splitWhitespace, trimSearchOperators } from "./eventSchema";
+import { schemaFilter, splitWhitespace, trimSearchOperators } from "./eventSchema";
 import { sql } from "kysely";
-import { schemaPoint, type Point } from "#src/db/geojson-types";
+import { zGeoJsonPoint, type Point } from "#src/db/geojson-types";
+import { revalidateTag } from "next/cache";
 
-/** strings less than 3 chars will not be stored in fulltext indexed */
-const zFulltextString = z.string().min(3).max(55);
+const eventTags = {
+  info: (id: bigint) => `event-info-${id}`,
+};
 
 export const eventRouter = createTRPCRouter({
+  getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
+    return await dbfetch({ next: { tags: [eventTags.info(input.id)] } })
+      .selectFrom("Event")
+      .selectAll()
+      .where("id", "=", input.id)
+      .executeTakeFirstOrThrow();
+  }),
   latest: publicProcedure.query(async () => {
     return await dbfetch({ next: { revalidate: 10 } })
       .selectFrom("Event")
@@ -21,10 +30,10 @@ export const eventRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        title: zFulltextString,
+        title: z.string().min(3).max(55),
         date: z.date(),
-        location: schemaPoint.nullish(),
-        locationName: zFulltextString.nullish(),
+        location: z.union([z.null().transform(() => undefined), zGeoJsonPoint]),
+        locationName: z.union([z.literal("").transform(() => undefined), z.string().min(3).max(55)]),
         //image: z.string().nullish(),
         //imageAspect: z.number().optional(),
       })
@@ -37,34 +46,39 @@ export const eventRouter = createTRPCRouter({
 
       return { ...insertResult, hashid: hashidFromId(insertResult.insertId!) };
     }),
-  update: protectedProcedure.input(schemaUpdate).mutation(async ({ input, ctx }) => {
-    console.log("api, input:", input);
-    const updateResult = await dbfetch()
-      .updateTable("Event")
-      .where("id", "=", input.id)
-      .where("creatorId", "=", ctx.user.id)
-      .set(input)
-      .executeTakeFirstOrThrow();
-
-    return { ...updateResult, hashid: hashidFromId(input.id) };
-  }),
-  getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
-    return await dbfetch({ next: { revalidate: 10 } })
-      .selectFrom("Event")
-      .selectAll()
-      .where("id", "=", input.id)
-      .executeTakeFirstOrThrow();
-  }),
-  getByIdNumber: publicProcedure
-    .input(z.object({ id: z.number(), k: z.date(), r: z.bigint() }))
-    .query(async ({ input }) => {
-      console.log({ input });
-      return await dbfetch({ next: { revalidate: 10 } })
-        .selectFrom("Event")
-        .selectAll()
-        .where("id", "=", BigInt(input.id))
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.bigint(),
+        title: z.string().min(3).max(55).optional(),
+        date: z.date().optional(),
+        location: zGeoJsonPoint.nullish(),
+        locationName: z.union([
+          z.literal("").transform(() => null),
+          z
+            .string()
+            .trim()
+            .min(3, { message: "at least 3 characters (or empty)" })
+            .max(55, { message: "at most 55 characters (or empty)" }),
+        ]),
+        //image: z.string().nullish(),
+        //imageAspect: z.number().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      console.log("api, input:", input);
+      const updateResult = await dbfetch()
+        .updateTable("Event")
+        .where("id", "=", input.id)
+        .where("creatorId", "=", ctx.user.id)
+        .set(input)
         .executeTakeFirstOrThrow();
+
+      revalidateTag(eventTags.info(input.id));
+
+      return { ...updateResult, hashid: hashidFromId(input.id) };
     }),
+
   getAll: publicProcedure.query(async () => {
     return await dbfetch({ next: { revalidate: 10 } })
       .selectFrom("Event")

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { schemaPoint } from "#src/db/geojson-types";
+import { zGeoJsonPoint } from "#src/db/geojson-types";
 
 export const schemaCreate = z.object({
   title: z
@@ -12,7 +12,7 @@ export const schemaCreate = z.object({
         .max(55, { message: "must be less than 55 characters" })
     ),
   date: z.date().optional(),
-  location: schemaPoint.optional(),
+  location: zGeoJsonPoint.optional(),
   locationName: z
     .string()
     .transform((s) => {
@@ -49,7 +49,7 @@ export const schemaFormUpdate = z.object({
   //same input/ouput: Date
   date: z.date(),
   //same input/ouput: point | null
-  location: schemaPoint.nullable(),
+  location: zGeoJsonPoint.nullable(),
   //same input/ouput: string
   locationName: z
     .string()
@@ -76,7 +76,7 @@ export const schemaUpdate = z.object({
   //input: Date, output Data | undefined
   date: z.date().optional(),
   //input: point | null | undefined
-  location: schemaPoint.nullish(),
+  location: zGeoJsonPoint.nullish(),
   //input: string | undefined, output string | null | undefined
   locationName: z
     .string()

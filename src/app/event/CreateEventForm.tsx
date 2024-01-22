@@ -8,7 +8,6 @@ import { Button } from "#src/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "#src/ui/form";
 import { Input } from "#src/ui/input";
 import { useToast } from "#src/ui/use-toast";
-import { schemaCreate } from "#src/trpc/routers/eventSchema";
 import { useRouter } from "next/navigation";
 import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
@@ -18,19 +17,27 @@ import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
-import { IconWho } from "#src/icons/Who";
+//import { IconWho } from "#src/icons/Who";
 import { dialogDispatch } from "#src/store/slices/dialog";
+import { zGeoJsonPoint } from "#src/db/geojson-types";
 
 const zFormData = z.object({
-  title: zFulltextString,
+  title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
   date: z.date(),
-  location: schemaPoint.nullish(),
-  locationName: zFulltextString.nullish(),
+  location: zGeoJsonPoint.nullable(),
+  locationName: z.union([
+    z.string().trim().length(0, { message: "at least 3 characters - or empty" }),
+    z
+      .string()
+      .trim()
+      .min(3, { message: "at least 3 characters - or empty" })
+      .max(55, { message: "at most 55 characters - or empty" }),
+  ]),
   //image: z.string().nullish(),
   //imageAspect: z.number().optional(),
 });
 
-type FormData = z.input<typeof zFormData>;
+type FormData = z.infer<typeof zFormData>;
 
 type Props = {
   isSignedIn: boolean;
@@ -42,9 +49,8 @@ export function CreateEventForm({ isSignedIn }: Props) {
     defaultValues: {
       title: "",
       date: new Date(),
+      location: null,
       locationName: "",
-      location: undefined,
-      who: "",
     },
   });
   const [showMap, setShowMap] = useState(false);
@@ -152,7 +158,7 @@ export function CreateEventForm({ isSignedIn }: Props) {
                 <FormControl>
                   <Input
                     type="datetime-local"
-                    value={datetimelocalString(field.value!)}
+                    value={datetimelocalString(field.value)}
                     onChange={(e) => {
                       if (!e.target.value) return;
                       form.setValue("date", new Date(e.target.value));
@@ -163,31 +169,6 @@ export function CreateEventForm({ isSignedIn }: Props) {
               </div>
               <FormMessage className="ml-8" />
               {/*<FormDescription>some date.</FormDescription>*/}
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="who"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center gap-2">
-                <IconWho />
-                <FormLabel className="w-11 shrink-0">Who</FormLabel>
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="anyone"
-                    autoCapitalize="none"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    {...field}
-                  />
-                </FormControl>
-              </div>
-              <FormMessage className="ml-8" />
-              {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
           )}
         />
