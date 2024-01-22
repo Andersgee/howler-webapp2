@@ -12,7 +12,6 @@ import { createPortal } from "react-dom";
 import { InputSearch } from "./InputSearch";
 import { Collapsible, CollapsibleContent } from "@radix-ui/react-collapsible";
 import { Label } from "#src/ui/label";
-import { schemaFilter, trimSearchOperators } from "#src/trpc/routers/eventSchema";
 
 export function ControlSearch() {
   const googleMaps = useStore.use.googleMaps();

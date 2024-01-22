@@ -6,10 +6,7 @@ import { schemaFilter, splitWhitespace, trimSearchOperators } from "./eventSchem
 import { sql } from "kysely";
 import { zGeoJsonPoint, type Point } from "#src/db/geojson-types";
 import { revalidateTag } from "next/cache";
-
-const eventTags = {
-  info: (id: bigint) => `event-info-${id}`,
-};
+import { eventTags } from "./eventTags";
 
 export const eventRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
