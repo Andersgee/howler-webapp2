@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 import * as z from "zod";
 import { JSONE } from "#src/utils/jsone";
 import { errorMessageFromUnkown } from "#src/utils/errormessage";
-import { encodeParams, urlWithSearchparams } from "#src/utils/url";
+import { encodeParams } from "#src/utils/url";
 
 /*
 1. check file type and size
@@ -36,27 +36,15 @@ export function useImageUpload(eventId: bigint, options?: Options) {
 
       setIsUploading(true);
       try {
-        const { imageAspect, width, height } = await getImageAspectRatio(file);
-        /*
-        const params = z
-    .object({
-      eventId: z.coerce.bigint(),
-      contentType: z.enum(["image/png", "image/jpeg"]),
-      w: z.coerce.number(),
-      h: z.coerce.number(),
-    })
-        */
-        const fileBuffer = await file.arrayBuffer();
-        const url = `/api/gcs/image?${encodeParams({
-          eventId: eventId.toString(),
-          contentType: file.type,
-          w: width,
-          h: height,
-        })}`;
-        const imageUrl = await fetch(url, { method: "POST", body: fileBuffer }).then((res) => res.text());
+        const { imageAspect, width } = await getImageAspectRatio(file);
 
-        options?.onSuccess?.({ image: imageUrl, imageAspect });
-        /*
+        const sharp = (await import("sharp")).default;
+
+        const optimizedFileBuffer = await sharp(await file.arrayBuffer())
+          .resize(Math.min(384, width))
+          .webp()
+          .toBuffer();
+
         //get signed
         const url = `/api/gcs?eventId=${eventId}&contentType=${file.type}`;
         const { signedUploadUrl, imageUrl } = z
@@ -71,10 +59,10 @@ export function useImageUpload(eventId: bigint, options?: Options) {
             "Cache-Control": "public, max-age=2592000",
             "X-Goog-Content-Length-Range": "0,10000000",
           },
-          body: file,
-          //body: optimizedFileBuffer,
+          //body: file,
+          body: optimizedFileBuffer,
         });
-        if (!bucketres) {
+        if (!bucketres.ok) {
           throw new Error("could not upload");
         }
 
@@ -88,7 +76,51 @@ export function useImageUpload(eventId: bigint, options?: Options) {
         }
 
         options?.onSuccess?.({ image: imageUrl, imageAspect });
-        */
+      } catch (err) {
+        console.error(errorMessageFromUnkown(err));
+        options?.onError?.("Something went wrong.");
+      }
+      setIsUploading(false);
+    },
+    [eventId, options]
+  );
+
+  return { uploadFile, isUploading };
+}
+
+/**
+ * same thing but go via api route to optimize image before storing in bucket
+ *
+ * This only works for images smaller than 4.5MB if hosting on vercel.
+ */
+export function useImageOptimizedUpload(eventId: bigint, options?: Options) {
+  const [isUploading, setIsUploading] = useState(false);
+
+  const uploadFile = useCallback(
+    async (file: File) => {
+      if (!(file.type === "image/png" || file.type === "image/jpeg")) {
+        options?.onError?.("Only jpeg or png images please.");
+        return;
+      }
+      if (file.size > 4000000) {
+        options?.onError?.("Only images smaller than 4MB please.");
+        return;
+      }
+
+      setIsUploading(true);
+      try {
+        const { imageAspect, width, height } = await getImageAspectRatio(file);
+
+        const fileBuffer = await file.arrayBuffer();
+        const url = `/api/gcs/image?${encodeParams({
+          eventId: eventId.toString(),
+          contentType: file.type,
+          w: width,
+          h: height,
+        })}`;
+        const imageUrl = await fetch(url, { method: "POST", body: fileBuffer }).then((res) => res.text());
+
+        options?.onSuccess?.({ image: imageUrl, imageAspect });
       } catch (err) {
         console.error(errorMessageFromUnkown(err));
         options?.onError?.("Something went wrong.");
