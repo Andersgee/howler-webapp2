@@ -36,14 +36,7 @@ export function useImageUpload(eventId: bigint, options?: Options) {
 
       setIsUploading(true);
       try {
-        const { imageAspect, width } = await getImageAspectRatio(file);
-
-        const sharp = (await import("sharp")).default;
-
-        const optimizedFileBuffer = await sharp(await file.arrayBuffer())
-          .resize(Math.min(384, width))
-          .webp()
-          .toBuffer();
+        const { imageAspect } = await getImageAspectRatio(file);
 
         //get signed
         const url = `/api/gcs?eventId=${eventId}&contentType=${file.type}`;
@@ -59,8 +52,7 @@ export function useImageUpload(eventId: bigint, options?: Options) {
             "Cache-Control": "public, max-age=2592000",
             "X-Goog-Content-Length-Range": "0,10000000",
           },
-          //body: file,
-          body: optimizedFileBuffer,
+          body: file,
         });
         if (!bucketres.ok) {
           throw new Error("could not upload");

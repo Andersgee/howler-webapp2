@@ -15,20 +15,25 @@ export async function GET(request: NextRequest) {
   const user = await getUserFromRequestCookie(request);
   if (!user) return NextResponse.json("Unauthorized", { status: 401 });
 
-  const eventId = BigInt(z.string().min(1).parse(request.nextUrl.searchParams.get("eventId")));
-  const contentType = z.enum(["image/png", "image/jpeg"]).parse(request.nextUrl.searchParams.get("contentType"));
+  const params = z
+    .object({
+      eventId: z.coerce.bigint(),
+      contentType: z.enum(["image/png", "image/jpeg"]),
+    })
+    .parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
 
   //make sure user is creator
   const event = await dbfetch()
     .selectFrom("Event")
     .select("id")
-    .where("id", "=", eventId)
+    .where("id", "=", params.eventId)
     .where("creatorId", "=", user.id)
     .executeTakeFirstOrThrow();
 
   const fileName = `${hashidFromId(event.id)}-${crypto.randomUUID()}`;
 
-  const { signedUploadUrl, imageUrl } = await generateV4UploadSignedUrl(fileName, contentType);
+  const { signedUploadUrl, imageUrl } = await generateV4UploadSignedUrl(fileName, params.contentType);
+
   return NextResponse.json({ signedUploadUrl, imageUrl }, { status: 200 });
 }
 

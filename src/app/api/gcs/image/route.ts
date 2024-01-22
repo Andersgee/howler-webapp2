@@ -11,9 +11,10 @@ export const runtime = "nodejs";
 
 const db = dbfetch();
 
-//its convenient to have the user upload directly to bucket with a signed url...
-//but why keep a 5Mb image instead of a 5kb image on bucket
-//go via this route, optimize it and upload the 6kb
+// alternative image upload.. optimize before storing in bucket
+// eg store a 4Mb image as 4kb
+// this only works for images smaller than 4.5MB if hosting on vercel.
+// since thats the request body size limit to serverless functions
 
 export async function POST(request: NextRequest) {
   const user = await getUserFromRequestCookie(request);
@@ -29,11 +30,6 @@ export async function POST(request: NextRequest) {
     .parse(Object.fromEntries(request.nextUrl.searchParams.entries()));
 
   const imageAspect = params.w / params.h;
-
-  //const eventId = z.coerce.bigint().parse(request.nextUrl.searchParams.get("eventId"));
-  //const contentType = z.enum(["image/png", "image/jpeg"]).parse(request.nextUrl.searchParams.get("contentType"));
-  //const width = z.coerce.number().parse(request.nextUrl.searchParams.get("w"));
-  //const height = z.coerce.number().parse(request.nextUrl.searchParams.get("h"));
 
   //make sure user is creator
   const event = await db
