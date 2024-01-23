@@ -1,6 +1,7 @@
 "use client";
 
 import { GoogleMaps } from "#src/components/GoogleMaps";
+import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { ShareButton } from "#src/components/ShareButton";
 import { type GeoJson } from "#src/db/types-geojson";
 import { type RouterOutputs } from "#src/hooks/api";
@@ -45,7 +46,7 @@ function Map({ show, location }: { show: boolean; location: null | GeoJson["Poin
   useEffect(() => {
     if (!googleMaps || !location) return;
 
-    const latLng = { lat: location.coordinates[0], lng: location.coordinates[1] };
+    const latLng = latLngLiteralFromPoint(location);
     googleMaps.setMode("view-event");
     googleMaps.primaryMarker.position = latLng;
     googleMaps.map.setOptions({

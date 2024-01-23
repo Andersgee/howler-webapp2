@@ -22,6 +22,7 @@ import { z } from "zod";
 import { zGeoJsonPoint, type GeoJson } from "#src/db/types-geojson";
 import { actionOnSuccess } from "./actions";
 import { setGoogleMapsPickedPoint } from "#src/store/slices/map";
+import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
 
 const zFormData = z.object({
   id: z.bigint(),
@@ -195,7 +196,7 @@ function Map({ show, initialLocation }: { show: boolean; initialLocation: null |
 
     googleMaps.setMode("pick-location");
     if (initialLocation) {
-      const latLng = { lat: initialLocation.coordinates[0], lng: initialLocation.coordinates[1] };
+      const latLng = latLngLiteralFromPoint(initialLocation);
       googleMaps.primaryMarker.position = latLng;
       googleMaps.map.setOptions({
         center: latLng,

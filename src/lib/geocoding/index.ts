@@ -1,6 +1,6 @@
 import { schemaReverseGeoCodingResponse, type ReverseGeoCodingResponse, type AdressComponentType } from "./schema";
 
-export async function getGoogleReverseGeocoding(p: { lng: number; lat: number }) {
+export async function getGoogleReverseGeocoding(p: { lat: number; lng: number }) {
   const key = process.env.GOOGLE_GEOCODING_API_KEY;
 
   try {

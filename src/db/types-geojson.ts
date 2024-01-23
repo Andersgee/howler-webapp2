@@ -71,6 +71,7 @@ type MultiLineString = z.infer<typeof zGeoJsonMultiLineString>;
 type MultiPolygon = z.infer<typeof zGeoJsonMultiPolygon>;
 type GeometryCollection = z.infer<typeof zGeoJsonGeometryCollection>;
 
+/** [longitude, latitude] aka [easting, northing] aka [x,y] */
 export type GeoJson = {
   Position: Position;
   Point: Point;

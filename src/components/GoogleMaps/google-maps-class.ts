@@ -3,6 +3,7 @@ import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
 import { HOWLER_MAP_DARK, HOWLER_MAP_LIGHT } from "./custom-theme";
+import { latLngLiteralFromPoint, pointFromlatLng } from "./google-maps-point-latlng";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -180,7 +181,7 @@ export class GoogleMapsClass {
         const latLng = e.latLng;
         if (this.mode === "pick-location") {
           this.primaryMarker.position = latLng;
-          setGoogleMapsPickedPoint({ type: "Point", coordinates: [latLng.lat(), latLng.lng()] });
+          setGoogleMapsPickedPoint(pointFromlatLng(latLng));
         }
         if (this.mode === "explore") {
           setGoogleMapsExploreSelectedEventId(null);
@@ -206,7 +207,7 @@ export class GoogleMapsClass {
         scale: 1.5, //default looks like 24px, recommended is atleast 44px, lets do 36? adjust pin.svg accordingly
       });
 
-      const latLng = { lat: event.location!.coordinates[0], lng: event.location!.coordinates[1] };
+      const latLng = latLngLiteralFromPoint(event.location);
       const marker = new google.maps.marker.AdvancedMarkerElement({
         position: latLng,
         content: pinGlyph.element,

@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 import { InputSearch } from "./InputSearch";
 import { Collapsible, CollapsibleContent } from "@radix-ui/react-collapsible";
 import { Label } from "#src/ui/label";
+import { latLngLiteralFromPoint } from "./google-maps-point-latlng";
 
 export function ControlSearch() {
   const googleMaps = useStore.use.googleMaps();
@@ -71,8 +72,7 @@ function Content() {
             const ev = data?.events.find((x) => x.id === id);
             if (googleMaps && ev) {
               setGoogleMapsExploreSelectedEventId(id);
-              console.log("hmm");
-              const latLng = { lat: ev.location.coordinates[0], lng: ev.location.coordinates[1] };
+              const latLng = latLngLiteralFromPoint(ev.location);
               googleMaps.infoWindow.setPosition(latLng);
               googleMaps.infoWindow.open({ map: googleMaps.map, shouldFocus: false });
               googleMaps.map.panTo(latLng);
