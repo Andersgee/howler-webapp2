@@ -5,6 +5,7 @@ import { hashidFromId } from "#src/utils/hashid";
 import { type NotNull, sql } from "kysely";
 import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { tagsEvent } from "./eventTags";
+import { revalidateTag } from "next/cache";
 
 export const eventRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
@@ -54,8 +55,7 @@ export const eventRouter = createTRPCRouter({
         .set(input)
         .executeTakeFirstOrThrow();
 
-      //revalidate in server action instead to bust router cache
-      //revalidateTag(eventTags.info(input.id));
+      revalidateTag(tagsEvent.info(input.id));
 
       return { ...updateResult, hashid: hashidFromId(input.id) };
     }),

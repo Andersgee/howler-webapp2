@@ -6,9 +6,9 @@ import {
   prisma_updatedat_from_col,
 } from "./mysql-prisma-map";
 import { ts_type_from_col } from "./mysql-typescript-map";
+import { zod_type_from_col } from "./mysql-zod-map";
 import { groupBy } from "./utils";
 import type { MysqlDB } from "./mysqldb";
-import { zod_type_from_col } from "./mysql-zod-map";
 
 type DB = Kysely<MysqlDB>;
 
@@ -38,10 +38,10 @@ export async function introspect(db: Kysely<any>) {
 /**
  * information_schema queries will NOT return fresh info by default.
  *
- * https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_information_schema_stats_expiry
+ * "To update cached values at any time for a given table, use ANALYZE TABLE."
+ * anothe options, supposedly, is setting information_schema_stats_expiry=0 either globally or on session
  *
- * supposedly setting information_schema_stats_expiry=0 either globally or on session
- * should be an option? but that doesnt work and not sure we want it anyway.
+ * https://dev.mysql.com/doc/refman/8.0/en/server-system-variables.html#sysvar_information_schema_stats_expiry
  */
 async function refreshInformationSchemaTables(db: DB) {
   const COLUMNS = await db

@@ -1,6 +1,6 @@
 import "dotenv/config";
 import "#src/utils/validate-process-env.mjs";
-import { introspect, generatePrismaSchema, generateTypescriptTypes } from "./mysql8-introspect";
+import { introspect, generatePrismaSchema, generateTypescriptTypes, generateZodSchema } from "./mysql8-introspect";
 import { dbfetch, dbTransaction } from "#src/db";
 import { writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -27,6 +27,7 @@ const cwd = process.cwd();
 const schemaPrismaPath = join(cwd, "prisma", "schema.prisma");
 const pulledPrismaPath = join(cwd, "prisma", "pulled.prisma");
 const typescriptTypesPath = join(cwd, "src", "db", "types.ts");
+const zodSchemaPath = join(cwd, "src", "db", "types-zod.ts");
 
 async function main() {
   let introspectresult = await introspect(db);
@@ -45,8 +46,8 @@ async function main() {
   }
 
   await writeFile(typescriptTypesPath, generateTypescriptTypes(introspectresult));
-  console.log(`saved ${typescriptTypesPath}`);
-
+  await writeFile(zodSchemaPath, generateZodSchema(introspectresult));
+  console.log("generated types");
   console.log("Done.");
 }
 
