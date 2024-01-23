@@ -4,11 +4,11 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
 import { type NotNull, sql } from "kysely";
 import { zGeoJsonPoint } from "#src/db/types-geojson";
-import { eventTags } from "./eventTags";
+import { tagsEvent } from "./eventTags";
 
 export const eventRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
-    return await dbfetch({ next: { tags: [eventTags.info(input.id)] } })
+    return await dbfetch({ next: { tags: [tagsEvent.info(input.id)] } })
       .selectFrom("Event")
       .selectAll()
       .where("id", "=", input.id)

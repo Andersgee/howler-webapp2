@@ -1,6 +1,6 @@
 import { dbfetch } from "#src/db";
 import { deleteImageFromBucket, generateV4UploadSignedUrl } from "#src/lib/cloud-storage";
-import { eventTags } from "#src/trpc/routers/eventTags";
+import { tagsEvent } from "#src/trpc/routers/eventTags";
 import { hashidFromId } from "#src/utils/hashid";
 import { getUserFromRequestCookie } from "#src/utils/jwt";
 import { revalidateTag } from "next/cache";
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     await deleteImageFromBucket(event.image);
   }
 
-  revalidateTag(eventTags.info(params.eventId));
+  revalidateTag(tagsEvent.info(params.eventId));
   //const ok = updateResult.numUpdatedRows > 0;
   return new Response(imageUrl, { status: 200 });
 }

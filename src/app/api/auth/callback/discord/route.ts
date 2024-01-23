@@ -1,6 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { type NextRequest } from "next/server";
-import { tagsUserRouter } from "#src/trpc/routers/user";
+import { tagsUser } from "#src/trpc/routers/userTags";
 
 import {
   DISCORD_TOKEN,
@@ -109,7 +109,7 @@ export async function GET(request: NextRequest) {
         image: userInfo.avatar,
       };
     }
-    revalidateTag(tagsUserRouter.info({ userId: tokenUser.id }));
+    revalidateTag(tagsUser.info({ userId: tokenUser.id }));
 
     const userCookie = await createTokenFromUser(tokenUser);
 

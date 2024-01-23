@@ -20,9 +20,11 @@ import { cn } from "#src/utils/cn";
 import { ControlUnpickPoint } from "#src/components/GoogleMaps/control-unpick-point";
 import { z } from "zod";
 import { zGeoJsonPoint, type GeoJson } from "#src/db/types-geojson";
-import { actionOnSuccess } from "./actions";
+//import { actionOnSuccess } from "./actions";
 import { setGoogleMapsPickedPoint } from "#src/store/slices/map";
 import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
+import { actionRevalidateTagAndRedirect } from "#src/app/actions";
+import { tagsEvent } from "#src/trpc/routers/eventTags";
 
 const zFormData = z.object({
   id: z.bigint(),
@@ -82,10 +84,13 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
   const { toast } = useToast();
 
   const eventUpdate = api.event.update.useMutation({
-    onSuccess: () => {
+    onSuccess: ({ hashid }) => {
       //form.reset();
       //router.push(`/event/${hashid}`); //revalidating in route handler does not bust router cache
-      void actionOnSuccess(initialEvent.id.toString()); //so revalidate in server action, and might aswell redirect there aswell
+      //void actionOnSuccess(initialEvent.id.toString()); //so revalidate in server action, and might aswell redirect there aswell
+      //await actionRevalidateTag(tagsEvent.info(initialEvent.id));
+      //toast({ variant: "default", title: "Saved" });
+      void actionRevalidateTagAndRedirect(tagsEvent.info(initialEvent.id), `/event/${hashid}`);
     },
     onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Could not update event", description: "Try again" });

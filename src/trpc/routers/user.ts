@@ -2,14 +2,11 @@ import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-
-export const tagsUserRouter = {
-  info: (p: { userId: bigint }) => `user-info-${p.userId}`,
-};
+import { tagsUser } from "./userTags";
 
 export const userRouter = createTRPCRouter({
   info: protectedProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input }) => {
-    const user = await dbfetch({ next: { tags: [tagsUserRouter.info(input)] } })
+    const user = await dbfetch({ next: { tags: [tagsUser.info(input)] } })
       .selectFrom("User")
       .selectAll()
       .where("User.id", "=", input.userId)
@@ -18,7 +15,7 @@ export const userRouter = createTRPCRouter({
     return user;
   }),
   infoPublic: publicProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input }) => {
-    const user = await dbfetch({ next: { tags: [tagsUserRouter.info(input)] } })
+    const user = await dbfetch({ next: { tags: [tagsUser.info(input)] } })
       .selectFrom("User")
       .select(["id", "name", "image"])
       .where("User.id", "=", input.userId)
@@ -35,7 +32,7 @@ export const userRouter = createTRPCRouter({
       })
       .executeTakeFirstOrThrow();
 
-    revalidateTag(tagsUserRouter.info({ userId: ctx.user.id }));
+    revalidateTag(tagsUser.info({ userId: ctx.user.id }));
     return true;
   }),
 });
