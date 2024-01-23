@@ -60,7 +60,6 @@ export function CreateEventForm({ isSignedIn }: Props) {
     { point: googleMapsPickedPoint! },
     {
       enabled: isSignedIn && Boolean(googleMapsPickedPoint),
-      notifyOnChangeProps: ["data"],
     }
   );
   useEffect(() => {

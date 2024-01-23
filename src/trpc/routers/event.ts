@@ -2,8 +2,8 @@ import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
-import { sql } from "kysely";
-import { zGeoJsonPoint, type GeoJson } from "#src/db/types-geojson";
+import { type NotNull, sql } from "kysely";
+import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { eventTags } from "./eventTags";
 
 export const eventRouter = createTRPCRouter({
@@ -70,16 +70,16 @@ export const eventRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const trimmedStr = trimSearchOperators(input.titleOrLocationName);
 
-      const withScore = trimmedStr.length > 0;
+      const withSearch = trimmedStr.length > 0;
 
       //I need to show ALL events (that has location) as default scenario
       //to put that default scenario in cache where no filters are applied
-      const db = !withScore && !input.minDate && !input.maxDate ? dbfetch({ next: { revalidate: 10 } }) : dbfetch();
+      const db = !withSearch && !input.minDate && !input.maxDate ? dbfetch({ next: { revalidate: 10 } }) : dbfetch();
 
       let q = db
         .selectFrom("Event")
         .select(["id", "location", "locationName", "title"])
-        .$if(withScore, (qb) => {
+        .$if(withSearch, (qb) => {
           const search = searchstring(trimmedStr);
           console.log("search:", search);
           return qb
@@ -87,7 +87,7 @@ export const eventRouter = createTRPCRouter({
             .orderBy("score desc");
         })
         .where("location", "is not", null)
-        .$narrowType<{ location: GeoJson["Point"] }>(); //for typescript, make location not null
+        .$narrowType<{ location: NotNull }>(); //for typescript, make location not null
 
       if (input.minDate) {
         q = q.where("date", ">", input.minDate);
@@ -98,21 +98,21 @@ export const eventRouter = createTRPCRouter({
 
       q = q.orderBy("id desc"); //finally order by id desc aka latest created first
 
-      if (withScore) {
+      if (withSearch) {
         q = q.limit(5);
       } else {
         //just grab everything I guess, need to show all on map
       }
 
       //.orderBy("location", sql`IS NULL`).orderBy("location asc") //this is how to do null last
-      let result = await q.execute();
+      let events = await q.execute();
 
       //Im sure its possible to do this conditional filter in the query itself... but this is fine
-      if (withScore) {
-        result = result.filter((x) => x.score! > 0);
+      if (withSearch) {
+        events = events.filter((x) => x.score! > 0);
       }
 
-      return { events: result, withScore };
+      return { events, withSearch };
     }),
 });
 

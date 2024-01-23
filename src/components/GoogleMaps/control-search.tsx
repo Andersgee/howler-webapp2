@@ -42,10 +42,7 @@ function Content() {
       maxDate: advancedSearch ? maxDate : undefined,
     },
     {
-      //enabled: titleOrLocationName.length
-      //enabled: trimSearchOperators(text).length >= 3,
-      //staleTime: 10000, //just for testing
-      notifyOnChangeProps: ["data"], //not sure if needed.. default is smart-tracking but what does that mean?
+      staleTime: 10000, //just for testing
     }
   );
 
@@ -63,7 +60,7 @@ function Content() {
   return (
     <Collapsible open={advancedSearch} onOpenChange={setAdvancedSearch} className="m-2">
       <InputSearch
-        suggestions={data?.events.slice(0, 5).map(suggestionFromEvent) ?? []}
+        suggestions={data?.withSearch ? data.events.map(suggestionFromEvent) : []}
         value={titleOrLocationName}
         onChange={(s, id) => {
           setTitleOrLocationName(s);
