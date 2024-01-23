@@ -30,10 +30,6 @@ function Content() {
   const [advancedSearch, setAdvancedSearch] = useState(false);
   const [minDate, setMinDate] = useState<Date>(new Date());
   const [maxDate, setMaxDate] = useState<Date>(new Date(Date.now() + MS_ONE_WEEK));
-  //const enabled = useMemo(()=>{
-  //  const trimmed = trimSearchOperators(titleOrLocationName)
-  //  return trimmed.length === 0 || trimmed.length>=3
-  //},[titleOrLocationName])
 
   const { data } = api.event.explore.useQuery(
     {
