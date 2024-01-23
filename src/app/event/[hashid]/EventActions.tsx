@@ -2,7 +2,7 @@
 
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { ShareButton } from "#src/components/ShareButton";
-import { type GeoJSON } from "#src/db/geojson-types";
+import { type GeoJson } from "#src/db/types-geojson";
 import { type RouterOutputs } from "#src/hooks/api";
 import { IconEdit } from "#src/icons/Edit";
 import { IconWhere } from "#src/icons/Where";
@@ -40,7 +40,7 @@ export function EventActions({ isCreator, event }: Props) {
   );
 }
 
-function Map({ show, location }: { show: boolean; location: null | GeoJSON["Point"] }) {
+function Map({ show, location }: { show: boolean; location: null | GeoJson["Point"] }) {
   const googleMaps = useStore.use.googleMaps();
   useEffect(() => {
     if (!googleMaps || !location) return;

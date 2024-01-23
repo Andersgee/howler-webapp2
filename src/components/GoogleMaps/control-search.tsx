@@ -71,6 +71,7 @@ function Content() {
             const ev = data?.events.find((x) => x.id === id);
             if (googleMaps && ev) {
               setGoogleMapsExploreSelectedEventId(id);
+              console.log("hmm");
               const latLng = { lat: ev.location.coordinates[0], lng: ev.location.coordinates[1] };
               googleMaps.infoWindow.setPosition(latLng);
               googleMaps.infoWindow.open({ map: googleMaps.map, shouldFocus: false });

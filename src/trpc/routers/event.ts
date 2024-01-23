@@ -2,9 +2,8 @@ import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { hashidFromId } from "#src/utils/hashid";
-import { schemaFilter } from "./eventSchema";
 import { sql } from "kysely";
-import { zGeoJsonPoint, type Point } from "#src/db/geojson-types";
+import { zGeoJsonPoint, type GeoJson } from "#src/db/types-geojson";
 import { eventTags } from "./eventTags";
 
 export const eventRouter = createTRPCRouter({
@@ -88,7 +87,7 @@ export const eventRouter = createTRPCRouter({
             .orderBy("score desc");
         })
         .where("location", "is not", null)
-        .$narrowType<{ location: Point }>(); //for typescript, make location not null
+        .$narrowType<{ location: GeoJson["Point"] }>(); //for typescript, make location not null
 
       if (input.minDate) {
         q = q.where("date", ">", input.minDate);

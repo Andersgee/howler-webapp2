@@ -19,7 +19,7 @@ import { IconWhere } from "#src/icons/Where";
 import { cn } from "#src/utils/cn";
 import { ControlUnpickPoint } from "#src/components/GoogleMaps/control-unpick-point";
 import { z } from "zod";
-import { zGeoJsonPoint, type GeoJSON } from "#src/db/geojson-types";
+import { zGeoJsonPoint, type GeoJson } from "#src/db/types-geojson";
 import { actionOnSuccess } from "./actions";
 import { setGoogleMapsPickedPoint } from "#src/store/slices/map";
 
@@ -81,7 +81,7 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
   const { toast } = useToast();
 
   const eventUpdate = api.event.update.useMutation({
-    onSuccess: ({ hashid }) => {
+    onSuccess: () => {
       //form.reset();
       //router.push(`/event/${hashid}`); //revalidating in route handler does not bust router cache
       void actionOnSuccess(initialEvent.id.toString()); //so revalidate in server action, and might aswell redirect there aswell
@@ -187,7 +187,7 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
   );
 }
 
-function Map({ show, initialLocation }: { show: boolean; initialLocation: null | GeoJSON["Point"] }) {
+function Map({ show, initialLocation }: { show: boolean; initialLocation: null | GeoJson["Point"] }) {
   const didRun = useRef(false);
   const googleMaps = useStore.use.googleMaps();
   useEffect(() => {

@@ -19,7 +19,7 @@ import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
 //import { IconWho } from "#src/icons/Who";
 import { dialogDispatch } from "#src/store/slices/dialog";
-import { zGeoJsonPoint } from "#src/db/geojson-types";
+import { zGeoJsonPoint } from "#src/db/types-geojson";
 
 const zFormData = z.object({
   title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),

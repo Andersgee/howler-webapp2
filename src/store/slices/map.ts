@@ -1,12 +1,12 @@
 import type { StateCreator } from "zustand";
 import { type GoogleMapsClass } from "#src/components/GoogleMaps/google-maps-class";
-import { type GeoJSON } from "#src/db/geojson-types";
+import { type GeoJson } from "#src/db/types-geojson";
 import { useStore } from "..";
 
 export type MapSlice = {
   googleMaps: GoogleMapsClass | null;
   googleMapsElement: HTMLDivElement | null;
-  googleMapsPickedPoint: GeoJSON["Point"] | null;
+  googleMapsPickedPoint: GeoJson["Point"] | null;
   googleMapsExploreSelectedEventId: bigint | null;
 };
 
@@ -21,7 +21,7 @@ export function setGoogleMapsElement(el: HTMLDivElement) {
   useStore.setState({ googleMapsElement: el });
 }
 
-export function setGoogleMapsPickedPoint(point: GeoJSON["Point"] | null) {
+export function setGoogleMapsPickedPoint(point: GeoJson["Point"] | null) {
   useStore.setState({ googleMapsPickedPoint: point });
 }
 

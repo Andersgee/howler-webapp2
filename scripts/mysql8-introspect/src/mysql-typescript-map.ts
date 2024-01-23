@@ -28,14 +28,14 @@ export function ts_type_from_col(col: Col) {
 }
 
 const ADVANCED_DATA_TYPE_MAP: Record<string, string> = {
-  point: `GeoJSON["Point"]`,
-  linestring: `GeoJSON["LineString"]`,
-  polygon: `GeoJSON["Polygon"]`,
-  geometry: `GeoJSON["Geometry"]`,
-  multipoint: `GeoJSON["MultiPoint"]`,
-  multilinestring: `GeoJSON["MultiLineString"]`,
-  multipolygon: `GeoJSON["MultiPolygon"]`,
-  geomcollection: `GeoJSON["GeometryCollection"]`,
+  point: `GeoJson["Point"]`,
+  linestring: `GeoJson["LineString"]`,
+  polygon: `GeoJson["Polygon"]`,
+  geometry: `GeoJson["Geometry"]`,
+  multipoint: `GeoJson["MultiPoint"]`,
+  multilinestring: `GeoJson["MultiLineString"]`,
+  multipolygon: `GeoJson["MultiPolygon"]`,
+  geomcollection: `GeoJson["GeometryCollection"]`,
 };
 
 const SIMPLE_DATA_TYPE_MAP: Record<string, string> = {

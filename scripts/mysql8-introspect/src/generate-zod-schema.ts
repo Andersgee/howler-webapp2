@@ -15,24 +15,17 @@ export function generateZodSchema(r: IntrospectResult): string {
     }
     s += "});\n\n";
   }
-
-  //s += postlude(Object.keys(r.tableTypes));
   return s;
 }
 
 function prelude() {
   return `import { z } from "zod";
-import { schemaGeoJSON } from "./geojson-types";
+import { zGeoJson } from "./types-geojson";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const zTypedArray = z.custom<ArrayBufferView>((value) => ArrayBuffer.isView(value));
 
 // this file here mostly generated as a copy-paste starting point reference for when specifying api inputs
 // anyway, this is how values of "INSERT" and "UPDATE" looks from a zod perspective
 \n`;
-}
-
-function postlude(tableNames: string[]) {
-  return `export const schemaDB = z.object({
-${tableNames.map((x) => `  ${x}: ${x},`).join("\n")}
-});\n`;
 }

@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { schemaGeoJSON } from "./geojson-types";
+import { zGeoJson } from "./types-geojson";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const zTypedArray = z.custom<ArrayBufferView>((value) => ArrayBuffer.isView(value));
 
 // this file here mostly generated as a copy-paste starting point reference for when specifying api inputs
@@ -12,7 +13,7 @@ export const schema_insert_Event = z.object({
   updatedAt: z.date().optional(),
   title: z.string(),
   date: z.date().optional(),
-  location: schemaGeoJSON.Point.nullish(),
+  location: zGeoJson.Point.nullish(),
   creatorId: z.bigint(),
   locationName: z.string().nullish(),
   image: z.string().nullish(),
@@ -24,7 +25,7 @@ export const schema_update_Event = z.object({
   updatedAt: z.date().optional(),
   title: z.string().optional(),
   date: z.date().optional(),
-  location: schemaGeoJSON.Point.nullish(),
+  location: zGeoJson.Point.nullish(),
   creatorId: z.bigint().optional(),
   locationName: z.string().nullish(),
   image: z.string().nullish(),

@@ -14,7 +14,7 @@ export function generateTypescriptTypesWithoutDocstrings(r: IntrospectResult): s
 
 function prelude(tableNames: string[]) {
   return `import type { Generated } from "kysely";
-import type { GeoJSON } from "./geojson-types";
+import type { GeoJson } from "./types-geojson";
   
 export type DB = {
 ${tableNames.map((x) => `  ${x}: ${x};`).join("\n")}

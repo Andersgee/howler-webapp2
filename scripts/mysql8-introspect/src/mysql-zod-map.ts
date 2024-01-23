@@ -28,14 +28,14 @@ export function zod_type_from_col(col: Col) {
 }
 
 const ADVANCED_DATA_TYPE_MAP: Record<string, string> = {
-  point: `schemaGeoJSON.Point`,
-  linestring: `schemaGeoJSON.LineString`,
-  polygon: `schemaGeoJSON.Polygon`,
-  geometry: `schemaGeoJSON.Geometry`,
-  multipoint: `schemaGeoJSON.MultiPoint`,
-  multilinestring: `schemaGeoJSON.MultiLineString`,
-  multipolygon: `schemaGeoJSON.MultiPolygon`,
-  geomcollection: `schemaGeoJSON.GeometryCollection`,
+  point: `zGeoJson.Point`,
+  linestring: `zGeoJson.LineString`,
+  polygon: `zGeoJson.Polygon`,
+  geometry: `zGeoJson.Geometry`,
+  multipoint: `zGeoJson.MultiPoint`,
+  multilinestring: `zGeoJson.MultiLineString`,
+  multipolygon: `zGeoJson.MultiPolygon`,
+  geomcollection: `zGeoJson.GeometryCollection`,
 };
 
 //const zTypedArray = z.custom<ArrayBufferView>((value) => ArrayBuffer.isView(value));

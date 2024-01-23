@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { zGeoJsonPoint } from "#src/db/geojson-types";
+import { zGeoJsonPoint } from "#src/db/types-geojson";
 
 export const schemaCreate = z.object({
   title: z

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { zGeoJsonPoint } from "#src/db/geojson-types";
+import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { getGoogleReverseGeocoding } from "#src/lib/geocoding";
 
 export const geocodeRouter = createTRPCRouter({

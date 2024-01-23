@@ -9,7 +9,7 @@ import Image from "next/image";
 import { IconImage } from "#src/icons/Image";
 import { IconLoadingSpinner } from "#src/icons/special";
 import { useToast } from "#src/ui/use-toast";
-import { Button, buttonVariants } from "#src/ui/button";
+import { Button } from "#src/ui/button";
 
 type Props = {
   className?: string;
