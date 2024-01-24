@@ -34,7 +34,7 @@ export async function actionDeleteMyUser() {
     const r = await dbfetch()
       .insertInto("DeletedEventImages")
       .ignore()
-      .values(events.filter(Boolean).map((x) => ({ image: x.image! })))
+      .values(events.filter((x) => x.image !== null).map((x) => ({ image: x.image! })))
       .execute();
 
     //everything else (for now) is cascading deletes
