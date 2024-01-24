@@ -1,11 +1,29 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { z } from "zod";
 import { zGeoJson } from "./types-geojson";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const zTypedArray = z.custom<ArrayBufferView>((value) => ArrayBuffer.isView(value));
 
 // this file here mostly generated as a copy-paste starting point reference for when specifying api inputs
 // anyway, this is how values of "INSERT" and "UPDATE" looks from a zod perspective
+
+export const schema_insert_DeletedEventImages = z.object({
+  image: z.string(),
+});
+export const schema_update_DeletedEventImages = z.object({
+  image: z.string().optional(),
+});
+
+export const schema_insert_UserEventPivot = z.object({
+  userId: z.bigint(),
+  eventId: z.bigint(),
+  joinDate: z.date().optional(),
+});
+export const schema_update_UserEventPivot = z.object({
+  userId: z.bigint().optional(),
+  eventId: z.bigint().optional(),
+  joinDate: z.date().optional(),
+});
 
 export const schema_insert_Event = z.object({
   id: z.bigint().optional(),
@@ -30,17 +48,6 @@ export const schema_update_Event = z.object({
   locationName: z.string().nullish(),
   image: z.string().nullish(),
   imageAspect: z.number().optional(),
-});
-
-export const schema_insert_UserEventPivot = z.object({
-  userId: z.bigint(),
-  eventId: z.bigint(),
-  joinDate: z.date().optional(),
-});
-export const schema_update_UserEventPivot = z.object({
-  userId: z.bigint().optional(),
-  eventId: z.bigint().optional(),
-  joinDate: z.date().optional(),
 });
 
 export const schema_insert_User = z.object({

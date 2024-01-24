@@ -1,11 +1,18 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
-  Event: Event;
+  DeletedEventImages: DeletedEventImages;
   UserEventPivot: UserEventPivot;
+  Event: Event;
   User: User;
   Post: Post;
+};
+
+export type DeletedEventImages = {
+  /** indexed: (image), dbtype: 'varchar(100)', eg string with max 100 chars */
+  image: string;
 };
 
 export type Event = {

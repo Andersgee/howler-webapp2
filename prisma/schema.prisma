@@ -75,21 +75,8 @@ model Event {
     @@fulltext([title, locationName])
 }
 
-//model Event {
-//    id        Int  @id @default(autoincrement())
-//    creator   User @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-//    creatorId Int
-//
-//    what             String
-//    where            String
-//    when             DateTime
-//    whenEnd          DateTime
-//    who              String
-//    info             String
-//    image            String?
-//    imageAspectRatio Float?
-//
-//    joinedUsers      UserEventPivot[]
-//    eventchatmessage Eventchatmessage[]
-//    eventLocation    EventLocation?
-//}
+model DeletedEventImages {
+    image String @db.VarChar(100)
+
+    @@id([image])
+}

@@ -1,6 +1,6 @@
 import { SIZE } from "./image-sizes-constants.mjs";
 
-type Width = keyof typeof SIZE;
+export type Width = keyof typeof SIZE;
 
 type Options = {
   "sm"?: Width;

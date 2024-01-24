@@ -14,10 +14,11 @@ type Props = {
 
 export default async function Page({ params }: Props) {
   const id = idFromHashid(params.hashid);
-  if (!id) notFound();
+  if (id === undefined) notFound();
 
   const { api, user } = await apiRsc();
   const event = await api.event.getById({ id });
+  if (!event) notFound();
 
   return (
     <div className="container mx-auto flex justify-center">

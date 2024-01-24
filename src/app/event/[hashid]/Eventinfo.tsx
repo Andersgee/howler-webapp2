@@ -8,7 +8,7 @@ import { cn } from "#src/utils/cn";
 
 type Props = {
   className?: string;
-  event: RouterOutputs["event"]["getById"];
+  event: NonNullable<RouterOutputs["event"]["getById"]>;
 };
 
 export function Eventinfo({ event, className }: Props) {

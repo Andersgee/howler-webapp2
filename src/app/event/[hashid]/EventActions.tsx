@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 
 type Props = {
   isCreator: boolean;
-  event: RouterOutputs["event"]["getById"];
+  event: NonNullable<RouterOutputs["event"]["getById"]>;
 };
 
 export function EventActions({ isCreator, event }: Props) {

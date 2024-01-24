@@ -47,7 +47,7 @@ type FormData = z.input<typeof zFormData>;
 
 type Props = {
   className?: string;
-  initialEvent: RouterOutputs["event"]["getById"];
+  initialEvent: NonNullable<RouterOutputs["event"]["getById"]>;
 };
 
 export function UpdateEventForm({ className, initialEvent }: Props) {

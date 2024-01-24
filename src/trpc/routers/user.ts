@@ -3,6 +3,7 @@ import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { tagsUser } from "./userTags";
+import { userCookieRemoveString } from "#src/utils/auth/schema";
 
 export const userRouter = createTRPCRouter({
   info: protectedProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input }) => {
@@ -34,5 +35,10 @@ export const userRouter = createTRPCRouter({
 
     revalidateTag(tagsUser.info({ userId: ctx.user.id }));
     return true;
+  }),
+  deleteMe: protectedProcedure.mutation(async ({ ctx }) => {
+    const _deleteResult = await dbfetch().deleteFrom("User").where("id", "=", ctx.user.id).executeTakeFirstOrThrow();
+    ctx.resHeaders?.append("Set-Cookie", userCookieRemoveString());
+    return { userId: ctx.user.id };
   }),
 });

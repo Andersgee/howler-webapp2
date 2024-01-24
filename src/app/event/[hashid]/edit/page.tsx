@@ -12,10 +12,11 @@ type Props = {
 
 export default async function Page({ params }: Props) {
   const id = idFromHashid(params.hashid);
-  if (!id) notFound();
+  if (id === undefined) notFound();
 
   const { api, user } = await apiRsc();
   const event = await api.event.getById({ id });
+  if (!event) notFound();
 
   if (!user?.id || user.id !== event.creatorId) redirect(`/event/${params.hashid}`);
 

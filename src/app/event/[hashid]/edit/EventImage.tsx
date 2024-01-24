@@ -13,7 +13,7 @@ import { Button } from "#src/ui/button";
 
 type Props = {
   className?: string;
-  event: RouterOutputs["event"]["getById"];
+  event: NonNullable<RouterOutputs["event"]["getById"]>;
 };
 
 export function EventImage({ event, className }: Props) {

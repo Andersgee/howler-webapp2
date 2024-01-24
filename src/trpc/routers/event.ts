@@ -13,7 +13,7 @@ export const eventRouter = createTRPCRouter({
       .selectFrom("Event")
       .selectAll()
       .where("id", "=", input.id)
-      .executeTakeFirstOrThrow();
+      .executeTakeFirst();
   }),
   create: protectedProcedure
     .input(
