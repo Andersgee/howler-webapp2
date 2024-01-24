@@ -18,7 +18,7 @@ export function DeleteAccountButton() {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button>Delete account</Button>
+        <Button variant="danger">Delete account</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
