@@ -5,7 +5,6 @@ import { tagsEvent } from "#src/trpc/routers/eventTags";
 import { tagsUser } from "#src/trpc/routers/userTags";
 import { USER_COOKIE_NAME } from "#src/utils/auth/schema";
 import { getUserFromCookie } from "#src/utils/jwt";
-import { type NotNull } from "kysely";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -43,7 +42,7 @@ export async function actionDeleteMyUser() {
 
     //cookies().delete(USER_COOKIE_NAME); //this did not work
     //unsure about special nextjs cookies() function. prob you must remove using same options, as normally
-    //cookies().set(USER_COOKIE_NAME, "null; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0");
+    //cookies().set(USER_COOKIE_NAME, "null; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age=0");
     cookies().set(USER_COOKIE_NAME, "null", { path: "/", secure: true, httpOnly: true, sameSite: "lax", maxAge: 0 }); //yep.
 
     revalidateTag(tagsUser.info({ userId: user.id }));

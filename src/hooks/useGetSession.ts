@@ -2,37 +2,47 @@ import { useEffect, useRef } from "react";
 import { JSONE } from "#src/utils/jsone";
 import { TokenUserSchema } from "#src/utils/jwt/schema";
 import { useStore } from "#src/store";
+//import { userDispatch } from "#src/store/slices/user";
 
 export function useGetSession() {
   const didRun = useRef(false);
+  const setUser = useStore.use.setUser();
 
   useEffect(() => {
     if (didRun.current) return; //only run once even in development
+    getSession()
+      .then((user) => {
+        if (user) {
+          setUser(user);
+        }
+      })
+      .catch(() => {
+        //ignore
+      });
     didRun.current = true;
-    void getSession();
-  }, []);
+  }, [setUser]);
   return null;
 }
 
 /**
- * grab/check for session
+ * grab session cookie and maybe user cookie
  *
- * if user already signed in (status 200) then set store.user instead
+ * if user already signed in (status 200) then set store.user aswell
  *
  * see /api/session logic
  */
-export async function getSession() {
+async function getSession() {
   try {
     const res = await fetch("/api/session");
     if (res.status === 200) {
       const user = TokenUserSchema.parse(await JSONE.parse(await res.text()));
-      useStore.setState({ user });
-      return true;
+      //userDispatch(user);
+      return user;
     } else {
-      return false;
+      return null;
     }
   } catch (err) {
     console.log(err);
-    return false;
+    return null;
   }
 }

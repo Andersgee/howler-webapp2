@@ -1,6 +1,11 @@
 import { type NextRequest } from "next/server";
-import { createSessionToken, getSessionFromRequestCookie, getUserFromRequestCookie } from "#src/utils/jwt";
-import { sessionCookieString } from "#src/utils/auth/schema";
+import {
+  createSessionToken,
+  createTokenFromUser,
+  getSessionFromRequestCookie,
+  getUserFromRequestCookie,
+} from "#src/utils/jwt";
+import { USER_COOKIE_MAXAGE, sessionCookieString, userCookieString } from "#src/utils/auth/schema";
 import { JSONE } from "#src/utils/jsone";
 
 /*
@@ -20,13 +25,20 @@ export const dynamic = "force-dynamic";
 export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
-  const user = await getUserFromRequestCookie(request);
-  if (user) return new Response(JSONE.stringify(user), { status: 200 });
-
-  const session = await getSessionFromRequestCookie(request);
-  if (session) return new Response(null, { status: 204 });
-
   const sessionToken = await createSessionToken();
+  const user = await getUserFromRequestCookie(request);
+  if (user) {
+    //refresh existing (new max-age), also return status 200 and user
+    const userCookie = await createTokenFromUser(user);
+    return new Response(JSONE.stringify(user), {
+      status: 200,
+      headers: [
+        ["Set-Cookie", userCookieString(userCookie, USER_COOKIE_MAXAGE)],
+        ["Set-Cookie", sessionCookieString(sessionToken)],
+      ],
+    });
+  }
+
   return new Response(null, {
     status: 204,
     headers: {

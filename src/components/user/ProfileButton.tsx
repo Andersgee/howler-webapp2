@@ -4,19 +4,14 @@ import { useStore } from "#src/store";
 import { SigninButtons } from "./SigninButtons";
 import { SignoutButton } from "./SignoutButton";
 import { UserImage32x32 } from "./UserImage";
-import { type TokenUser } from "#src/utils/jwt/schema";
 import { Popover, PopoverContent, PopoverTrigger } from "#src/ui/popover";
 import { Button, buttonVariants } from "#src/ui/button";
 import { dialogDispatch } from "#src/store/slices/dialog";
 import { IconSettings } from "#src/icons/Settings";
 import Link from "next/link";
 
-type Props = {
-  user: TokenUser | null;
-};
-
-export function ProfileButton({ user }: Props) {
-  //const user = useStore.use.user();
+export function ProfileButton() {
+  const user = useStore.use.user();
   const dialogValue = useStore.use.dialogValue();
 
   return (
