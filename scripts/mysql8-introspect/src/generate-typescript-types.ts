@@ -13,7 +13,8 @@ export function generateTypescriptTypesWithoutDocstrings(r: IntrospectResult): s
 }
 
 function prelude(tableNames: string[]) {
-  return `import type { Generated } from "kysely";
+  return `/* eslint-disable @typescript-eslint/no-unused-vars */
+import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {

@@ -19,10 +19,10 @@ export function generateZodSchema(r: IntrospectResult): string {
 }
 
 function prelude() {
-  return `import { z } from "zod";
+  return `/* eslint-disable @typescript-eslint/no-unused-vars */
+import { z } from "zod";
 import { zGeoJson } from "./types-geojson";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const zTypedArray = z.custom<ArrayBufferView>((value) => ArrayBuffer.isView(value));
 
 // this file here mostly generated as a copy-paste starting point reference for when specifying api inputs
