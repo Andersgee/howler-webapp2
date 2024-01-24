@@ -44,7 +44,7 @@ export async function actionDeleteMyUser() {
     //cookies().delete(USER_COOKIE_NAME); //this did not work
     //unsure about special nextjs cookies() function. prob you must remove using same options, as normally
     //cookies().set(USER_COOKIE_NAME, "null; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=0");
-    cookies().set(USER_COOKIE_NAME, "null", { path: "/", secure: true, httpOnly: true, sameSite: "lax", maxAge: 0 });
+    cookies().set(USER_COOKIE_NAME, "null", { path: "/", secure: true, httpOnly: true, sameSite: "lax", maxAge: 0 }); //yep.
 
     revalidateTag(tagsUser.info({ userId: user.id }));
 
