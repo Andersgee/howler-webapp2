@@ -64,6 +64,7 @@ model Event {
     locationName String?               @db.VarChar(55)
     creatorId    BigInt                @db.UnsignedBigInt
     image        String?               @db.VarChar(100)
+    //imageBlurData String?               @db.VarChar(200) //for <Image placeholder="blur" blurDataURL={imageBlurData}>
     imageAspect  Float                 @default(1) @db.Float()
 
     User           User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)

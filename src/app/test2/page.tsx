@@ -14,6 +14,7 @@ export default async function Page() {
 
   const image_blurdata =
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAAECAIAAADETxJQAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAMUlEQVR4nGNoLk5av2TK/59PGUK9bBITnS7uWMxQkx3Ly8EwpTyZITXMXUFarCLOBwBpHQ9k5wYp+gAAAABJRU5ErkJggg==";
+
   return (
     <div>
       <h1>testing bluradata </h1>
