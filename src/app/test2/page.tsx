@@ -1,3 +1,4 @@
+import { blurDataURLFromBuffer } from "#src/lib/get-blur-data";
 import { apiRsc } from "#src/trpc/api-rsc";
 import { idFromHashid } from "#src/utils/hashid";
 import { imageSizes } from "#src/utils/image-sizes";
@@ -10,6 +11,8 @@ export default async function Page() {
   const id = idFromHashid("o0o5W")!;
   const event = await api.event.getById({ id });
   if (!event?.image) notFound();
+
+  //const a = await getBlurDataFromImageUrl(event.image)
   //const image = "https://storage.googleapis.com/howler-event-images/o0o5W-f8b0caeb-115b-4730-9297-e695da2035e6";
 
   const image_blurdata =
@@ -23,6 +26,20 @@ export default async function Page() {
           <p>basic</p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={image_blurdata} alt="Red dot" className="h-auto w-64 md:w-96" />
+        </div>
+        <div>
+          <p>Image with blur from db</p>
+          <Image
+            src={event.image}
+            alt={"some title"}
+            sizes={imageSizes("w-64", { md: "w-96" })}
+            className="mb-8 h-auto w-64 md:w-96"
+            //width and height only for aspect ratio purpose
+            width={256}
+            height={Math.round(256 / event.imageAspect)}
+            placeholder={event.imageBlurData ? "blur" : undefined}
+            blurDataURL={event.imageBlurData ? blurDataURLFromBuffer(event.imageBlurData) : undefined}
+          />
         </div>
         <div>
           <p>Image with blur</p>

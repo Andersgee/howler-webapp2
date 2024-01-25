@@ -59,3 +59,7 @@ export function imageSizes(width: Width, o?: Options) {
   const sm = o.sm ? `(min-width: ${SIZE["w-screen-sm"]}) ${SIZE[o.sm]}, ` : "";
   return `${xl2}${xl}${md}${sm}${w}`;
 }
+
+export function blurDataURLFromBuffer(data: Buffer) {
+  return `data:image/png;base64,${data.toString("base64")}`;
+}

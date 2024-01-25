@@ -55,17 +55,18 @@ model UserEventPivot {
 }
 
 model Event {
-    id           BigInt                @default(autoincrement()) @db.UnsignedBigInt
-    createdAt    DateTime              @default(now())
-    updatedAt    DateTime              @default(now()) @updatedAt
-    title        String                @db.VarChar(55)
-    date         DateTime              @default(now())
-    location     Unsupported("point")? //https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html
-    locationName String?               @db.VarChar(55)
-    creatorId    BigInt                @db.UnsignedBigInt
-    image        String?               @db.VarChar(100)
-    //imageBlurData String?               @db.VarChar(200) //for <Image placeholder="blur" blurDataURL={imageBlurData}>
-    imageAspect  Float                 @default(1) @db.Float()
+    id            BigInt                @default(autoincrement()) @db.UnsignedBigInt
+    createdAt     DateTime              @default(now())
+    updatedAt     DateTime              @default(now()) @updatedAt
+    title         String                @db.VarChar(55)
+    date          DateTime              @default(now())
+    location      Unsupported("point")? //https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html
+    locationName  String?               @db.VarChar(55)
+    creatorId     BigInt                @db.UnsignedBigInt
+    image         String?               @db.VarChar(100)
+    //imageBlurData String?               @db.VarChar(200) //for <Image placeholder="blur" blurDataURL={imageBlurData}> actually why not just store bytes instead...
+    imageBlurData Bytes?                @db.VarBinary(255) //4x4=16 pixels ends up around 127 bytes, so go with 255 (btw, dont do tinyblob here. presence of blobs hurt read speed, but necessary for Large OBjects)
+    imageAspect   Float                 @default(1) @db.Float()
 
     User           User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
     UserEventPivot UserEventPivot[]

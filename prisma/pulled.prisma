@@ -8,7 +8,7 @@ generator client {
 }
 
 model DeletedEventImages {
-  image String
+  image String @db.VarChar(100)
 
   @@id([image])
 }

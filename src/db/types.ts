@@ -3,9 +3,9 @@ import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
+  Event: Event;
   DeletedEventImages: DeletedEventImages;
   UserEventPivot: UserEventPivot;
-  Event: Event;
   User: User;
   Post: Post;
 };
@@ -36,6 +36,8 @@ export type Event = {
   image: string | null;
   /** default: 1, dbtype: 'float' */
   imageAspect: Generated<number>;
+  /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
+  imageBlurData: Buffer | null;
 };
 
 export type Post = {

@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { Eventinfo } from "./Eventinfo";
 import { EventActions } from "./EventActions";
 import Image from "next/image";
-import { imageSizes } from "#src/utils/image-sizes";
+import { blurDataURLFromBuffer, imageSizes } from "#src/utils/image-sizes";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -33,6 +33,8 @@ export default async function Page({ params }: Props) {
             //width and height only for aspect ratio purpose
             width={256}
             height={Math.round(256 / event.imageAspect)}
+            placeholder={event.imageBlurData ? "blur" : undefined}
+            blurDataURL={event.imageBlurData ? blurDataURLFromBuffer(event.imageBlurData) : undefined}
           />
         )}
 

@@ -1,5 +1,6 @@
 import { dbfetch } from "#src/db";
 import { deleteImageFromBucket, generateV4UploadSignedUrl } from "#src/lib/cloud-storage";
+import { getPlaceholderData } from "#src/lib/image-placeholder";
 import { tagsEvent } from "#src/trpc/routers/eventTags";
 import { hashidFromId } from "#src/utils/hashid";
 import { getUserFromRequestCookie } from "#src/utils/jwt";
@@ -45,6 +46,9 @@ export async function POST(request: NextRequest) {
   const fileBuffer = await request.arrayBuffer();
   const optimizedFileBuffer = await sharp(fileBuffer).resize(Math.min(384, params.w)).webp().toBuffer();
 
+  const imageBlurData = await getPlaceholderData(optimizedFileBuffer);
+  //const blurDataURL = `data:image/png;base64,${imageBlurData.toString("base64")}`;
+
   //pick a filename and get signedurl
   const fileName = `${hashidFromId(event.id)}-${crypto.randomUUID()}`;
   const { signedUploadUrl, imageUrl } = await generateV4UploadSignedUrl(fileName, params.contentType);
@@ -69,6 +73,7 @@ export async function POST(request: NextRequest) {
     .set({
       image: imageUrl,
       imageAspect: imageAspect,
+      imageBlurData,
     })
     .executeTakeFirstOrThrow();
 
