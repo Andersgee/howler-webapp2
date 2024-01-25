@@ -1,6 +1,5 @@
 import { dbfetch } from "#src/db";
 import { deleteImageFromBucket, generateV4UploadSignedUrl } from "#src/lib/cloud-storage";
-import { getPlaceholderData } from "#src/lib/image-placeholder";
 import { tagsEvent } from "#src/trpc/routers/eventTags";
 import { hashidFromId } from "#src/utils/hashid";
 import { JSONE } from "#src/utils/jsone";

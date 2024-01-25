@@ -13,8 +13,6 @@ import { encodeParams } from "#src/utils/url";
 4. return image url
 */
 
-const MAX_SIZE_BYTES = 10000000;
-
 type Options = {
   onSuccess?: ({ image, imageAspect }: { image: string; imageAspect: number }) => void;
   onError?: (msg: string) => void;
@@ -38,48 +36,51 @@ export function useImageUpload(eventId: bigint, options?: Options) {
         options?.onError?.("Only jpeg or png images please.");
         return;
       }
-      if (file.size > MAX_SIZE_BYTES) {
+      const fileSize = file.size;
+      if (fileSize > 10000000) {
         options?.onError?.("Only images smaller than 10MB please.");
         return;
       }
 
       setIsUploading(true);
       try {
-        const { imageAspect } = await getImageAspectRatio(file);
-
-        //get signed
-        const url = `/api/gcs?eventId=${eventId}&contentType=${file.type}`;
-        const { signedUploadUrl, imageUrl } = z
-          .object({ signedUploadUrl: z.string(), imageUrl: z.string() })
-          .parse(await fetch(url, { method: "GET" }).then((res) => res.json()));
-
-        //upload to bucket, headers must match bucket config
-        const timer = setTimeout(() => setUploadTimerIsReached(true), options?.uploadTimerMs ?? 30000);
-        const bucketres = await fetch(signedUploadUrl, {
-          method: "PUT",
-          signal: abortController.signal,
-          headers: {
-            "Content-Type": file.type,
-            "Cache-Control": "public, max-age=2592000",
-            "X-Goog-Content-Length-Range": "0,10000000",
-          },
-          body: file,
-        });
-        clearTimeout(timer);
-        setUploadTimerIsReached(false);
-        if (!bucketres.ok) {
-          throw new Error("could not upload");
+        const { imageAspect, width, height } = await getImageSize(file);
+        let imageUrl: string;
+        if (fileSize < 4000000) {
+          //payload to serverless functions must be less than 4.5MB
+          //there are some benefits to going via api.
+          // - a single request from client
+          // - allows optimizing before storing in bucket
+          // - allows generating placeholder data
+          imageUrl = await uploadSmall(
+            eventId,
+            file,
+            width,
+            height,
+            30000,
+            () => setUploadTimerIsReached(true),
+            abortController
+          );
+        } else {
+          //the standard is having user upload directly to bucket
+          //3 requests from client.. get signed url from api, upload image to bucket, tell api that transfer is complete and update db
+          //cant really optimize image or generate placeholder data until some time later this way
+          //I mean images are ofc optimized and cached via next/image when used,
+          //Im talking about optimizing/saving on storage space here and also a smaller "original" also meaning the very first next/image usage will also be faster
+          //
+          //the proper way would be to have some google cloud hook that listens for bucket inserts (object finalized) and then sends some info to my api
+          //https://cloud.google.com/functions/docs/tutorials/storage#functions-prepare-environment-nodejs
+          //but ofc this will not work on localhost unless running through some tunneling service like ngrok
+          imageUrl = await uploadLarge(
+            eventId,
+            file,
+            width,
+            height,
+            30000,
+            () => setUploadTimerIsReached(true),
+            abortController
+          );
         }
-
-        //update
-        const res = await fetch("/api/gcs", {
-          method: "POST",
-          body: JSONE.stringify({ eventId, imageUrl, imageAspect }),
-        });
-        if (!res.ok) {
-          throw new Error("uploaded but could not update event");
-        }
-
         options?.onSuccess?.({ image: imageUrl, imageAspect });
         setIsUploading(false);
       } catch (err) {
@@ -98,52 +99,79 @@ export function useImageUpload(eventId: bigint, options?: Options) {
   return { uploadFile, isUploading, cancelUpload, uploadTimerIsReached };
 }
 
-/**
- * same thing but go via api route to optimize image before storing in bucket
- *
- * This only works for images smaller than 4.5MB if hosting on vercel.
- */
-export function useImageOptimizedUpload(eventId: bigint, options?: Options) {
-  const [isUploading, setIsUploading] = useState(false);
+async function uploadLarge(
+  eventId: bigint,
+  file: File,
+  width: number,
+  height: number,
+  uploadTimerMs = 30000,
+  timerCallback: () => void,
+  abortController: AbortController
+) {
+  const imageAspect = width / height;
+  //get signed
+  const url = `/api/gcs?eventId=${eventId}&contentType=${file.type}`;
+  const { signedUploadUrl, imageUrl } = z
+    .object({ signedUploadUrl: z.string(), imageUrl: z.string() })
+    .parse(await fetch(url, { method: "GET" }).then((res) => res.json()));
 
-  const uploadFile = useCallback(
-    async (file: File) => {
-      if (!(file.type === "image/png" || file.type === "image/jpeg")) {
-        options?.onError?.("Only jpeg or png images please.");
-        return;
-      }
-      if (file.size > 4000000) {
-        options?.onError?.("Only images smaller than 4MB please.");
-        return;
-      }
-
-      setIsUploading(true);
-      try {
-        const { imageAspect, width, height } = await getImageAspectRatio(file);
-
-        const fileBuffer = await file.arrayBuffer();
-        const url = `/api/gcs/image?${encodeParams({
-          eventId: eventId.toString(),
-          contentType: file.type,
-          w: width,
-          h: height,
-        })}`;
-        const imageUrl = await fetch(url, { method: "POST", body: fileBuffer }).then((res) => res.text());
-
-        options?.onSuccess?.({ image: imageUrl, imageAspect });
-      } catch (err) {
-        console.error(errorMessageFromUnkown(err));
-        options?.onError?.("Something went wrong.");
-      }
-      setIsUploading(false);
+  //upload to bucket, headers must match bucket config
+  const timer = setTimeout(timerCallback, uploadTimerMs);
+  const bucketres = await fetch(signedUploadUrl, {
+    method: "PUT",
+    signal: abortController.signal,
+    headers: {
+      "Content-Type": file.type,
+      "Cache-Control": "public, max-age=2592000",
+      "X-Goog-Content-Length-Range": "0,10000000",
     },
-    [eventId, options]
-  );
+    body: file,
+  });
+  clearTimeout(timer);
 
-  return { uploadFile, isUploading };
+  if (!bucketres.ok) {
+    throw new Error("could not upload");
+  }
+
+  //update
+  const res = await fetch("/api/gcs", {
+    method: "POST",
+    body: JSONE.stringify({ eventId, imageUrl, imageAspect }),
+  });
+  if (!res.ok) {
+    throw new Error("uploaded but could not update event");
+  }
+  return imageUrl;
 }
 
-async function getImageAspectRatio(file: File): Promise<{ width: number; height: number; imageAspect: number }> {
+async function uploadSmall(
+  eventId: bigint,
+  file: File,
+  width: number,
+  height: number,
+  uploadTimerMs = 30000,
+  timerCallback: () => void,
+  abortController: AbortController
+) {
+  const fileBuffer = await file.arrayBuffer();
+  const url = `/api/gcs/image?${encodeParams({
+    eventId: eventId.toString(),
+    contentType: file.type,
+    w: width,
+    h: height,
+  })}`;
+  const timer = setTimeout(timerCallback, uploadTimerMs);
+  const imageUrl = await fetch(url, {
+    method: "POST",
+    signal: abortController.signal,
+    body: fileBuffer,
+  }).then((res) => res.text());
+  clearTimeout(timer);
+
+  return imageUrl;
+}
+
+async function getImageSize(file: File): Promise<{ width: number; height: number; imageAspect: number }> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
