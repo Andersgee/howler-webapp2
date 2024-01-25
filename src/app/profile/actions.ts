@@ -30,7 +30,7 @@ export async function actionDeleteMyUser() {
     */
     //for now, I think just store the imageUrls of which images should be deleted, for deletion some time later
     //also user does not have to wait for google cloud storage to respond
-    const r = await dbfetch()
+    const _insertResult = await dbfetch()
       .insertInto("DeletedEventImages")
       .ignore()
       .values(events.filter((x) => x.image !== null).map((x) => ({ image: x.image! })))

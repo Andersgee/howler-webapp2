@@ -9,9 +9,10 @@ import { Button, buttonVariants } from "#src/ui/button";
 import { dialogDispatch } from "#src/store/slices/dialog";
 import { IconSettings } from "#src/icons/Settings";
 import Link from "next/link";
+import { type TokenUser } from "#src/utils/jwt/schema";
 
-export function ProfileButton() {
-  const user = useStore.use.user();
+export function ProfileButton({ user }: { user: TokenUser | null }) {
+  //const user = useStore.use.user();
   const dialogValue = useStore.use.dialogValue();
 
   return (

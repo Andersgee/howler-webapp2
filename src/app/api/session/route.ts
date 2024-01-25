@@ -1,10 +1,5 @@
 import { type NextRequest } from "next/server";
-import {
-  createSessionToken,
-  createTokenFromUser,
-  getSessionFromRequestCookie,
-  getUserFromRequestCookie,
-} from "#src/utils/jwt";
+import { createSessionToken, createTokenFromUser, getUserFromRequestCookie } from "#src/utils/jwt";
 import { USER_COOKIE_MAXAGE, sessionCookieString, userCookieString } from "#src/utils/auth/schema";
 import { JSONE } from "#src/utils/jsone";
 

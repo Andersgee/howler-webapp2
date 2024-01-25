@@ -6,21 +6,22 @@ import { useStore } from "#src/store";
 
 export function useGetSession() {
   const didRun = useRef(false);
-  const setUser = useStore.use.setUser();
+  const userDispatch = useStore.use.userDispatch();
 
   useEffect(() => {
     if (didRun.current) return; //only run once even in development
     getSession()
       .then((user) => {
         if (user) {
-          setUser(user);
+          userDispatch(user);
+          //userDispatch(user) //this might cause ReferenceError: cannot access 'i' before initialization?
         }
       })
       .catch(() => {
         //ignore
       });
     didRun.current = true;
-  }, [setUser]);
+  }, [userDispatch]);
   return null;
 }
 
@@ -36,7 +37,6 @@ async function getSession() {
     const res = await fetch("/api/session");
     if (res.status === 200) {
       const user = TokenUserSchema.parse(await JSONE.parse(await res.text()));
-      //userDispatch(user);
       return user;
     } else {
       return null;

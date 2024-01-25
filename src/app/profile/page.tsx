@@ -4,13 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { DeleteAccountButton } from "./DeleteAccountButton";
 
-type Props = {
-  searchParams: Record<string, string | string[] | undefined>;
-  /** adjust params according dynamic routes, eg if this is under a [slug] folder */
-  params: { slug: string };
-};
-
-export default async function Page({ params }: Props) {
+export default async function Page() {
   const { api, user: cookieuser } = await apiRsc();
   if (!cookieuser) redirect("/");
 

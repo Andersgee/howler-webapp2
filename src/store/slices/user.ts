@@ -4,12 +4,12 @@ import { type TokenUser } from "#src/utils/jwt/schema";
 
 export type Userlice = {
   user: TokenUser | null;
-  setUser: (user: TokenUser) => void;
+  userDispatch: (user: TokenUser) => void;
 };
 
 export const createUserSlice: StateCreator<Userlice, [], [], Userlice> = (set, _get) => ({
   user: null,
-  setUser: (user) => set({ user }),
+  userDispatch: (user) => set({ user }),
 });
 
 //export function userDispatch(user: TokenUser) {
