@@ -1,5 +1,6 @@
 import { dbfetch } from "#src/db";
 import { deleteImageFromBucket, generateV4UploadSignedUrl } from "#src/lib/cloud-storage";
+import { getPlaceholderData } from "#src/lib/image-placeholder";
 import { tagsEvent } from "#src/trpc/routers/eventTags";
 import { hashidFromId } from "#src/utils/hashid";
 import { JSONE } from "#src/utils/jsone";
@@ -39,19 +40,22 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({ signedUploadUrl, imageUrl }, { status: 200 });
 }
 
-//after user has uploaded directly to bucket, they must post here to replace image url in db
-//also make sure to delete image from bucket
-//it might be worth thinking about optimizing the saved image in bucket? before upload? after upload? on client side?
-//if client side we could actually use dynamic import and not import "sharp" until needed,
-//I think that might be the way to go. nope. cant use sharp in browser.
+//after user has uploaded directly to bucket, they/something must post here to replace image url in db
+//also make sure to delete old image from bucket
 export async function POST(request: NextRequest) {
   const user = await getUserFromRequestCookie(request);
   if (!user) return NextResponse.json("Unauthorized", { status: 401 });
-  //await request.json()
 
   const { eventId, imageUrl, imageAspect } = z
     .object({ eventId: z.bigint(), imageUrl: z.string(), imageAspect: z.number() })
     .parse(JSONE.parse(await request.text()));
+
+  //generate placeholder data (download image with regular fetch...
+  //this is likely 5MB plus and could really be skipped...
+  //in fact, If Im gonna download the image might aswell update to bucket image to an optimized image
+  //const imagedata = await fetch(imageUrl, { cache: "no-store" }).then((res) => res.arrayBuffer());
+  //const imageBlurData = await getPlaceholderData(imagedata);
+  // //const blurDataURL = `data:image/png;base64,${imageBlurData.toString("base64")}`;
 
   //make sure user is creator and grab old image url
   const oldEvent = await dbfetch()
@@ -66,7 +70,11 @@ export async function POST(request: NextRequest) {
     .updateTable("Event")
     .where("id", "=", eventId)
     .where("creatorId", "=", user.id)
-    .set({ image: imageUrl, imageAspect })
+    .set({
+      image: imageUrl,
+      imageAspect,
+      //imageBlurData,
+    })
     .executeTakeFirstOrThrow();
 
   //now that new image url is in db. delete image from bucket

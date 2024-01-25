@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
   const fileBuffer = await request.arrayBuffer();
   const optimizedFileBuffer = await sharp(fileBuffer).resize(Math.min(384, params.w)).webp().toBuffer();
 
+  //generate placeholder data
   const imageBlurData = await getPlaceholderData(optimizedFileBuffer);
   //const blurDataURL = `data:image/png;base64,${imageBlurData.toString("base64")}`;
 
@@ -72,13 +73,13 @@ export async function POST(request: NextRequest) {
     .where("creatorId", "=", user.id)
     .set({
       image: imageUrl,
-      imageAspect: imageAspect,
+      imageAspect,
       imageBlurData,
     })
     .executeTakeFirstOrThrow();
 
   //image is uploaded to bucket and db is updated with new imageUrl
-  //maybe delete old image from bucket
+  //delete old image from bucket
   if (event.image) {
     await deleteImageFromBucket(event.image);
   }
