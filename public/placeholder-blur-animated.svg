@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 4 3">
+
+<filter id="placeholder-blur">
+<feGaussianBlur in="SourceGraphic" stdDeviation="0.35">
+<animate
+      attributeName="stdDeviation"
+      calcMode="spline"
+      values="0.35 ; 0.2 ; 0.35"
+      keyTimes="0 ; 0.8 ; 1"
+      keySplines="0.5 0.5 0.5 0.5 ; 0.42 0 0.58 1"
+      dur="2s"
+      repeatCount="indefinite" />
+</feGaussianBlur>
+</filter>
+
+<g filter="url(#placeholder-blur)">
+<rect fill="rgb(93,75,73)" width="2" height="2"   x="-1" y="-1"/>
+<rect fill="rgb(107,101,94)" width="1" height="2" x="1" y="-1"/>
+<rect fill="rgb(118,118,80)" width="1" height="2" x="2" y="-1"/>
+<rect fill="rgb(92,96,56)" width="2" height="2"   x="3" y="-1"/>
+
+<rect fill="rgb(136,51,53)" width="2" height="1" x="-1" y="1"/>
+<rect fill="rgb(164,49,69)" width="1" height="1" x="1" y="1"/>
+<rect fill="rgb(144,33,49)" width="1" height="1" x="2" y="1"/>
+<rect fill="rgb(115,48,23)" width="2" height="1" x="3" y="1"/>
+
+<rect fill="rgb(122,43,34)" width="2" height="2" x="-1" y="2"/>
+<rect fill="rgb(115,39,34)" width="1" height="2" x="1" y="2"/>
+<rect fill="rgb(110,35,27)" width="1" height="2" x="2" y="2"/>
+<rect fill="rgb(110,49,18)" width="2" height="2" x="3" y="2"/>
+</g>
+
+</svg>
