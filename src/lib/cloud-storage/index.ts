@@ -83,7 +83,9 @@ export async function getBucketMetadata() {
   return JSON.stringify(metadata, null, 2);
 }
 
-/** imageUrl is the complete url (not the file name inside the bucket) */
+/**
+ * imageUrl is the complete url (not the file name inside the bucket)
+ */
 export async function deleteImageFromBucket(imageUrl: string) {
   //const imageUrl = `https://storage.googleapis.com/howler-event-images/${fileName}`;
 
@@ -94,5 +96,6 @@ export async function deleteImageFromBucket(imageUrl: string) {
     ignoreNotFound: true,
   });
 
-  return res?.statusCode === 204;
+  const foundAndDeleted = res?.statusCode === 204;
+  return foundAndDeleted;
 }

@@ -25,6 +25,8 @@ export default async function Page({ params }: Props) {
   const event = await api.event.getById({ id });
   if (!event) notFound();
 
+  const isJoined = user ? await api.event.meIsJoined({ id }) : false;
+
   return (
     <div className="container mx-auto flex justify-center">
       <div className="flex w-full flex-col items-center">
@@ -44,7 +46,7 @@ export default async function Page({ params }: Props) {
         )}
 
         <Eventinfo event={event} />
-        <EventActions event={event} isCreator={user?.id === event.creatorId} />
+        <EventActions event={event} user={user} isCreator={user?.id === event.creatorId} isJoined={isJoined} />
       </div>
     </div>
   );

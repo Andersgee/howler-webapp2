@@ -1,7 +1,7 @@
-import { z } from "zod";
+import { bigint, z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { hashidFromId } from "#src/utils/hashid";
+import { hashidFromId, idFromHashid } from "#src/utils/hashid";
 import { type NotNull, sql } from "kysely";
 import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { tagsEvent } from "./eventTags";
@@ -113,6 +113,50 @@ export const eventRouter = createTRPCRouter({
       }
 
       return { events, withSearch };
+    }),
+  isJoined: publicProcedure.input(z.object({ id: z.bigint(), userId: z.bigint() })).query(async ({ input }) => {
+    const t = tagsEvent.isJoined({ eventId: input.id, userId: input.userId });
+    const r = await dbfetch({ next: { tags: [t] } })
+      .selectFrom("UserEventPivot")
+      .select("eventId")
+      .where("eventId", "=", input.id)
+      .where("userId", "=", input.userId)
+      .executeTakeFirst();
+    return r ? true : false;
+  }),
+  meIsJoined: protectedProcedure.input(z.object({ id: z.bigint() })).query(async ({ input, ctx }) => {
+    const t = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
+    const r = await dbfetch({ next: { tags: [t] } })
+      .selectFrom("UserEventPivot")
+      .select("eventId")
+      .where("eventId", "=", input.id)
+      .where("userId", "=", ctx.user.id)
+      .executeTakeFirst();
+    return r ? true : false;
+  }),
+  joinOrLeave: protectedProcedure
+    .input(z.object({ id: z.bigint(), join: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const t = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
+      if (input.join) {
+        await dbfetch()
+          .insertInto("UserEventPivot")
+          .ignore()
+          .values({
+            eventId: input.id,
+            userId: ctx.user.id,
+          })
+          .executeTakeFirstOrThrow();
+      } else {
+        await dbfetch()
+          .deleteFrom("UserEventPivot")
+          .where("eventId", "=", input.id)
+          .where("userId", "=", ctx.user.id)
+          .executeTakeFirstOrThrow();
+      }
+
+      revalidateTag(t);
+      return t;
     }),
 });
 
