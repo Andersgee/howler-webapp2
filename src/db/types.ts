@@ -37,7 +37,7 @@ export type Event = {
   /** default: 1, dbtype: 'float' */
   imageAspect: Generated<number>;
   /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
-  imageBlurData: Buffer | null;
+  imageBlurData: Uint8Array | null;
 };
 
 export type Post = {

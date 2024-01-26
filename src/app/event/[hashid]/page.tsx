@@ -4,7 +4,12 @@ import { notFound } from "next/navigation";
 import { Eventinfo } from "./Eventinfo";
 import { EventActions } from "./EventActions";
 import Image from "next/image";
-import { blurDataURLFromBuffer, imageSizes } from "#src/utils/image-sizes";
+import { imageSizes } from "#src/utils/image-sizes";
+import { base64 } from "rfc4648";
+
+function blurDataURLstring(data: Uint8Array) {
+  return `data:image/png;base64,${base64.stringify(data)}`;
+}
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -34,7 +39,7 @@ export default async function Page({ params }: Props) {
             width={256}
             height={Math.round(256 / event.imageAspect)}
             placeholder={event.imageBlurData ? "blur" : undefined}
-            blurDataURL={event.imageBlurData ? blurDataURLFromBuffer(event.imageBlurData) : undefined}
+            blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
           />
         )}
 

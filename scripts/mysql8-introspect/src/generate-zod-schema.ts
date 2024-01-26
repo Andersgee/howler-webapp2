@@ -23,7 +23,7 @@ function prelude() {
 import { z } from "zod";
 import { zGeoJson } from "./types-geojson";
 
-const zTypedArray = z.custom<ArrayBufferView>((value) => ArrayBuffer.isView(value));
+const zTypedArray = z.custom<Uint8Array>((value) => value instanceof Uint8Array);
 
 // this file here mostly generated as a copy-paste starting point reference for when specifying api inputs
 // anyway, this is how values of "INSERT" and "UPDATE" looks from a zod perspective

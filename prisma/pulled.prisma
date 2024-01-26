@@ -24,6 +24,7 @@ model Event {
   locationName String? @db.VarChar(55)
   image String? @db.VarChar(100)
   imageAspect Float @db.Float @default(1)
+  imageBlurData Bytes? @db.VarBinary(255)
 
   Event_creatorId_fkey User @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
