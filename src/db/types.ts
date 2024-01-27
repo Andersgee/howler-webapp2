@@ -3,11 +3,12 @@ import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
-  Event: Event;
-  DeletedEventImages: DeletedEventImages;
   UserEventPivot: UserEventPivot;
   User: User;
+  Event: Event;
+  DeletedEventImages: DeletedEventImages;
   Post: Post;
+  FcmToken: FcmToken;
 };
 
 export type DeletedEventImages = {
@@ -38,6 +39,13 @@ export type Event = {
   imageAspect: Generated<number>;
   /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
   imageBlurData: Uint8Array | null;
+};
+
+export type FcmToken = {
+  /** indexed: (token), dbtype: 'varchar(200)', eg string with max 200 chars */
+  token: string;
+  /** indexed: (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  userId: bigint;
 };
 
 export type Post = {

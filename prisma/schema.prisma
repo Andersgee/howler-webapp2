@@ -23,8 +23,18 @@ model User {
     Post           Post[]
     Event          Event[]
     UserEventPivot UserEventPivot[]
+    FcmToken       FcmToken[]
 
     @@id([id])
+}
+
+model FcmToken {
+    token  String @db.VarChar(200) //They seem to be 163 long but that might change? they used to be shorter.
+    userId BigInt @db.UnsignedBigInt
+
+    User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@id([token])
 }
 
 enum Role {
