@@ -2,18 +2,20 @@
 notes to self:
 so the "firebase-admin/messaging" is convenient and all but 
 I dont need all the bells and whistles and also I cant use edge runtime
-obviously its very bloated for what in the end amounts to a fetch() call
+obviously its very bloated for what in the end amounts to a POST request
+
+REST api spec: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
 
 discovery document? https://firebase.googleapis.com/$discovery/rest?version=v1beta1
 
 from looking at the source it looks like
 1. get a token if the one you have is expired
+2. 
 
 */
 
 import { z } from "zod";
 import { jwtVerify, SignJWT, JWTPayload } from "jose";
-import { importPrivateKey } from "./import-key";
 
 const SERVICE_ACCOUNT = {
   projectId: process.env.HOWLER_FIREBASE_ADMIN_PROJECT_ID,
@@ -33,7 +35,7 @@ const ONE_HOUR_IN_SECONDS = 60 * 60;
 const JWT_ALGORITHM = "RS256";
 
 async function createAuthJwt(): Promise<string> {
-  const SECRET = await importPrivateKey(process.env.HOWLER_FIREBASE_ADMIN_SERVICE_ACCOUNT_PRIVATE_KEY);
+  const cryptoKey = await cryptoKeyFromPem(SERVICE_ACCOUNT.privateKey);
 
   const scope = [
     "https://www.googleapis.com/auth/cloud-platform",
@@ -52,7 +54,7 @@ async function createAuthJwt(): Promise<string> {
     scope: scope,
   })
     .setProtectedHeader({ alg: JWT_ALGORITHM })
-    .sign(SECRET);
+    .sign(cryptoKey);
 
   return token;
 }
@@ -82,4 +84,27 @@ export async function getAccessToken() {
     .parse(json);
 
   return data;
+}
+
+/** read the key into a CryptoKey object for jose.sign() */
+async function cryptoKeyFromPem(pem: string) {
+  const pemHeader = "-----BEGIN PRIVATE KEY-----";
+  const pemFooter = "-----END PRIVATE KEY-----";
+  const pemContents = pem.substring(pemHeader.length, pem.length - pemFooter.length - 1);
+  const binaryDer = Buffer.from(pemContents, "base64");
+
+  const cryptoKey = await crypto.subtle.importKey(
+    "pkcs8", //format
+    binaryDer, //data
+    {
+      //algorithm, https://developer.mozilla.org/en-US/docs/Web/API/RsaHashedImportParams
+      //name: "RSA-PSS",
+      name: "RSASSA-PKCS1-v1_5",
+      hash: "SHA-256",
+    },
+    true,
+    ["sign"] //allowed usages
+  );
+
+  return cryptoKey;
 }
