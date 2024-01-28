@@ -76,7 +76,8 @@ export async function getAccessToken() {
   const data = z
     .object({
       access_token: z.string(),
-      expires_in: z.number(),
+      expires_in: z.number(), //seconds, ish 3600
+      //token_type: z.string(), //"Bearer"
     })
     .parse(json);
 
