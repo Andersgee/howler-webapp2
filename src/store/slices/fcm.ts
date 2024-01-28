@@ -1,6 +1,6 @@
 import type { StateCreator } from "zustand";
 import type { MessagePayload } from "firebase/messaging";
-import { useStore } from "..";
+//import { useStore } from "..";
 import { getNotificationsIsAlreadyGranted, requestNotificationPermission } from "#src/utils/notification-permission";
 
 export type Fcmslice = {
@@ -23,10 +23,6 @@ export const createFcmSlice: StateCreator<Fcmslice, [], [], Fcmslice> = (set, ge
     }
   },
 });
-
-export function payloadDispatch(payload: MessagePayload) {
-  useStore.setState({ fcmMessagePayload: payload });
-}
 
 //export function setNotificationsIsGranted(notificationsIsGranted: boolean) {
 //  useStore.setState({ notificationsIsGranted });

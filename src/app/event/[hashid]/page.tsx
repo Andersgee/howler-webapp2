@@ -6,6 +6,7 @@ import { EventActions } from "./EventActions";
 import Image from "next/image";
 import { imageSizes } from "#src/utils/image-sizes";
 import { base64 } from "rfc4648";
+import { Stuff } from "./Stuff";
 
 function blurDataURLstring(data: Uint8Array) {
   return `data:image/png;base64,${base64.stringify(data)}`;
@@ -46,6 +47,7 @@ export default async function Page({ params }: Props) {
         )}
 
         <Eventinfo event={event} />
+        <Stuff eventId={event.id} />
         <EventActions event={event} user={user} isCreator={user?.id === event.creatorId} isJoined={isJoined} />
       </div>
     </div>

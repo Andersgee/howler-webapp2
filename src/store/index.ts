@@ -5,6 +5,7 @@ import { createDialogSlice, type DialogSlice } from "./slices/dialog";
 import { createUserSlice, type Userlice } from "./slices/user";
 import { createMapSlice, type MapSlice } from "./slices/map";
 import { createFcmSlice, type Fcmslice } from "./slices/fcm";
+import { type MessagePayload } from "firebase/messaging";
 
 type StoreState = DialogSlice & Userlice & MapSlice & Fcmslice;
 
@@ -16,3 +17,7 @@ const useStoreBase = create<StoreState>()((...a) => ({
 }));
 
 export const useStore = createSelectors(useStoreBase);
+
+export function payloadDispatch(payload: MessagePayload) {
+  useStore.setState({ fcmMessagePayload: payload });
+}

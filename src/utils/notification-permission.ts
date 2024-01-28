@@ -22,6 +22,7 @@ export async function requestNotificationPermission(onDenied: () => void, onGran
 }
 
 export function getNotificationsIsAlreadyGranted() {
+  if (typeof window === "undefined") return false;
   if ("Notification" in window && Notification.permission === "granted") return true;
   return false;
 }
