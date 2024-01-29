@@ -24,17 +24,13 @@ export function NotificationsButton({ user }: { user: TokenUser }) {
       //initialData: { pages: [initialPosts], pageParams: [] },
     }
   );
-  const ref = useIntersectionObserverCallback(
-    ([entry]) => {
-      const isVisible = !!entry?.isIntersecting;
-      console.log("isVisible:", isVisible);
-      if (isVisible && !isFetchingNextPage && hasNextPage) {
-        console.log("running fetchNextPage");
-        void fetchNextPage();
-      }
-    },
-    [isFetchingNextPage, hasNextPage]
-  );
+
+  const onLastItemInView = () => {
+    if (!isFetchingNextPage && hasNextPage) {
+      console.log("running fetchNextPage");
+      void fetchNextPage();
+    }
+  };
 
   return (
     <Popover
@@ -75,11 +71,24 @@ export function NotificationsButton({ user }: { user: TokenUser }) {
                 <hr />
               </Link>
             ))}
-          <div ref={ref} className="flex min-h-[1px] justify-center p-2">
-            {hasNextPage ? isFetchingNextPage ? <IconLoadingSpinner /> : "has more but not fetching" : "end of list"}
+
+          <IntersectionObserverDiv onVisible={onLastItemInView} />
+          <div className="flex justify-center p-2">
+            {hasNextPage ? isFetchingNextPage ? <IconLoadingSpinner /> : <div>more...</div> : <div>end of list</div>}
           </div>
         </div>
       </PopoverContent>
     </Popover>
   );
+}
+
+function IntersectionObserverDiv({ onVisible }: { onVisible: () => void }) {
+  const ref = useIntersectionObserverCallback(([entry]) => {
+    const isVisible = !!entry?.isIntersecting;
+    if (isVisible) {
+      onVisible();
+    }
+  }, []);
+
+  return <div ref={ref} className="min-h-[1px] min-w-[1px]"></div>;
 }
