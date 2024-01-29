@@ -1,3 +1,6 @@
+import { z } from "zod";
+import { SignJWT } from "jose";
+
 /*
 notes to self:
 so the "firebase-admin/messaging" is convenient and all but 
@@ -6,20 +9,15 @@ obviously its very bloated for what in the end amounts to a POST request
 
 REST api spec: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
 
-from looking at firebase-admin source it looks like
+from looking at firebase-admin source code it looks like
 1. get an access_token if the one you have is expired
 2. POST to https://fcm.googleapis.com/v1/projects/${PROJECT_ID}/messages:send
-with header Authorization: "Bearer some_access_token"
+with header Authorization: `Bearer ${access_token}`
 and body as specified here: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages/send
 3. yep thats it
 4. keep in mind the types TokenMessage etc dont quite match the spec
-they remap some stuff keys before sending to match latest spec so cant quite reuse their typings :/
-
+they remap some stuff keys before sending to match latest spec so cant quite re-use their typings
 */
-
-import { z } from "zod";
-import { SignJWT } from "jose";
-//import { type TokenMessage } from "firebase-admin/messaging";
 
 const SERVICE_ACCOUNT = {
   projectId: process.env.HOWLER_FIREBASE_ADMIN_PROJECT_ID,
@@ -28,58 +26,34 @@ const SERVICE_ACCOUNT = {
 };
 
 //const SECRET = new TextEncoder().encode(SERVICE_ACCOUNT.privateKey);
-//nope.jose SignJWT(SECRET).sign needs SECRET in Uint8Array or CryptoKey format
+//nope. jose SignJWT.sign() needs key in Uint8Array or CryptoKey format
 //see: https://github.com/panva/jose/issues/210#jws-alg
+async function getSECRET() {
+  return await cryptoKeyFromPem(SERVICE_ACCOUNT.privateKey);
+}
 
 const GOOGLE_TOKEN_AUDIENCE = "https://accounts.google.com/o/oauth2/token";
 const GOOGLE_AUTH_TOKEN_HOST = "accounts.google.com";
 const GOOGLE_AUTH_TOKEN_PATH = "/o/oauth2/token";
-
 const ONE_HOUR_IN_SECONDS = 60 * 60;
-
 const FCM_SEND_HOST = "fcm.googleapis.com";
 
 /** see [Message reference here](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message)  */
 export async function sendMessage(accessToken: string, message: Record<string, unknown>, validate_only = false) {
   const urlPath = `/v1/projects/${SERVICE_ACCOUNT.projectId}/messages:send`;
-
-  //const url = `https://${FCM_SEND_HOST}${FCM_SEND_PATH}`
-
   const url = `https://${FCM_SEND_HOST}${urlPath}`;
-
-  /*
-  //is this what firebase/admin api-request buildEntity() does?...
-  const data = Buffer.from(JSON.stringify(message), 'utf-8');
-  const res1 = await fetch(url, {
+  return await fetch(url, {
     method: "POST",
     cache: "no-store",
     headers: {
-      "content-type": "application/json;charset=utf-8",
-      "Content-Length": data.length.toString(),
-      "Authorization": `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({ validate_only, message }),
-  });
-  */
-
-  //lets try following REST api spec for now:
-  //https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages/send
-  //https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#Message
-  const res = await fetch(url, {
-    method: "POST",
-    cache: "no-store",
-    headers: {
-      //'X-Firebase-Client': `fire-admin-node/${getSdkVersion()}`,
-      //'access_token_auth': 'true',
       Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify({ validate_only, message }),
   });
-  return res;
 }
 
 async function createAuthJwt() {
-  const cryptoKey = await cryptoKeyFromPem(SERVICE_ACCOUNT.privateKey);
+  const SECRET = await getSECRET();
 
   //copy pasted, but spec sais I only need either firebase.messaging or cloud-platform
   //yep only firebase.messaging works fine.
@@ -92,10 +66,9 @@ async function createAuthJwt() {
   ].join(" ");
 
   const d = new Date();
-  const nowSeconds = Math.round(d.getTime() / 1000);
+  const nowSeconds = Math.floor(d.getTime() / 1000);
   const expiresSeconds = nowSeconds + ONE_HOUR_IN_SECONDS;
 
-  //const nowSeconds = Math.round(Date.now() / 1000);
   const token = await new SignJWT({
     aud: GOOGLE_TOKEN_AUDIENCE,
     iat: nowSeconds,
@@ -104,7 +77,7 @@ async function createAuthJwt() {
     scope: scope,
   })
     .setProtectedHeader({ alg: "RS256" })
-    .sign(cryptoKey);
+    .sign(SECRET);
 
   const expiresDate = new Date(expiresSeconds * 1000);
   return { token, expiresDate };
