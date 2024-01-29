@@ -11,10 +11,12 @@ import { useIntersectionObserverCallback } from "#src/hooks/useIntersectionObser
 import { IconSettings } from "#src/icons/Settings";
 import { buttonVariants } from "#src/ui/button";
 import { IconLoadingSpinner } from "#src/icons/special";
+import { useToast } from "#src/ui/use-toast";
 
 export function NotificationsButton({ user }: { user: TokenUser }) {
   //const user = useStore.use.user();
   const dialogValue = useStore.use.dialogValue();
+  const maybeRequestNotifications = useStore.use.maybeRequestNotifications();
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = api.notification.infinite.useInfiniteQuery(
     {},
     {
@@ -31,13 +33,25 @@ export function NotificationsButton({ user }: { user: TokenUser }) {
       void fetchNextPage();
     }
   };
+  const { toast } = useToast();
+  const onDenied = () =>
+    toast({
+      variant: "default",
+      title: "You have blocked notifications",
+      description:
+        "Open your browser preferences or click the lock near the address bar to change your notification preferences.",
+    });
+  const onTriggerClick = () => maybeRequestNotifications(onDenied);
 
   return (
     <Popover
       open={dialogValue === "notifications"}
       onOpenChange={(open) => dialogDispatch({ type: open ? "show" : "hide", name: "notifications" })}
     >
-      <PopoverTrigger className="rounded-md p-1.5 outline-none hover:bg-color-neutral-200 focus-visible:focusring">
+      <PopoverTrigger
+        className="rounded-md p-1.5 outline-none hover:bg-color-neutral-200 focus-visible:focusring"
+        onClick={onTriggerClick}
+      >
         <IconBell />
       </PopoverTrigger>
       <PopoverContent>
@@ -74,7 +88,15 @@ export function NotificationsButton({ user }: { user: TokenUser }) {
 
           <IntersectionObserverDiv onVisible={onLastItemInView} />
           <div className="flex justify-center p-2">
-            {hasNextPage ? isFetchingNextPage ? <IconLoadingSpinner /> : <div>more...</div> : <div>end of list</div>}
+            {hasNextPage ? (
+              isFetchingNextPage ? (
+                <IconLoadingSpinner />
+              ) : (
+                <div>more...</div>
+              )
+            ) : (
+              <div>{data && data.pages.length > 1 ? "you have reached the end" : ""}</div>
+            )}
           </div>
         </div>
       </PopoverContent>
