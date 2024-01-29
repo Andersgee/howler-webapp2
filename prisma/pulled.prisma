@@ -7,6 +7,14 @@ generator client {
   previewFeatures = ["fullTextIndex"]
 }
 
+model CloudMessageAccessToken {
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  token String @db.VarChar(2000)
+  expires DateTime @db.DateTime(3)
+
+  @@id([id])
+}
+
 model DeletedEventImages {
   image String @db.VarChar(100)
 
@@ -35,6 +43,16 @@ model Event {
   @@fulltext([title, locationName])
 }
 
+model FcmToken {
+  token String @db.VarChar(200)
+  userId BigInt @db.UnsignedBigInt
+
+  FcmToken_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([token])
+  @@index([userId])
+}
+
 model Post {
   id BigInt @db.UnsignedBigInt @default(autoincrement())
   text String
@@ -61,6 +79,7 @@ model User {
   role User_role_enum @default(USER)
 
   Event_creatorId_fkey Event[]
+  FcmToken_userId_fkey FcmToken[]
   Post_userId_fkey Post[]
   UserEventPivot_userId_fkey UserEventPivot[]
 

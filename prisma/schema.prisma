@@ -8,6 +8,14 @@ generator client {
     previewFeatures = ["fullTextIndex"]
 }
 
+model CloudMessageAccessToken {
+    id      BigInt   @db.UnsignedBigInt
+    token   String   @db.VarChar(2000) //it seems to be 1024 long
+    expires DateTime
+
+    @@id([id])
+}
+
 model User {
     id            BigInt   @default(autoincrement()) @db.UnsignedBigInt
     email         String   @unique //allow multiple sign in methods, but same email would be same user.

@@ -16,6 +16,7 @@ from looking at the source it looks like
 
 import { z } from "zod";
 import { jwtVerify, SignJWT, JWTPayload } from "jose";
+import { type TokenMessage } from "firebase-admin/messaging";
 
 const SERVICE_ACCOUNT = {
   projectId: process.env.HOWLER_FIREBASE_ADMIN_PROJECT_ID,
@@ -32,35 +33,79 @@ const GOOGLE_AUTH_TOKEN_HOST = "accounts.google.com";
 const GOOGLE_AUTH_TOKEN_PATH = "/o/oauth2/token";
 
 const ONE_HOUR_IN_SECONDS = 60 * 60;
-const JWT_ALGORITHM = "RS256";
 
-async function createAuthJwt(): Promise<string> {
+const FCM_SEND_HOST = "fcm.googleapis.com";
+
+export async function sendMessage(accessToken: string, message: TokenMessage, validate_only = false) {
+  const urlPath = `/v1/projects/${SERVICE_ACCOUNT.projectId}/messages:send`;
+
+  //const url = `https://${FCM_SEND_HOST}${FCM_SEND_PATH}`
+
+  const url = `https://${FCM_SEND_HOST}${urlPath}`;
+
+  /*
+  //is this what firebase/admin api-request buildEntity() does?...
+  const data = Buffer.from(JSON.stringify(message), 'utf-8');
+  const res1 = await fetch(url, {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      "content-type": "application/json;charset=utf-8",
+      "Content-Length": data.length.toString(),
+      "Authorization": `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ validate_only, message }),
+  });
+  */
+
+  //lets try following REST api spec for now:
+  //https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages/send
+  //https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#Message
+  const res = await fetch(url, {
+    method: "POST",
+    cache: "no-store",
+    headers: {
+      //'X-Firebase-Client': `fire-admin-node/${getSdkVersion()}`,
+      //'access_token_auth': 'true',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ validate_only, message }),
+  });
+  return res;
+}
+
+async function createAuthJwt() {
   const cryptoKey = await cryptoKeyFromPem(SERVICE_ACCOUNT.privateKey);
 
   const scope = [
-    "https://www.googleapis.com/auth/cloud-platform",
-    "https://www.googleapis.com/auth/firebase.database",
+    //"https://www.googleapis.com/auth/cloud-platform",
+    //"https://www.googleapis.com/auth/firebase.database",
     "https://www.googleapis.com/auth/firebase.messaging",
-    "https://www.googleapis.com/auth/identitytoolkit",
-    "https://www.googleapis.com/auth/userinfo.email",
+    //"https://www.googleapis.com/auth/identitytoolkit",
+    //"https://www.googleapis.com/auth/userinfo.email",
   ].join(" ");
 
-  const nowSeconds = Math.round(Date.now() / 1000);
+  const d = new Date();
+  const nowSeconds = Math.round(d.getTime() / 1000);
+  const expiresSeconds = nowSeconds + ONE_HOUR_IN_SECONDS;
+
+  //const nowSeconds = Math.round(Date.now() / 1000);
   const token = await new SignJWT({
     aud: GOOGLE_TOKEN_AUDIENCE,
     iat: nowSeconds,
-    exp: nowSeconds + ONE_HOUR_IN_SECONDS, //"NumericDate", seconds from 1970-01-01,
+    exp: expiresSeconds, //"NumericDate", seconds from 1970-01-01,
     iss: SERVICE_ACCOUNT.clientEmail,
     scope: scope,
   })
-    .setProtectedHeader({ alg: JWT_ALGORITHM })
+    .setProtectedHeader({ alg: "RS256" })
     .sign(cryptoKey);
 
-  return token;
+  const expiresDate = new Date(expiresSeconds * 1000);
+  return { token, expiresDate };
 }
 
 export async function getAccessToken() {
-  const token = await createAuthJwt();
+  const { token, expiresDate } = await createAuthJwt();
   const postData = `grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=${token}`;
   const url = `https://${GOOGLE_AUTH_TOKEN_HOST}${GOOGLE_AUTH_TOKEN_PATH}`;
   const res = await fetch(url, {
@@ -71,19 +116,20 @@ export async function getAccessToken() {
     },
     body: postData,
   });
-  console.log("res.ok:", res.ok);
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const json = await res.json();
-  console.log("json:", json);
+
   const data = z
     .object({
       access_token: z.string(),
       expires_in: z.number(), //seconds, ish 3600
       //token_type: z.string(), //"Bearer"
     })
-    .parse(json);
+    .parse(await res.json());
 
-  return data;
+  return {
+    access_token: data.access_token,
+    //expires_in_seconds: data.expires_in,
+    expiresDate,
+  };
 }
 
 /** read the key into a CryptoKey object for jose.sign() */

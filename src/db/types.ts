@@ -3,12 +3,22 @@ import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
+  CloudMessageAccessToken: CloudMessageAccessToken;
   UserEventPivot: UserEventPivot;
   User: User;
-  Event: Event;
-  DeletedEventImages: DeletedEventImages;
   Post: Post;
   FcmToken: FcmToken;
+  Event: Event;
+  DeletedEventImages: DeletedEventImages;
+};
+
+export type CloudMessageAccessToken = {
+  /** indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  id: bigint;
+  /** dbtype: 'varchar(2000)', eg string with max 2000 chars */
+  token: string;
+  /** dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  expires: Date;
 };
 
 export type DeletedEventImages = {
