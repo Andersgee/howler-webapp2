@@ -28,10 +28,11 @@ model User {
     updatedAt     DateTime @default(now()) @updatedAt
     role          Role     @default(USER)
 
-    Post           Post[]
-    Event          Event[]
-    UserEventPivot UserEventPivot[]
-    FcmToken       FcmToken[]
+    Post                  Post[]
+    Event                 Event[]
+    UserEventPivot        UserEventPivot[]
+    FcmToken              FcmToken[]
+    UserNotificationPivot UserNotificationPivot[]
 
     @@id([id])
 }
@@ -99,4 +100,25 @@ model DeletedEventImages {
     image String @db.VarChar(100)
 
     @@id([image])
+}
+
+model UserNotificationPivot {
+    user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId         BigInt       @db.UnsignedBigInt
+    notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+    notificationId BigInt       @db.UnsignedBigInt
+
+    @@id([userId, notificationId])
+}
+
+model Notification {
+    id           BigInt   @default(autoincrement()) @db.UnsignedBigInt
+    title        String   @db.VarChar(55)
+    body         String   @db.VarChar(55)
+    relativeLink String   @db.VarChar(55)
+    createdAt    DateTime @default(now())
+
+    UserNotificationPivot UserNotificationPivot[]
+
+    @@id([id])
 }

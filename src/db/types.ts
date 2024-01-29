@@ -4,9 +4,11 @@ import type { GeoJson } from "./types-geojson";
   
 export type DB = {
   CloudMessageAccessToken: CloudMessageAccessToken;
+  UserNotificationPivot: UserNotificationPivot;
   UserEventPivot: UserEventPivot;
   User: User;
   Post: Post;
+  Notification: Notification;
   FcmToken: FcmToken;
   Event: Event;
   DeletedEventImages: DeletedEventImages;
@@ -58,6 +60,19 @@ export type FcmToken = {
   userId: bigint;
 };
 
+export type Notification = {
+  /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  id: Generated<bigint>;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  title: string;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  body: string;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  relativeLink: string;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
+};
+
 export type Post = {
   /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   id: Generated<bigint>;
@@ -101,5 +116,12 @@ export type UserEventPivot = {
   eventId: bigint;
   /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   joinDate: Generated<Date>;
+};
+
+export type UserNotificationPivot = {
+  /** indexed: (userId, notificationId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  userId: bigint;
+  /** indexed: (userId, notificationId) and (notificationId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  notificationId: bigint;
 };
 

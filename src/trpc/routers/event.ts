@@ -6,6 +6,7 @@ import { type NotNull, sql } from "kysely";
 import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { tagsEvent } from "./eventTags";
 import { revalidateTag } from "next/cache";
+import { notify } from "#src/lib/cloud-messaging-light/notify";
 
 export const eventRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
@@ -32,7 +33,16 @@ export const eventRouter = createTRPCRouter({
         .values({ ...input, creatorId: ctx.user.id })
         .executeTakeFirstOrThrow();
 
-      return { ...insertResult, hashid: hashidFromId(insertResult.insertId!) };
+      const hashid = hashidFromId(insertResult.insertId!);
+      //TODO: decide who to notify... for now just send to creator
+      const notifyUserIds = [ctx.user.id];
+      await notify(notifyUserIds, {
+        title: `${ctx.user.name} howled!`,
+        body: input.title,
+        relativeLink: `/event/${hashid}`,
+      });
+
+      return { ...insertResult, hashid };
     }),
   update: protectedProcedure
     .input(

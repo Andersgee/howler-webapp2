@@ -8,7 +8,7 @@ generator client {
 }
 
 model CloudMessageAccessToken {
-  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  id BigInt @db.UnsignedBigInt
   token String @db.VarChar(2000)
   expires DateTime @db.DateTime(3)
 
@@ -51,6 +51,15 @@ model FcmToken {
 
   @@id([token])
   @@index([userId])
+}
+
+model Notification {
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  title String @db.VarChar(55)
+  body String @db.VarChar(55)
+  relativeLink String @db.VarChar(55)
+
+  @@id([id])
 }
 
 model Post {

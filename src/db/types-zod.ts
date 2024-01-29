@@ -18,6 +18,15 @@ export const schema_update_CloudMessageAccessToken = z.object({
   expires: z.date().optional(),
 });
 
+export const schema_insert_UserNotificationPivot = z.object({
+  userId: z.bigint(),
+  notificationId: z.bigint(),
+});
+export const schema_update_UserNotificationPivot = z.object({
+  userId: z.bigint().optional(),
+  notificationId: z.bigint().optional(),
+});
+
 export const schema_insert_UserEventPivot = z.object({
   userId: z.bigint(),
   eventId: z.bigint(),
@@ -67,6 +76,21 @@ export const schema_update_Post = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   userId: z.bigint().optional(),
+});
+
+export const schema_insert_Notification = z.object({
+  id: z.bigint().optional(),
+  title: z.string(),
+  body: z.string(),
+  relativeLink: z.string(),
+  createdAt: z.date().optional(),
+});
+export const schema_update_Notification = z.object({
+  id: z.bigint().optional(),
+  title: z.string().optional(),
+  body: z.string().optional(),
+  relativeLink: z.string().optional(),
+  createdAt: z.date().optional(),
 });
 
 export const schema_insert_FcmToken = z.object({
