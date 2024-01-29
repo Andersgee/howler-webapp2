@@ -5,7 +5,10 @@ import { sendCloudMessage, sendCloudMessageToTokens } from "#src/lib/cloud-messa
 //import { dbfetch } from "#src/db";
 //import { getAccessToken } from "#src/lib/cloud-messaging-light/admin";
 
-const andersPhoneFcmToken: string[] = [];
+const test_fcm_token = process.env.ANDERS_PHONE_TEST_FCM_TOKEN!;
+if (typeof test_fcm_token !== "string") {
+  throw new Error("no process.env.ANDERS_PHONE_TEST_FCM_TOKEN");
+}
 
 async function main() {
   //const db = dbfetch();
@@ -18,7 +21,7 @@ async function main() {
 
   const userIds = [BigInt(3)];
 
-  await sendCloudMessageToTokens(andersPhoneFcmToken, {
+  await sendCloudMessageToTokens([test_fcm_token], {
     data: {
       relativeLink: "/event/A6Qbe",
     },

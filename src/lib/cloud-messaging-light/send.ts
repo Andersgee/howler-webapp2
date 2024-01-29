@@ -96,8 +96,8 @@ async function getOrRefreshAccessToken() {
       expires: expiresDate,
     };
     await db.insertInto("CloudMessageAccessToken").values(accessToken).execute();
-  } else if (accessToken.expires.getTime() - Date.now() < 30000) {
-    //needs refresh, 30s margin?
+  } else if (accessToken.expires.getTime() - Date.now() < 60000) {
+    //needs refresh, 60s margin?
     const { access_token, expiresDate } = await getAccessToken();
     accessToken = {
       id: id,
