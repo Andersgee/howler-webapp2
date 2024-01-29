@@ -43,9 +43,9 @@ export async function POST(request: NextRequest) {
       fcmOptions: {
         link: "https://howler.andyfx.net/event/Brv7e",
       },
-      data: {
-        relativeLink: "/event/Brv7e",
-      },
+    },
+    data: {
+      relativeLink: "/event/Brv7e",
     },
   });
   await dbfetch().deleteFrom("FcmToken").where("token", "in", staleTokens).execute();

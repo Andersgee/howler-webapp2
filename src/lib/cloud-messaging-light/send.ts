@@ -1,6 +1,40 @@
 import { dbfetch } from "#src/db";
-import type { BaseMessage } from "firebase-admin/messaging";
 import { getAccessToken, sendMessage } from "./admin";
+
+/** see [Message reference here](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message)  */
+type Message = {
+  data?: Record<string, string>;
+  /** cross platform */
+  notification: { title: string; body: string; image?: string };
+  /** make sure to put link */
+  webpush: {
+    fcm_options: { link: string };
+  } & Record<string, unknown>;
+} & Record<string, unknown>;
+
+/** see [Message reference here](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message)  */
+export async function sendCloudMessage(userIds: bigint[], message: Message) {
+  if (userIds.length === 0) return;
+
+  const accessToken = await getOrRefreshAccessToken();
+
+  const fcmTokens = await dbfetch().selectFrom("FcmToken").select("token").where("userId", "in", userIds).execute();
+
+  for (const fcmToken of fcmTokens) {
+    try {
+      const res = await sendMessage(accessToken, { token: fcmToken.token, ...message });
+      //TODO: deal with response errors https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode
+      if (!res.ok) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const d = await res.json();
+        //d.error_code //
+        console.log("not ok json:", d);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
 
 async function getOrRefreshAccessToken() {
   //serverless style, keep accessToken in db
@@ -35,29 +69,6 @@ async function getOrRefreshAccessToken() {
   }
 
   return accessToken.token;
-}
-
-export async function sendCloudMessage(userIds: bigint[], message: BaseMessage) {
-  if (userIds.length === 0) return;
-
-  const accessToken = await getOrRefreshAccessToken();
-
-  const fcmTokens = await dbfetch().selectFrom("FcmToken").select("token").where("userId", "in", userIds).execute();
-
-  for (const fcmToken of fcmTokens) {
-    try {
-      const res = await sendMessage(accessToken, { token: fcmToken.token, ...message });
-      //TODO: deal with response errors https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode
-      if (!res.ok) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const d = await res.json();
-        //d.error_code //
-        console.log("not ok json:", d);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
 }
 
 //https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode

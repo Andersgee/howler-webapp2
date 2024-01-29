@@ -6,17 +6,20 @@ obviously its very bloated for what in the end amounts to a POST request
 
 REST api spec: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages
 
-discovery document? https://firebase.googleapis.com/$discovery/rest?version=v1beta1
-
-from looking at the source it looks like
-1. get a token if the one you have is expired
-2. 
+from looking at firebase-admin source it looks like
+1. get an access_token if the one you have is expired
+2. POST to https://fcm.googleapis.com/v1/projects/${PROJECT_ID}/messages:send
+with header Authorization: "Bearer some_access_token"
+and body as specified here: https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages/send
+3. yep thats it
+4. keep in mind the types TokenMessage etc dont quite match the spec
+they remap some stuff keys before sending to match latest spec so cant quite reuse their typings :/
 
 */
 
 import { z } from "zod";
-import { jwtVerify, SignJWT, JWTPayload } from "jose";
-import { type TokenMessage } from "firebase-admin/messaging";
+import { SignJWT } from "jose";
+//import { type TokenMessage } from "firebase-admin/messaging";
 
 const SERVICE_ACCOUNT = {
   projectId: process.env.HOWLER_FIREBASE_ADMIN_PROJECT_ID,
@@ -36,7 +39,8 @@ const ONE_HOUR_IN_SECONDS = 60 * 60;
 
 const FCM_SEND_HOST = "fcm.googleapis.com";
 
-export async function sendMessage(accessToken: string, message: TokenMessage, validate_only = false) {
+/** see [Message reference here](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message)  */
+export async function sendMessage(accessToken: string, message: Record<string, unknown>, validate_only = false) {
   const urlPath = `/v1/projects/${SERVICE_ACCOUNT.projectId}/messages:send`;
 
   //const url = `https://${FCM_SEND_HOST}${FCM_SEND_PATH}`
@@ -77,6 +81,8 @@ export async function sendMessage(accessToken: string, message: TokenMessage, va
 async function createAuthJwt() {
   const cryptoKey = await cryptoKeyFromPem(SERVICE_ACCOUNT.privateKey);
 
+  //copy pasted, but spec sais I only need either firebase.messaging or cloud-platform
+  //yep only firebase.messaging works fine.
   const scope = [
     //"https://www.googleapis.com/auth/cloud-platform",
     //"https://www.googleapis.com/auth/firebase.database",
