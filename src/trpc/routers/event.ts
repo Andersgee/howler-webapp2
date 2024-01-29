@@ -1,7 +1,7 @@
-import { bigint, z } from "zod";
+import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { hashidFromId, idFromHashid } from "#src/utils/hashid";
+import { hashidFromId } from "#src/utils/hashid";
 import { type NotNull, sql } from "kysely";
 import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { tagsEvent } from "./eventTags";
