@@ -6,11 +6,54 @@ type Message = {
   data?: Record<string, string>;
   /** cross platform */
   notification: { title: string; body: string; image?: string };
-  /** make sure to put link */
+  /** additional options for webpush. make sure to put link */
   webpush: {
+    /** properties as difened in [Web Notification API](https://developer.mozilla.org/en-US/docs/Web/API/Notification) */
+    notification?: {
+      icon?: string;
+      //vibrate: [200, 100, 200], //https://developer.mozilla.org/en-US/docs/Web/API/Notification/vibrate
+    } & Record<string, string>;
     fcm_options: { link: string };
   } & Record<string, unknown>;
 } & Record<string, unknown>;
+
+export async function sendCloudMessageToTokens(tokens: string[], message: Message) {
+  const accessToken = await getOrRefreshAccessToken();
+  for (const token of tokens) {
+    try {
+      const res = await sendMessage(accessToken, { token, ...message });
+      //TODO: deal with response errors https://firebase.google.com/docs/reference/fcm/rest/v1/ErrorCode
+      if (!res.ok) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const data = await res.json();
+        console.log("res not ok, json:", JSON.stringify(data, null, 2));
+        if (res.status === 400) {
+          console.log("INVALID_ARGUMENT... bad payload probably");
+        } else if (res.status === 401) {
+          console.log("THIRD_PARTY_AUTH_ERROR... not super clear what to do here. prob delete token:", token);
+        } else if (res.status === 403) {
+          console.log("SENDER_ID_MISMATCH... this should never happen?");
+        } else if (res.status === 404) {
+          console.log("UNREGISTERED... should remove token:", token);
+        } else if (res.status === 429) {
+          console.log("QUOTA_EXCEEDED... should retry with exponential backoff, minimum initial delay of 1 minute.");
+        } else if (res.status === 500) {
+          console.log("INTERNAL... unkown server error, retry according to same as 503");
+        } else if (res.status === 503) {
+          console.log(
+            "UNAVAILABLE... server overloaded, should retry with exponential backoff, minimum initial delay of 1 second."
+          );
+        } else {
+          console.log("... spec dont describe what to to for response status:", res.status);
+        }
+
+        //d.error_code //
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+}
 
 /** see [Message reference here](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message)  */
 export async function sendCloudMessage(userIds: bigint[], message: Message) {
