@@ -108,7 +108,7 @@ model UserNotificationPivot {
     notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
     notificationId BigInt       @db.UnsignedBigInt
 
-    @@id([userId, notificationId])
+    @@id([notificationId, userId])
 }
 
 model Notification {

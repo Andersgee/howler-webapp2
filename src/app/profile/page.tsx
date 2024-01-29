@@ -15,7 +15,7 @@ export default async function Page() {
       <div className="px-2">
         <section className="flex flex-col items-center">
           <UserImage96x96 alt={user.name} image={user.image ?? ""} />
-          <h1>{`Welcome, ${user.name}`}</h1>
+          <h1 className="mt-2">{`Welcome, ${user.name}`}</h1>
           <p>Manage your info</p>
         </section>
 
