@@ -20,7 +20,10 @@ type Message = {
   } & Record<string, unknown>;
 } & Record<string, unknown>;
 
+/** see [Message reference here](https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#resource:-message)  */
 export async function sendCloudMessageToTokens(tokens: string[], message: Message) {
+  if (tokens.length === 0) return;
+
   const accessToken = await getOrRefreshAccessToken();
   for (const token of tokens) {
     try {

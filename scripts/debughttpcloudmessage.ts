@@ -26,7 +26,7 @@ async function main() {
       relativeLink: "/event/A6Qbe",
     },
     notification: {
-      title: "klappa katt with transparent badge and capital color",
+      title: "with musker icon on android",
       body: "some body",
       //image: polylineimg, //keep image small.. JPEG, PNG full support across platforms .. WebP has varying levels of support
     },
@@ -43,9 +43,12 @@ async function main() {
         link: "https://howler.andyfx.net/event/A6Qbe", //Mata gravid katt som inte vill gå ut
       },
     },
+    //ok this is useless. webapp is not android app? using custom icon here does not do anything
     //android: {
     //  notification: {
-    //    color: "#2563EB", //must be capital letters?
+    //    //color: "#2563EB", //must be capital letters?
+    //    color: "#FF0000",
+    //    icon: "https://musker.andyfx.net/icons/favicon.png",
     //  },
     //},
   });
