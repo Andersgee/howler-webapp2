@@ -1,7 +1,7 @@
 {
-  "name": "edge-stack",
-  "short_name": "edge-stack",
-  "description": "Boilerplate app.",
+  "name": "Howler",
+  "short_name": "Howler",
+  "description": "Find something to do or make something happen.",
   "display": "standalone",
   "orientation": "any",
   "scope": "/",
@@ -14,7 +14,7 @@
       "purpose": "any"
     },
     {
-      "src": "icons/favicon-maskable-512x512.png",
+      "src": "icons/favicon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

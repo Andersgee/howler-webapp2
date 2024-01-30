@@ -45,7 +45,7 @@ export async function notify(userIds: bigint[], message: Message) {
     },
     webpush: {
       notification: {
-        icon: absUrl("/icons/favicon-48x48.png"),
+        icon: absUrl("/icons/favicon-48.png"),
         badge: absUrl("/icons/badge.png"),
       },
       fcm_options: {

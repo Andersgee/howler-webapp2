@@ -25,9 +25,8 @@ export function seo({
     manifest: absUrl("/manifest.webmanifest"),
     icons: [
       { rel: "icon", type: "image/svg+xml", url: absUrl("/icons/favicon.svg") },
-      { rel: "icon", type: "image/png", url: absUrl("/icons/favicon-48x48.png"), sizes: "48x48" },
-      { rel: "icon", type: "image/png", url: absUrl("/icons/favicon-32x32.png"), sizes: "32x32" },
-      { rel: "apple-touch-icon", url: absUrl("/icons/favicon-maskable-512x512.png") },
+      { rel: "icon", type: "image/png", url: absUrl("/icons/favicon-48.png"), sizes: "48x48" },
+      { rel: "apple-touch-icon", url: absUrl("/icons/favicon-maskable-512.png") },
     ],
     openGraph: {
       type: type,

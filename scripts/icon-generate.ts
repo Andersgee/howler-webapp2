@@ -39,7 +39,33 @@ async function main() {
 async function optimizeAndSave(file: string, width: number) {
   const outFile = `${file.split(".")[0]}-${width}.png`;
   try {
-    const info = await sharp(file).resize(width).png().toFile(outFile);
+    const info = await sharp(file)
+      .resize(width)
+
+      .png()
+      .toFile(outFile);
+    console.log(`saved: ${outFile},\t size: ${info.width}x${info.height}`);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function optimizeAndSavePadded(file: string, width: number) {
+  const outFile = `${file.split(".")[0]}-${width}.png`;
+  //const pad = 52; //maskable padding should be 10% of final width, meaning 512 width => 51.2 => 52
+  const pad = Math.ceil(width * 0.1);
+  try {
+    const info = await sharp(file)
+      .resize(width - pad * 2)
+      .extend({
+        background: "#ffffff",
+        top: pad,
+        right: pad,
+        bottom: pad,
+        left: pad,
+      })
+      .png()
+      .toFile(outFile);
     console.log(`saved: ${outFile},\t size: ${info.width}x${info.height}`);
   } catch (error) {
     console.log(error);
