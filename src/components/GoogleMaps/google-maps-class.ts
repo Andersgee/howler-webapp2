@@ -83,7 +83,7 @@ export class GoogleMapsClass {
 
       this.map = new google.maps.Map(element, {
         zoom: INITIAL_ZOOM,
-        center: initialCenter,
+        center: initialCenter ?? { lat: 55.49, lng: 13.04 },
         mapId: TEST_MAP_ID,
         minZoom: MIN_ZOOM,
         maxZoom: MAX_ZOOM,
