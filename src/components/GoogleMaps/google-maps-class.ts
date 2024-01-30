@@ -26,10 +26,10 @@ https://developers.google.com/maps/documentation/javascript/coordinates
 
 const MIN_ZOOM = 3;
 const MAX_ZOOM = 18;
-//const INITIAL_ZOOM = 5;
+const INITIAL_ZOOM = 5;
 //const INITIAL_CENTER = { lat: 55.49, lng: 13.04 };
-const INITIAL_ZOOM = 17;
-const INITIAL_CENTER = { lat: 59.9124033, lng: 16.3235665 };
+//const INITIAL_ZOOM = 17;
+//const INITIAL_CENTER = { lat: 59.9124033, lng: 16.3235665 };
 
 export class GoogleMapsClass {
   map!: google.maps.Map;
@@ -60,7 +60,7 @@ export class GoogleMapsClass {
     this.mode = mode;
   }
 
-  async init(element: HTMLDivElement) {
+  async init(element: HTMLDivElement, initialCenter: { lat: number; lng: number } | null) {
     console.log("GoogleMapsClass, init");
     try {
       //load relevant libs
@@ -83,7 +83,7 @@ export class GoogleMapsClass {
 
       this.map = new google.maps.Map(element, {
         zoom: INITIAL_ZOOM,
-        center: INITIAL_CENTER,
+        center: initialCenter,
         mapId: TEST_MAP_ID,
         minZoom: MIN_ZOOM,
         maxZoom: MAX_ZOOM,

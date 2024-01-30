@@ -7,6 +7,7 @@ import { absUrl } from "#src/utils/url";
 import { ReversePortal } from "#src/lib/reverse-portal";
 import { setGoogleMapsElement } from "#src/store/slices/map";
 import { initGoogleMaps } from "#src/store/actions";
+import { useGeo } from "#src/hooks/useGeo";
 
 /** parent decides size */
 export function GoogleMaps() {
@@ -24,6 +25,8 @@ export function GoogleMaps() {
 function MountGoogleMaps() {
   const [googleMapsScriptIsLoaded, setGoogleMapsScriptIsLoaded] = useState(false);
   const element = useStore.use.googleMapsElement();
+  const initialCenter = useGeo();
+
   useEffect(() => {
     const el = document.createElement("div");
     el.setAttribute("style", "width:100%;height:100%;background-color: hsl(var(--color-neutral-50));");
@@ -31,16 +34,16 @@ function MountGoogleMaps() {
   }, []);
 
   useEffect(() => {
-    if (!googleMapsScriptIsLoaded || !element) return;
+    if (!googleMapsScriptIsLoaded || !element || initialCenter === undefined) return;
 
-    initGoogleMaps(element)
+    initGoogleMaps(element, initialCenter)
       .then(() => {
         console.log("initGoogleMaps ok");
       })
       .catch(() => {
         console.log("initGoogleMaps fail");
       });
-  }, [googleMapsScriptIsLoaded, element]);
+  }, [googleMapsScriptIsLoaded, element, initialCenter]);
 
   return (
     <Script src={absUrl("/google-maps.js")} strategy="lazyOnload" onLoad={() => setGoogleMapsScriptIsLoaded(true)} />

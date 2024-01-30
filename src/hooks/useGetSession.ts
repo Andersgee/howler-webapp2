@@ -10,6 +10,7 @@ export function useGetSession() {
 
   useEffect(() => {
     if (didRun.current) return; //only run once even in development
+    didRun.current = true;
     getSession()
       .then((user) => {
         if (user) {
@@ -20,7 +21,6 @@ export function useGetSession() {
       .catch(() => {
         //ignore
       });
-    didRun.current = true;
   }, [userDispatch]);
   return null;
 }
