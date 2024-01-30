@@ -4,7 +4,7 @@ import { absUrl } from "./url";
 /** meta tags for SEO, with sensible required fields. */
 export function seo({
   type = "website",
-  site_name = "edge-stack",
+  site_name = "Howler",
   title,
   url,
   image,

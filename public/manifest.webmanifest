@@ -1,7 +1,7 @@
 {
   "name": "Howler",
   "short_name": "Howler",
-  "description": "Find something to do or make something happen.",
+  "description": "Quickly find/plan stuff to do with friends, or with anyone really.",
   "display": "standalone",
   "orientation": "any",
   "scope": "/",

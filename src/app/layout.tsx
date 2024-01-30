@@ -7,8 +7,8 @@ import { Toaster } from "#src/ui/toaster";
 import { Topnav } from "#src/components/topnav";
 
 export const metadata = seo({
-  title: "Boilerplate app",
-  description: "Boilerplate app",
+  title: "Howler",
+  description: "Quickly find/plan stuff to do with friends, or with anyone really.",
   url: "/",
   image: "/andyfx.png",
 });
