@@ -115,14 +115,18 @@ export const eventRouter = createTRPCRouter({
       }
 
       //.orderBy("location", sql`IS NULL`).orderBy("location asc") //this is how to do null last
-      let events = await q.execute();
+      try {
+        let events = await q.execute();
+        //Im sure its possible to do this conditional filter in the query itself... but this is fine
+        if (withSearch) {
+          events = events.filter((x) => x.score! > 0);
+        }
 
-      //Im sure its possible to do this conditional filter in the query itself... but this is fine
-      if (withSearch) {
-        events = events.filter((x) => x.score! > 0);
+        return { events, withSearch };
+      } catch (err) {
+        console.log(err);
+        return { events: [], withSearch: false };
       }
-
-      return { events, withSearch };
     }),
   isJoined: publicProcedure.input(z.object({ id: z.bigint(), userId: z.bigint() })).query(async ({ input }) => {
     const t = tagsEvent.isJoined({ eventId: input.id, userId: input.userId });
