@@ -46,7 +46,8 @@ export function useImageUpload(eventId: bigint, options?: Options) {
       try {
         const { imageAspect, width, height } = await getImageSize(file);
         let imageUrl: string;
-        if (fileSize < 4000000) {
+        //if (fileSize < 4000000) {
+        if (false) {
           //payload to serverless functions must be less than 4.5MB
           //there are some benefits to going via api.
           // - a single request from client
