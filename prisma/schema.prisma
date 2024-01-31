@@ -34,7 +34,20 @@ model User {
     FcmToken              FcmToken[]
     UserNotificationPivot UserNotificationPivot[]
 
+    UserUserPivotrecievedFollows UserUserPivot[] @relation("recievedFollows")
+    UserUserPivotsentFollows     UserUserPivot[] @relation("sentFollows")
+
     @@id([id])
+}
+
+model UserUserPivot {
+    user       User     @relation("recievedFollows", fields: [userId], references: [id], onDelete: Cascade)
+    userId     BigInt   @db.UnsignedBigInt
+    follower   User     @relation("sentFollows", fields: [followerId], references: [id], onDelete: Cascade)
+    followerId BigInt   @db.UnsignedBigInt
+    createdAt  DateTime @default(now())
+
+    @@id([userId, followerId])
 }
 
 model FcmToken {
@@ -108,7 +121,8 @@ model UserNotificationPivot {
     notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
     notificationId BigInt       @db.UnsignedBigInt
 
-    @@id([notificationId, userId])
+    @@id([userId, notificationId])
+    @@index([notificationId])
 }
 
 model Notification {

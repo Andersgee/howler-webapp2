@@ -4,6 +4,7 @@ import type { GeoJson } from "./types-geojson";
   
 export type DB = {
   CloudMessageAccessToken: CloudMessageAccessToken;
+  UserUserPivot: UserUserPivot;
   UserNotificationPivot: UserNotificationPivot;
   UserEventPivot: UserEventPivot;
   User: User;
@@ -41,16 +42,16 @@ export type Event = {
   date: Generated<Date>;
   /** dbtype: 'point' */
   location: GeoJson["Point"] | null;
-  /** indexed: (title, locationName), dbtype: 'varchar(55)', eg string with max 55 chars */
-  locationName: string | null;
   /** indexed: (creatorId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   creatorId: bigint;
+  /** indexed: (title, locationName), dbtype: 'varchar(55)', eg string with max 55 chars */
+  locationName: string | null;
   /** dbtype: 'varchar(100)', eg string with max 100 chars */
   image: string | null;
-  /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
-  imageBlurData: Uint8Array | null;
   /** default: 1, dbtype: 'float' */
   imageAspect: Generated<number>;
+  /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
+  imageBlurData: Uint8Array | null;
 };
 
 export type FcmToken = {
@@ -119,9 +120,18 @@ export type UserEventPivot = {
 };
 
 export type UserNotificationPivot = {
-  /** indexed: (notificationId, userId) and (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  /** indexed: (userId, notificationId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   userId: bigint;
-  /** indexed: (notificationId, userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  /** indexed: (userId, notificationId) and (notificationId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   notificationId: bigint;
+};
+
+export type UserUserPivot = {
+  /** indexed: (userId, followerId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  userId: bigint;
+  /** indexed: (userId, followerId) and (followerId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  followerId: bigint;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
 };
 

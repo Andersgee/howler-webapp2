@@ -18,6 +18,17 @@ export const schema_update_CloudMessageAccessToken = z.object({
   expires: z.date().optional(),
 });
 
+export const schema_insert_UserUserPivot = z.object({
+  userId: z.bigint(),
+  followerId: z.bigint(),
+  createdAt: z.date().optional(),
+});
+export const schema_update_UserUserPivot = z.object({
+  userId: z.bigint().optional(),
+  followerId: z.bigint().optional(),
+  createdAt: z.date().optional(),
+});
+
 export const schema_insert_UserNotificationPivot = z.object({
   userId: z.bigint(),
   notificationId: z.bigint(),
@@ -109,11 +120,11 @@ export const schema_insert_Event = z.object({
   title: z.string(),
   date: z.date().optional(),
   location: zGeoJson.Point.nullish(),
-  locationName: z.string().nullish(),
   creatorId: z.bigint(),
+  locationName: z.string().nullish(),
   image: z.string().nullish(),
-  imageBlurData: zTypedArray.nullish(),
   imageAspect: z.number().optional(),
+  imageBlurData: zTypedArray.nullish(),
 });
 export const schema_update_Event = z.object({
   id: z.bigint().optional(),
@@ -122,11 +133,11 @@ export const schema_update_Event = z.object({
   title: z.string().optional(),
   date: z.date().optional(),
   location: zGeoJson.Point.nullish(),
-  locationName: z.string().nullish(),
   creatorId: z.bigint().optional(),
+  locationName: z.string().nullish(),
   image: z.string().nullish(),
-  imageBlurData: zTypedArray.nullish(),
   imageAspect: z.number().optional(),
+  imageBlurData: zTypedArray.nullish(),
 });
 
 export const schema_insert_DeletedEventImages = z.object({

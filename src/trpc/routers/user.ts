@@ -41,4 +41,38 @@ export const userRouter = createTRPCRouter({
     ctx.resHeaders?.append("Set-Cookie", userCookieRemoveString());
     return { userId: ctx.user.id };
   }),
+  meIsFollowing: protectedProcedure.input(z.object({ id: z.bigint() })).query(async ({ input, ctx }) => {
+    const t = tagsUser.isFollowing({ userId: input.id, followerId: ctx.user.id });
+    const r = await dbfetch({ next: { tags: [t] } })
+      .selectFrom("UserUserPivot")
+      .select("userId")
+      .where("userId", "=", input.id)
+      .where("followerId", "=", ctx.user.id)
+      .executeTakeFirst();
+    return r ? true : false;
+  }),
+  followOrUnfollow: protectedProcedure
+    .input(z.object({ id: z.bigint(), join: z.boolean() }))
+    .mutation(async ({ ctx, input }) => {
+      const t = tagsUser.isFollowing({ userId: input.id, followerId: ctx.user.id });
+      if (input.join) {
+        await dbfetch()
+          .insertInto("UserUserPivot")
+          .ignore()
+          .values({
+            userId: input.id,
+            followerId: ctx.user.id,
+          })
+          .executeTakeFirstOrThrow();
+      } else {
+        await dbfetch()
+          .deleteFrom("UserUserPivot")
+          .where("userId", "=", input.id)
+          .where("followerId", "=", ctx.user.id)
+          .executeTakeFirstOrThrow();
+      }
+
+      revalidateTag(t);
+      return t;
+    }),
 });

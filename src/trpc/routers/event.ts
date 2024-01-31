@@ -12,8 +12,11 @@ export const eventRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
     return await dbfetch({ next: { tags: [tagsEvent.info(input.id)] } })
       .selectFrom("Event")
-      .selectAll()
-      .where("id", "=", input.id)
+      .innerJoin("User", "User.id", "Event.creatorId")
+      .selectAll("Event")
+      .select(["User.image as creatorImage", "User.name as creatorName"])
+      //.select()
+      .where("Event.id", "=", input.id)
       .executeTakeFirst();
   }),
   create: protectedProcedure

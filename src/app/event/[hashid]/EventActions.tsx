@@ -4,6 +4,7 @@ import { actionRevalidateTag } from "#src/app/actions";
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { ShareButton } from "#src/components/ShareButton";
+import { UserImage32x32 } from "#src/components/user/UserImage";
 import { type GeoJson } from "#src/db/types-geojson";
 import { api, type RouterOutputs } from "#src/hooks/api";
 import { IconEdit } from "#src/icons/Edit";
@@ -12,6 +13,7 @@ import { useStore } from "#src/store";
 import { dialogDispatch } from "#src/store/slices/dialog";
 import { tagsEvent } from "#src/trpc/routers/eventTags";
 import { Button, buttonVariants } from "#src/ui/button";
+import { useToast } from "#src/ui/use-toast";
 import { hashidFromId } from "#src/utils/hashid";
 import { type TokenUser } from "#src/utils/jwt/schema";
 import Link from "next/link";
@@ -22,6 +24,7 @@ type Props = {
   user: TokenUser | null;
   isCreator: boolean;
   isJoined: boolean;
+  isFollowing: boolean;
 };
 
 export function EventActions(props: Props) {
@@ -40,12 +43,53 @@ export function EventActions(props: Props) {
             <IconEdit /> Edit
           </Link>
         )}
+        <FollowUnfollowButton event={props.event} user={props.user} isFollowing={props.isFollowing} />
         <ShareButton title={props.event.title} />
 
         <JoinLeaveButton user={props.user} id={props.event.id} isJoined={props.isJoined} />
       </div>
       <Map show={showMap} location={props.event.location} />
     </>
+  );
+}
+
+function FollowUnfollowButton({
+  user,
+  isFollowing,
+  event,
+}: {
+  user: TokenUser | null;
+  isFollowing: boolean;
+  event: NonNullable<RouterOutputs["event"]["getById"]>;
+}) {
+  const maybeRequestNotifications = useStore.use.maybeRequestNotifications();
+  const { toast } = useToast();
+  const onDenied = () =>
+    toast({
+      variant: "default",
+      title: "You have blocked notifications",
+      description:
+        "Open your browser preferences or click the lock near the address bar to change your notification preferences.",
+    });
+
+  const userFollowOrUnfollow = api.user.followOrUnfollow.useMutation({
+    onSuccess: (tag) => actionRevalidateTag(tag),
+  });
+
+  const handleClick = async () => {
+    if (user) {
+      await maybeRequestNotifications(onDenied);
+      userFollowOrUnfollow.mutate({ id: event.creatorId, join: isFollowing ? false : true });
+    } else {
+      dialogDispatch({ type: "show", name: "profilebutton" });
+    }
+  };
+
+  return (
+    <Button onClick={handleClick} variant="icon" disabled={userFollowOrUnfollow.isPending}>
+      <UserImage32x32 image={event.creatorImage ?? ""} alt={event.creatorName} />{" "}
+      <span className="ml-1">{isFollowing ? "Follow" : "Unfollow"}</span>
+    </Button>
   );
 }
 
@@ -60,7 +104,11 @@ function JoinLeaveButton({ user, id, isJoined }: { user: TokenUser | null; id: b
       dialogDispatch({ type: "show", name: "profilebutton" });
     }
   };
-  return <Button onClick={handleClick}>{isJoined ? "Leave" : "Join"}</Button>;
+  return (
+    <Button disabled={eventJoinOrLeave.isPending} onClick={handleClick}>
+      {isJoined ? "Leave" : "Join"}
+    </Button>
+  );
 }
 
 function Map({ show, location }: { show: boolean; location: null | GeoJson["Point"] }) {
