@@ -10,7 +10,7 @@ export const metadata = seo({
   title: "Howler",
   description: "Quickly find/plan stuff to do with friends, or with anyone really.",
   url: "/",
-  image: "/Howler.png",
+  image: "/howler.png",
 });
 
 export const runtime = "edge";
