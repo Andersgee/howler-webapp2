@@ -1,4 +1,4 @@
-import { initCloudMessaging, getFcmToken } from "#src/lib/cloud-messaging";
+import { initCloudMessaging, getFcmToken } from "#src/lib/cloud-messaging-light/client";
 import { payloadDispatch } from "#src/store";
 import { useEffect } from "react";
 import { useStore } from "#src/store";
