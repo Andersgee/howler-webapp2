@@ -36,11 +36,15 @@ export const eventRouter = createTRPCRouter({
       const hashid = hashidFromId(insertResult.insertId!);
       //TODO: decide who to notify... for now just send to creator
       const notifyUserIds = [ctx.user.id];
-      await notify(notifyUserIds, {
-        title: `${ctx.user.name} howled!`,
-        body: input.title,
-        relativeLink: `/event/${hashid}`,
-      });
+      try {
+        await notify(notifyUserIds, {
+          title: `${ctx.user.name} howled!`,
+          body: input.title,
+          relativeLink: `/event/${hashid}`,
+        });
+      } catch (err) {
+        console.log(err);
+      }
 
       return { ...insertResult, hashid };
     }),
