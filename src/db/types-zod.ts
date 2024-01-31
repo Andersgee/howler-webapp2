@@ -109,11 +109,11 @@ export const schema_insert_Event = z.object({
   title: z.string(),
   date: z.date().optional(),
   location: zGeoJson.Point.nullish(),
-  creatorId: z.bigint(),
   locationName: z.string().nullish(),
+  creatorId: z.bigint(),
   image: z.string().nullish(),
-  imageAspect: z.number().optional(),
   imageBlurData: zTypedArray.nullish(),
+  imageAspect: z.number().optional(),
 });
 export const schema_update_Event = z.object({
   id: z.bigint().optional(),
@@ -122,11 +122,11 @@ export const schema_update_Event = z.object({
   title: z.string().optional(),
   date: z.date().optional(),
   location: zGeoJson.Point.nullish(),
-  creatorId: z.bigint().optional(),
   locationName: z.string().nullish(),
+  creatorId: z.bigint().optional(),
   image: z.string().nullish(),
-  imageAspect: z.number().optional(),
   imageBlurData: zTypedArray.nullish(),
+  imageAspect: z.number().optional(),
 });
 
 export const schema_insert_DeletedEventImages = z.object({

@@ -28,11 +28,11 @@ model Event {
   title String @db.VarChar(55)
   date DateTime @db.DateTime(3) @default(now())
   location Unsupported("point")?
-  creatorId BigInt @db.UnsignedBigInt
   locationName String? @db.VarChar(55)
+  creatorId BigInt @db.UnsignedBigInt
   image String? @db.VarChar(100)
-  imageAspect Float @db.Float @default(1)
   imageBlurData Bytes? @db.VarBinary(255)
+  imageAspect Float @db.Float @default(1)
 
   Event_creatorId_fkey User @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
@@ -58,6 +58,9 @@ model Notification {
   title String @db.VarChar(55)
   body String @db.VarChar(55)
   relativeLink String @db.VarChar(55)
+  createdAt DateTime @db.DateTime(3) @default(now())
+
+  UserNotificationPivot_notificationId_fkey UserNotificationPivot[]
 
   @@id([id])
 }
@@ -91,6 +94,7 @@ model User {
   FcmToken_userId_fkey FcmToken[]
   Post_userId_fkey Post[]
   UserEventPivot_userId_fkey UserEventPivot[]
+  UserNotificationPivot_userId_fkey UserNotificationPivot[]
 
   @@id([id])
   @@unique([email])
@@ -108,6 +112,17 @@ model UserEventPivot {
   UserEventPivot_eventId_fkey Event @relation(fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   @@id([eventId, userId])
+  @@index([userId])
+}
+
+model UserNotificationPivot {
+  userId BigInt @db.UnsignedBigInt
+  notificationId BigInt @db.UnsignedBigInt
+
+  UserNotificationPivot_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  UserNotificationPivot_notificationId_fkey Notification @relation(fields: [notificationId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  @@id([notificationId, userId])
   @@index([userId])
 }
 
