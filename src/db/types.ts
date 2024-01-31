@@ -42,16 +42,16 @@ export type Event = {
   date: Generated<Date>;
   /** dbtype: 'point' */
   location: GeoJson["Point"] | null;
-  /** indexed: (creatorId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
-  creatorId: bigint;
   /** indexed: (title, locationName), dbtype: 'varchar(55)', eg string with max 55 chars */
   locationName: string | null;
+  /** indexed: (creatorId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  creatorId: bigint;
   /** dbtype: 'varchar(100)', eg string with max 100 chars */
   image: string | null;
-  /** default: 1, dbtype: 'float' */
-  imageAspect: Generated<number>;
   /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
   imageBlurData: Uint8Array | null;
+  /** default: 1, dbtype: 'float' */
+  imageAspect: Generated<number>;
 };
 
 export type FcmToken = {
@@ -120,9 +120,9 @@ export type UserEventPivot = {
 };
 
 export type UserNotificationPivot = {
-  /** indexed: (userId, notificationId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  /** indexed: (notificationId, userId) and (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   userId: bigint;
-  /** indexed: (userId, notificationId) and (notificationId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  /** indexed: (notificationId, userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   notificationId: bigint;
 };
 

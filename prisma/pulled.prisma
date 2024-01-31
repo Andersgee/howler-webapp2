@@ -28,19 +28,19 @@ model Event {
   title String @db.VarChar(55)
   date DateTime @db.DateTime(3) @default(now())
   location Unsupported("point")?
-  creatorId BigInt @db.UnsignedBigInt
   locationName String? @db.VarChar(55)
+  creatorId BigInt @db.UnsignedBigInt
   image String? @db.VarChar(100)
-  imageAspect Float @db.Float @default(1)
   imageBlurData Bytes? @db.VarBinary(255)
+  imageAspect Float @db.Float @default(1)
 
   Event_creatorId_fkey User @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
   UserEventPivot_eventId_fkey UserEventPivot[]
 
-  @@id([id])
   @@index([creatorId])
   @@fulltext([title, locationName])
+  @@id([id])
 }
 
 model FcmToken {
@@ -49,8 +49,8 @@ model FcmToken {
 
   FcmToken_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  @@id([token])
   @@index([userId])
+  @@id([token])
 }
 
 model Notification {
@@ -74,8 +74,8 @@ model Post {
 
   Post_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  @@id([id])
   @@index([userId])
+  @@id([id])
 }
 
 model User {
@@ -90,19 +90,17 @@ model User {
   updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
   role User_role_enum @default(USER)
 
-  Event_creatorId_fkey Event[]
   FcmToken_userId_fkey FcmToken[]
-  Post_userId_fkey Post[]
   UserEventPivot_userId_fkey UserEventPivot[]
   UserNotificationPivot_userId_fkey UserNotificationPivot[]
-  UserUserPivot_userId_fkey UserUserPivot[]
-  UserUserPivot_followerId_fkey UserUserPivot[]
+  Post_userId_fkey Post[]
+  Event_creatorId_fkey Event[]
 
   @@id([id])
-  @@unique([email])
-  @@unique([googleUserSub])
   @@unique([discordUserId])
+  @@unique([email])
   @@unique([githubUserId])
+  @@unique([googleUserSub])
 }
 
 model UserEventPivot {
@@ -124,20 +122,8 @@ model UserNotificationPivot {
   UserNotificationPivot_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   UserNotificationPivot_notificationId_fkey Notification @relation(fields: [notificationId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  @@id([userId, notificationId])
-  @@index([notificationId])
-}
-
-model UserUserPivot {
-  userId BigInt @db.UnsignedBigInt
-  followerId BigInt @db.UnsignedBigInt
-  createdAt DateTime @db.DateTime(3) @default(now())
-
-  UserUserPivot_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  UserUserPivot_followerId_fkey User @relation(fields: [followerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
-  @@id([userId, followerId])
-  @@index([followerId])
+  @@id([notificationId, userId])
+  @@index([userId])
 }
 
 enum User_role_enum {

@@ -31,14 +31,22 @@ export const eventRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const insertResult = await dbfetch()
+      const db = dbfetch();
+      const insertResult = await db
         .insertInto("Event")
         .values({ ...input, creatorId: ctx.user.id })
         .executeTakeFirstOrThrow();
 
       const hashid = hashidFromId(insertResult.insertId!);
+
+      const userUserPivots = await db
+        .selectFrom("UserUserPivot")
+        .select("followerId")
+        .where("userId", "=", ctx.user.id)
+        .execute();
+      const notifyUserIds = userUserPivots.map((x) => x.followerId);
       //TODO: decide who to notify... for now just send to creator
-      const notifyUserIds = [ctx.user.id];
+      //const notifyUserIds = [ctx.user.id];
       try {
         await notify(notifyUserIds, {
           title: `${ctx.user.name} howled!`,

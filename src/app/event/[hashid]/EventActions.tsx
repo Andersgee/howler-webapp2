@@ -43,7 +43,9 @@ export function EventActions(props: Props) {
             <IconEdit /> Edit
           </Link>
         )}
-        <FollowUnfollowButton event={props.event} user={props.user} isFollowing={props.isFollowing} />
+        {!props.isCreator && (
+          <FollowUnfollowButton event={props.event} user={props.user} isFollowing={props.isFollowing} />
+        )}
         <ShareButton title={props.event.title} />
 
         <JoinLeaveButton user={props.user} id={props.event.id} isJoined={props.isJoined} />
