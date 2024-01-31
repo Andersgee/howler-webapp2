@@ -13,7 +13,7 @@ export type Message = {
 export async function notify(userIds: bigint[], message: Message) {
   if (userIds.length === 0) return;
 
-  //make sure to save notification
+  //make sure to save notification in db
   const db = dbfetch();
   const insertResult = await db
     .insertInto("Notification")
