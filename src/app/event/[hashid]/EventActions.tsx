@@ -117,7 +117,7 @@ function Map({ show, location }: { show: boolean; location: null | GeoJson["Poin
   const googleMaps = useStore.use.googleMaps();
   const didRun = useRef(false);
   useEffect(() => {
-    if (!googleMaps || !location) return;
+    if (!googleMaps || !location || !show) return;
 
     if (!didRun.current) {
       googleMaps.setMode("view-event");
