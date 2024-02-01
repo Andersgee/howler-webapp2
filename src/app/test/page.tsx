@@ -5,6 +5,13 @@ export default function Page() {
   const headerStore = Object.fromEntries(headers().entries());
   return (
     <div>
+      <div>
+        <a href={`/api/auth/signin/facebook?route=${"/test"}`}>
+          <div>icon</div>
+          <span>Sign in with Facebook</span>
+        </a>
+      </div>
+
       <h2>Cookies</h2>
       {cookieStore.map((cookie) => (
         <div key={cookie.name} className="flex gap-2">

@@ -30,6 +30,8 @@ export const envSchema = z.object({
   HOWLER_FIREBASE_ADMIN_PROJECT_ID: z.string(),
   HOWLER_FIREBASE_ADMIN_CLIENT_EMAIL: z.string(),
   HOWLER_FIREBASE_ADMIN_SERVICE_ACCOUNT_PRIVATE_KEY: z.string(),
+  FACEBOOK_CLIENT_ID: z.string(),
+  FACEBOOK_CLIENT_SECRET: z.string(),
 });
 
 /**
