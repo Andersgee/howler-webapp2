@@ -123,7 +123,7 @@ async function getTableRelations(db: DB) {
           const isNullable = indexInfo?.NULLABLE === "YES";
           const optional = isNullable ? "?" : "";
 
-          const opposing_prismastring = `${pseudocolName} ${tableName}[]`;
+          const opposing_prismastring = `${pseudocolName} ${tableName}[] @relation("${pseudocolName}")`;
           //const opposing_prismastring = `${pseudocolName} ${tableName}?\n` //any scenario where this is required?..
 
           if (opposingTableRelations[referencedModel]) {
@@ -132,7 +132,7 @@ async function getTableRelations(db: DB) {
             opposingTableRelations[referencedModel] = [{ prismastring: opposing_prismastring }];
           }
 
-          const prismastring = `${pseudocolName} ${referencedModel}${optional} @relation(fields: [${fieldName}], references: [${referencedCol}], onUpdate: ${onUpdate}, onDelete: ${onDelete})`;
+          const prismastring = `${pseudocolName} ${referencedModel}${optional} @relation("${pseudocolName}", fields: [${fieldName}], references: [${referencedCol}], onUpdate: ${onUpdate}, onDelete: ${onDelete})`;
           return { ...relation, prismastring };
         }),
       ] as const;

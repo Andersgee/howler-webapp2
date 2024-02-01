@@ -120,9 +120,9 @@ export type UserEventPivot = {
 };
 
 export type UserNotificationPivot = {
-  /** indexed: (notificationId, userId) and (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  /** indexed: (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   userId: bigint;
-  /** indexed: (notificationId, userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  /** indexed: (notificationId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   notificationId: bigint;
 };
 

@@ -14,6 +14,14 @@ export function generatePrismaSchema({
     for (const column of columns) {
       s += `  ${column.prismastring}\n`;
     }
+    const indexing = tableIndexing[tableName];
+    if (indexing) {
+      s += "\n";
+      for (const index of indexing) {
+        s += `  ${index.prismastring}\n`;
+      }
+    }
+    s += "\n  //any relation fields below here are for prisma syntax only (they dont do anything at db level)\n";
     const relations = tableRelations[tableName];
     if (relations) {
       s += "\n";
@@ -24,19 +32,12 @@ export function generatePrismaSchema({
 
     const opposingRelations = opposingTableRelations[tableName];
     if (opposingRelations) {
-      s += "\n";
+      //s += "\n";
       for (const opposingRelation of opposingRelations) {
         s += `  ${opposingRelation.prismastring}\n`;
       }
     }
 
-    const indexing = tableIndexing[tableName];
-    if (indexing) {
-      s += "\n";
-      for (const index of indexing) {
-        s += `  ${index.prismastring}\n`;
-      }
-    }
     s += "}\n\n";
   }
   for (const en of enums) {

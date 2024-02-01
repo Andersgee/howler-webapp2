@@ -13,12 +13,16 @@ model CloudMessageAccessToken {
   expires DateTime @db.DateTime(3)
 
   @@id([id])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
 }
 
 model DeletedEventImages {
   image String @db.VarChar(100)
 
   @@id([image])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
 }
 
 model Event {
@@ -34,23 +38,26 @@ model Event {
   imageBlurData Bytes? @db.VarBinary(255)
   imageAspect Float @db.Float @default(1)
 
-  Event_creatorId_fkey User @relation(fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
-  UserEventPivot_eventId_fkey UserEventPivot[]
-
   @@index([creatorId])
   @@fulltext([title, locationName])
   @@id([id])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+
+  Event_creatorId_fkey User @relation("Event_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  UserEventPivot_eventId_fkey UserEventPivot[] @relation("UserEventPivot_eventId_fkey")
 }
 
 model FcmToken {
   token String @db.VarChar(200)
   userId BigInt @db.UnsignedBigInt
 
-  FcmToken_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
   @@index([userId])
   @@id([token])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+
+  FcmToken_userId_fkey User @relation("FcmToken_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model Notification {
@@ -60,9 +67,10 @@ model Notification {
   relativeLink String @db.VarChar(55)
   createdAt DateTime @db.DateTime(3) @default(now())
 
-  UserNotificationPivot_notificationId_fkey UserNotificationPivot[]
-
   @@id([id])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+  UserNotificationPivot_notificationId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_notificationId_fkey")
 }
 
 model Post {
@@ -72,10 +80,12 @@ model Post {
   updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
   userId BigInt @db.UnsignedBigInt
 
-  Post_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
   @@index([userId])
   @@id([id])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+
+  Post_userId_fkey User @relation("Post_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model User {
@@ -90,17 +100,20 @@ model User {
   updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
   role User_role_enum @default(USER)
 
-  FcmToken_userId_fkey FcmToken[]
-  UserEventPivot_userId_fkey UserEventPivot[]
-  UserNotificationPivot_userId_fkey UserNotificationPivot[]
-  Post_userId_fkey Post[]
-  Event_creatorId_fkey Event[]
-
   @@id([id])
   @@unique([discordUserId])
   @@unique([email])
   @@unique([githubUserId])
   @@unique([googleUserSub])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+  FcmToken_userId_fkey FcmToken[] @relation("FcmToken_userId_fkey")
+  UserEventPivot_userId_fkey UserEventPivot[] @relation("UserEventPivot_userId_fkey")
+  UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")
+  Post_userId_fkey Post[] @relation("Post_userId_fkey")
+  Event_creatorId_fkey Event[] @relation("Event_creatorId_fkey")
+  UserUserPivot_userId_fkey UserUserPivot[] @relation("UserUserPivot_userId_fkey")
+  UserUserPivot_followerId_fkey UserUserPivot[] @relation("UserUserPivot_followerId_fkey")
 }
 
 model UserEventPivot {
@@ -108,22 +121,40 @@ model UserEventPivot {
   eventId BigInt @db.UnsignedBigInt
   joinDate DateTime @db.DateTime(3) @default(now())
 
-  UserEventPivot_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  UserEventPivot_eventId_fkey Event @relation(fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
   @@id([eventId, userId])
   @@index([userId])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+
+  UserEventPivot_userId_fkey User @relation("UserEventPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  UserEventPivot_eventId_fkey Event @relation("UserEventPivot_eventId_fkey", fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model UserNotificationPivot {
   userId BigInt @db.UnsignedBigInt
   notificationId BigInt @db.UnsignedBigInt
 
-  UserNotificationPivot_userId_fkey User @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  UserNotificationPivot_notificationId_fkey Notification @relation(fields: [notificationId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
   @@id([notificationId, userId])
   @@index([userId])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+
+  UserNotificationPivot_userId_fkey User @relation("UserNotificationPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  UserNotificationPivot_notificationId_fkey Notification @relation("UserNotificationPivot_notificationId_fkey", fields: [notificationId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+}
+
+model UserUserPivot {
+  userId BigInt @db.UnsignedBigInt
+  followerId BigInt @db.UnsignedBigInt
+  createdAt DateTime @db.DateTime(3) @default(now())
+
+  @@id([userId, followerId])
+  @@index([followerId])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+
+  UserUserPivot_userId_fkey User @relation("UserUserPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  UserUserPivot_followerId_fkey User @relation("UserUserPivot_followerId_fkey", fields: [followerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 enum User_role_enum {
