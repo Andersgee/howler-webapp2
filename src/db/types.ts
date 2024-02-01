@@ -4,13 +4,13 @@ import type { GeoJson } from "./types-geojson";
   
 export type DB = {
   CloudMessageAccessToken: CloudMessageAccessToken;
-  UserUserPivot: UserUserPivot;
-  UserNotificationPivot: UserNotificationPivot;
-  UserEventPivot: UserEventPivot;
-  User: User;
-  Post: Post;
   Notification: Notification;
   FcmToken: FcmToken;
+  Post: Post;
+  User: User;
+  UserEventPivot: UserEventPivot;
+  UserNotificationPivot: UserNotificationPivot;
+  UserUserPivot: UserUserPivot;
   Event: Event;
   DeletedEventImages: DeletedEventImages;
 };

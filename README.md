@@ -75,10 +75,10 @@ other
 
 ```sh
 #backup
-sudo docker stop howler-db-db
+sudo docker stop howler-db
 sudo cp -r mysqldatadir mysqldatadir_backup
-sudo docker start howler-db-db
+sudo docker start howler-db
 #remove
-sudo docker rm howler-db-db
+sudo docker rm howler-db
 sudo rm -r mysqldatadir
 ```

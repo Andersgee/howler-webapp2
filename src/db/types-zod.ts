@@ -18,35 +18,43 @@ export const schema_update_CloudMessageAccessToken = z.object({
   expires: z.date().optional(),
 });
 
-export const schema_insert_UserUserPivot = z.object({
-  userId: z.bigint(),
-  followerId: z.bigint(),
+export const schema_insert_Notification = z.object({
+  id: z.bigint().optional(),
+  title: z.string(),
+  body: z.string(),
+  relativeLink: z.string(),
   createdAt: z.date().optional(),
 });
-export const schema_update_UserUserPivot = z.object({
-  userId: z.bigint().optional(),
-  followerId: z.bigint().optional(),
+export const schema_update_Notification = z.object({
+  id: z.bigint().optional(),
+  title: z.string().optional(),
+  body: z.string().optional(),
+  relativeLink: z.string().optional(),
   createdAt: z.date().optional(),
 });
 
-export const schema_insert_UserNotificationPivot = z.object({
+export const schema_insert_FcmToken = z.object({
+  token: z.string(),
   userId: z.bigint(),
-  notificationId: z.bigint(),
 });
-export const schema_update_UserNotificationPivot = z.object({
+export const schema_update_FcmToken = z.object({
+  token: z.string().optional(),
   userId: z.bigint().optional(),
-  notificationId: z.bigint().optional(),
 });
 
-export const schema_insert_UserEventPivot = z.object({
+export const schema_insert_Post = z.object({
+  id: z.bigint().optional(),
+  text: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
   userId: z.bigint(),
-  eventId: z.bigint(),
-  joinDate: z.date().optional(),
 });
-export const schema_update_UserEventPivot = z.object({
+export const schema_update_Post = z.object({
+  id: z.bigint().optional(),
+  text: z.string().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
   userId: z.bigint().optional(),
-  eventId: z.bigint().optional(),
-  joinDate: z.date().optional(),
 });
 
 export const schema_insert_User = z.object({
@@ -74,43 +82,35 @@ export const schema_update_User = z.object({
   role: z.enum(["USER","ADMIN"]).optional(),
 });
 
-export const schema_insert_Post = z.object({
-  id: z.bigint().optional(),
-  text: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+export const schema_insert_UserEventPivot = z.object({
   userId: z.bigint(),
+  eventId: z.bigint(),
+  joinDate: z.date().optional(),
 });
-export const schema_update_Post = z.object({
-  id: z.bigint().optional(),
-  text: z.string().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
+export const schema_update_UserEventPivot = z.object({
   userId: z.bigint().optional(),
+  eventId: z.bigint().optional(),
+  joinDate: z.date().optional(),
 });
 
-export const schema_insert_Notification = z.object({
-  id: z.bigint().optional(),
-  title: z.string(),
-  body: z.string(),
-  relativeLink: z.string(),
-  createdAt: z.date().optional(),
+export const schema_insert_UserNotificationPivot = z.object({
+  userId: z.bigint(),
+  notificationId: z.bigint(),
 });
-export const schema_update_Notification = z.object({
-  id: z.bigint().optional(),
-  title: z.string().optional(),
-  body: z.string().optional(),
-  relativeLink: z.string().optional(),
-  createdAt: z.date().optional(),
+export const schema_update_UserNotificationPivot = z.object({
+  userId: z.bigint().optional(),
+  notificationId: z.bigint().optional(),
 });
 
-export const schema_insert_FcmToken = z.object({
-  token: z.string(),
+export const schema_insert_UserUserPivot = z.object({
   userId: z.bigint(),
+  followerId: z.bigint(),
+  createdAt: z.date().optional(),
 });
-export const schema_update_FcmToken = z.object({
-  token: z.string().optional(),
+export const schema_update_UserUserPivot = z.object({
   userId: z.bigint().optional(),
+  followerId: z.bigint().optional(),
+  createdAt: z.date().optional(),
 });
 
 export const schema_insert_Event = z.object({
