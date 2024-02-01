@@ -3,14 +3,14 @@ import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
-  CloudMessageAccessToken: CloudMessageAccessToken;
+  Post: Post;
+  UserUserPivot: UserUserPivot;
+  UserNotificationPivot: UserNotificationPivot;
+  UserEventPivot: UserEventPivot;
+  User: User;
   Notification: Notification;
   FcmToken: FcmToken;
-  Post: Post;
-  User: User;
-  UserEventPivot: UserEventPivot;
-  UserNotificationPivot: UserNotificationPivot;
-  UserUserPivot: UserUserPivot;
+  CloudMessageAccessToken: CloudMessageAccessToken;
   Event: Event;
   DeletedEventImages: DeletedEventImages;
 };
