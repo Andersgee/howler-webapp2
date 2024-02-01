@@ -48,7 +48,7 @@ export function EventActions(props: Props) {
         )}
         <ShareButton title={props.event.title} />
 
-        <JoinLeaveButton user={props.user} id={props.event.id} isJoined={props.isJoined} />
+        {!props.isCreator && <JoinLeaveButton user={props.user} id={props.event.id} isJoined={props.isJoined} />}
       </div>
       <Map show={showMap} location={props.event.location} />
     </>
