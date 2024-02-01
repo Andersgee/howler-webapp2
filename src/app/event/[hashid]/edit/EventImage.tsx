@@ -48,7 +48,7 @@ export function EventImage({ event, className }: Props) {
         <input
           type="file"
           accept="image/png, image/jpeg"
-          capture="environment"
+          //capture="environment"
           className="sr-only"
           disabled={isUploading}
           onChange={(e) => {
