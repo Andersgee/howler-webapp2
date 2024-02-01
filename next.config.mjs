@@ -25,6 +25,11 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "platform-lookaside.fbsbx.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "storage.googleapis.com",
         pathname: "/howler-event-images/**",
       },

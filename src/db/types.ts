@@ -108,6 +108,8 @@ export type User = {
   updatedAt: Generated<Date>;
   /** default: USER, dbtype: 'enum('USER','ADMIN')' */
   role: Generated<"USER" | "ADMIN">;
+  /** indexed: (facebookdUserId), dbtype: 'varchar(191)', eg string with max 191 chars */
+  facebookdUserId: string | null;
 };
 
 export type UserEventPivot = {

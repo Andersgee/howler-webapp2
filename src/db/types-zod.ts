@@ -68,6 +68,7 @@ export const schema_insert_User = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   role: z.enum(["USER","ADMIN"]).optional(),
+  facebookdUserId: z.string().nullish(),
 });
 export const schema_update_User = z.object({
   id: z.bigint().optional(),
@@ -80,6 +81,7 @@ export const schema_update_User = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   role: z.enum(["USER","ADMIN"]).optional(),
+  facebookdUserId: z.string().nullish(),
 });
 
 export const schema_insert_UserEventPivot = z.object({

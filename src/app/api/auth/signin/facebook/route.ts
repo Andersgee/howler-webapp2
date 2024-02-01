@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
     const authRequestUrl = urlWithSearchparams(authorization_endpoint, {
       client_id: process.env.FACEBOOK_CLIENT_ID,
       response_type: "code",
-      scope: "email",
+      scope: "email", // "public_profile,email" ?
       redirect_uri: absUrl("/api/auth/callback/facebook"),
       state: stateToken,
     });

@@ -39,46 +39,77 @@ export async function GET(request: NextRequest) {
       redirect_uri: absUrl("/api/auth/callback/facebook"),
       code: code,
     });
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const token = await fetch(token_endpoint, {
-      method: "GET",
-      cache: "no-store",
-    }).then((r) => r.json());
-    console.log("token:", token);
 
-    /*
-    const token = z.object({ access_token: z.string(), token_type: z.string(), expires_in: z.coerce.number() }).parse(
-      await fetch(token_endpoint, {
-        method: "GET",
-        cache: "no-store",
-      }).then((r) => r.json())
-    );
-    */
-
-    /*
-    GET https://graph.facebook.com/v19.0/oauth/access_token?
-   client_id={app-id}
-   &redirect_uri={redirect-uri}
-   &client_secret={app-secret}
-   &code={code-parameter}
-    */
+    const token = z
+      .object({
+        access_token: z.string(),
+        token_type: z.string(), //"bearer"
+        expires_in: z.number(), //5182784
+      })
+      .parse(
+        await fetch(token_endpoint, {
+          method: "GET",
+          cache: "no-store",
+        }).then((r) => r.json())
+      );
 
     // Obtain info about the user for which we now have an access token
+    const userinfoUrl = urlWithSearchparams("https://graph.facebook.com/v19.0/me", {
+      fields: "id,name,email,picture",
+      access_token: token.access_token,
+    });
+    const userInfo = z
+      .object({
+        id: z.string(),
+        name: z.string(),
+        email: z.string(),
+        picture: z.object({
+          data: z.object({
+            //width: z.number(), //49
+            //height: z.number(), //49
+            //is_silhouette: z.boolean(),
+            url: z.string(), //'https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=10160546811594270&height=50&width=50&ext=1709410307&hash=Afq3CgjBp7_NgRUycgTHcZioDwb9LPdhRsW4SLgZZM1ZWA',
+          }),
+        }),
+      })
+      .parse(await fetch(userinfoUrl, { method: "GET", cache: "no-store" }).then((r) => r.json()));
 
-    //get any additional info
+    //console.log(userInfo);
 
     // Authenticate the user
-    //const existingUser = await db.selectFrom("User").selectAll().where("email", "=", userInfo.email).executeTakeFirst();
+    const existingUser = await db.selectFrom("User").selectAll().where("email", "=", userInfo.email).executeTakeFirst();
 
-    //insert (or update existing) user in db
-    /*
     let tokenUser: TokenUser | undefined = undefined;
-    tokenUser = tokenUser!
-    
+    if (existingUser) {
+      if (!existingUser.facebookdUserId) {
+        await db.updateTable("User").set({ facebookdUserId: userInfo.id }).where("id", "=", existingUser.id).execute();
+      }
+
+      tokenUser = {
+        id: existingUser.id,
+        name: existingUser.name,
+        image: existingUser.image ?? "",
+      };
+    } else {
+      const insertResult = await db
+        .insertInto("User")
+        .values({
+          name: userInfo.name,
+          email: userInfo.email,
+          facebookdUserId: userInfo.id,
+          image: userInfo.picture.data.url,
+        })
+        .executeTakeFirstOrThrow();
+
+      tokenUser = {
+        id: insertResult.insertId!,
+        name: userInfo.name,
+        image: userInfo.picture.data.url,
+      };
+    }
     revalidateTag(tagsUser.info({ userId: tokenUser.id }));
 
     const userCookie = await createTokenFromUser(tokenUser);
-
     return new Response(null, {
       status: 303,
       headers: {
@@ -86,14 +117,13 @@ export async function GET(request: NextRequest) {
         "Set-Cookie": userCookieString(userCookie, USER_COOKIE_MAXAGE),
       },
     });
-    */
   } catch (error) {
     console.log(error);
     //console.error(errorMessageFromUnkown(error));
     return new Response(null, {
       status: 303,
       headers: {
-        Location: absUrl("/callbackerr"),
+        Location: absUrl(),
       },
     });
   }
