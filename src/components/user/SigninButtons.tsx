@@ -37,6 +37,12 @@ export function SigninButtons() {
       */}
 
       <div>
+        <a href={`/api/auth/signin/facebook?route=${pathname}`} className={linkStyles}>
+          <div>icon</div>
+          <span>Sign in with Facebook</span>
+        </a>
+      </div>
+      <div>
         <a href={`/api/auth/signin/discord?route=${pathname}`} className={linkStyles}>
           <IconDiscord />
           <span>Sign in with Discord</span>

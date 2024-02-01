@@ -5,6 +5,8 @@ export default function Page() {
   const headerStore = Object.fromEntries(headers().entries());
   return (
     <div>
+      test
+      {/*
       <div>
         <a href={`/api/auth/signin/facebook?route=${"/test"}`}>
           <div>icon</div>
@@ -26,6 +28,7 @@ export default function Page() {
           <p>Value: {v}</p>
         </div>
       ))}
+      */}
     </div>
   );
 }

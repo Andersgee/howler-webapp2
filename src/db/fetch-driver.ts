@@ -77,7 +77,7 @@ class FetchConnection implements DatabaseConnection {
       parameters: compiledQuery.parameters,
     });
 
-    const url = `${this.config.url}?q=${q}`;
+    const url = `${this.config.url}?q=${encodeURIComponent(q)}`;
     const res = await fetch(url, this.config.init);
 
     if (res.ok) {
@@ -88,6 +88,7 @@ class FetchConnection implements DatabaseConnection {
         throw new Error("failed to parse response");
       }
     } else {
+      console.log("execute not ok");
       console.log(await res.text());
       throw new Error(`${res.status} ${res.statusText}`);
     }
