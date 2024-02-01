@@ -24,29 +24,21 @@ export function IconFacebook({ className, ...props }: Props) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      clip-rule="evenodd"
-      fill-rule="evenodd"
-      //image-rendering="optimizeQuality"
-      //shape-rendering="geometricPrecision"
-      //text-rendering="geometricPrecision"
-      viewBox="6702.77 18309.17 6561.66 6561.660000000007"
+      viewBox="0 0 36 36"
+      height="40"
+      width="40"
       className={cn("h-6 w-6", className)}
       aria-label="Facebook"
       {...props}
     >
-      <linearGradient id="a" gradientUnits="userSpaceOnUse" x1="9983.6" x2="9983.6" y1="18249.39" y2="25150.62">
-        <stop offset="0" stop-color="#00b2ff" />
-        <stop offset="1" stop-color="#006aff" />
-      </linearGradient>
       <path
-        d="M9983.6 18309.17c1811.95 0 3280.83 1468.88 3280.83 3280.83s-1468.88 3280.83-3280.83 3280.83S6702.77 23401.95 6702.77 21590s1468.88-3280.83 3280.83-3280.83z"
-        fill="url(#a)"
-      />
+        fill="#0866ff"
+        d="M20.181 35.87C29.094 34.791 36 27.202 36 18c0-9.941-8.059-18-18-18S0 8.059 0 18c0 8.442 5.811 15.526 13.652 17.471L14 34h5.5l.681 1.87Z"
+      ></path>
       <path
-        d="M10409.89 24843.29v-2534.17h714.43l94.7-891.91h-809.13l1.2-446.44c0-232.63 22.1-357.22 356.24-357.22h446.68v-892.06h-714.59c-858.35 0-1160.42 432.65-1160.42 1160.34v535.45h-535.07v891.99H9339v2498.09c208.45 41.53 423.95 63.47 644.6 63.47a3310.9 3310.9 0 0 0 426.29-27.54z"
-        fill="#fff"
-        fill-rule="nonzero"
-      />
+        fill="#ffffff"
+        d="M13.651 35.471v-11.97H9.936V18h3.715v-2.37c0-6.127 2.772-8.964 8.784-8.964 1.138 0 3.103.223 3.91.446v4.983c-.425-.043-1.167-.065-2.081-.065-2.952 0-4.09 1.116-4.09 4.025V18h5.883l-1.008 5.5h-4.867v12.37a18.183 18.183 0 0 1-6.53-.399Z"
+      ></path>
     </svg>
   );
 }

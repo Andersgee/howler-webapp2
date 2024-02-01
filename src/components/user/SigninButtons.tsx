@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconGoogle, IconDiscord, IconGithub } from "#src/icons/special";
+import { IconGoogle, IconDiscord, IconGithub, IconFacebook } from "#src/icons/special";
 import { useUserAgent } from "#src/hooks/useUserAgent";
 
 const linkStyles =
@@ -38,7 +38,7 @@ export function SigninButtons() {
 
       <div>
         <a href={`/api/auth/signin/facebook?route=${pathname}`} className={linkStyles}>
-          <div>icon</div>
+          <IconFacebook />
           <span>Sign in with Facebook</span>
         </a>
       </div>
