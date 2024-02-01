@@ -1,12 +1,25 @@
 import { UserImage32x32, UserImage96x96 } from "#src/components/user/UserImage";
 import { apiRsc } from "#src/trpc/api-rsc";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+//import { redirect } from "next/navigation";
 import { DeleteAccountButton } from "./DeleteAccountButton";
+import { seo } from "#src/utils/seo";
+import { NoUser } from "./NoUser";
+
+export const metadata = seo({
+  title: "Profile | Howler",
+  description: "Manage your profile.",
+  url: "/profile",
+  image: "/howler.png",
+});
 
 export default async function Page() {
   const { api, user: cookieuser } = await apiRsc();
-  if (!cookieuser) redirect("/");
+  //if (!cookieuser) redirect("/");
+
+  if (!cookieuser) {
+    return <NoUser />;
+  }
 
   const user = await api.user.info({ userId: cookieuser.id });
 
