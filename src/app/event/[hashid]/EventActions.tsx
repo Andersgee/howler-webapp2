@@ -90,7 +90,7 @@ function FollowUnfollowButton({
   return (
     <Button onClick={handleClick} variant="icon" disabled={userFollowOrUnfollow.isPending}>
       <UserImage32x32 image={event.creatorImage ?? ""} alt={event.creatorName} />{" "}
-      <span className="ml-1">{isFollowing ? "Follow" : "Unfollow"}</span>
+      <span className="ml-1">{isFollowing ? "Unfollow" : "Follow"}</span>
     </Button>
   );
 }
