@@ -1,3 +1,5 @@
+"use client";
+
 import { dialogDispatch } from "#src/store/slices/dialog";
 import { Button } from "#src/ui/button";
 
