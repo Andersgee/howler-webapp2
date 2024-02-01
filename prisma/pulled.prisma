@@ -109,11 +109,11 @@ model User {
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
   FcmToken_userId_fkey FcmToken[] @relation("FcmToken_userId_fkey")
   UserEventPivot_userId_fkey UserEventPivot[] @relation("UserEventPivot_userId_fkey")
-  UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")
   Post_userId_fkey Post[] @relation("Post_userId_fkey")
   Event_creatorId_fkey Event[] @relation("Event_creatorId_fkey")
   UserUserPivot_userId_fkey UserUserPivot[] @relation("UserUserPivot_userId_fkey")
   UserUserPivot_followerId_fkey UserUserPivot[] @relation("UserUserPivot_followerId_fkey")
+  UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")
 }
 
 model UserEventPivot {
@@ -134,13 +134,13 @@ model UserNotificationPivot {
   userId BigInt @db.UnsignedBigInt
   notificationId BigInt @db.UnsignedBigInt
 
-  @@id([notificationId, userId])
+  @@id([notificationId])
   @@index([userId])
 
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
 
-  UserNotificationPivot_userId_fkey User @relation("UserNotificationPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   UserNotificationPivot_notificationId_fkey Notification @relation("UserNotificationPivot_notificationId_fkey", fields: [notificationId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  UserNotificationPivot_userId_fkey User @relation("UserNotificationPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model UserUserPivot {
