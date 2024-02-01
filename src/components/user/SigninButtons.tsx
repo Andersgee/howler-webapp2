@@ -28,6 +28,13 @@ export function SigninButtons() {
   return (
     <div className="bg-color-unthemed-neutral-0 p-4 shadow-md">
       <div>
+        <a href={`/api/auth/signin/facebook?route=${pathname}`} className={linkStyles}>
+          <div>icon</div>
+          <span>Sign in with Facebook</span>
+        </a>
+      </div>
+
+      <div>
         <a href={`/api/auth/signin/google?route=${pathname}`} className={linkStyles}>
           <IconGoogle />
           <span>Sign in with Google</span>

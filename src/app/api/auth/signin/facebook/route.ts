@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     const authorization_endpoint = "https://www.facebook.com/v19.0/dialog/oauth";
 
     const authRequestUrl = urlWithSearchparams(authorization_endpoint, {
-      client_id: "",
+      client_id: process.env.FACEBOOK_CLIENT_ID,
       response_type: "code",
       scope: "email",
       redirect_uri: absUrl("/api/auth/callback/facebook"),
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     return new Response(null, {
       status: 303,
       headers: {
-        Location: absUrl(),
+        Location: absUrl("/err"),
       },
     });
   }

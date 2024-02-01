@@ -7,6 +7,7 @@ import type { TokenUser } from "#src/utils/jwt/schema";
 import { absUrl, encodeParams, urlWithSearchparams } from "#src/utils/url";
 import { dbfetch } from "#src/db";
 import { z } from "zod";
+import { errorMessageFromUnkown } from "#src/utils/errormessage";
 
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
@@ -20,6 +21,7 @@ export async function GET(request: NextRequest) {
 
     const stateToken = request.nextUrl.searchParams.get("state");
     const code = request.nextUrl.searchParams.get("code");
+    console.log("code:", code);
     if (!stateToken || !code) throw new Error("no session");
 
     const state = await verifyStateToken(stateToken);
@@ -32,17 +34,26 @@ export async function GET(request: NextRequest) {
 
     // Exchange the code for an access token
     const token_endpoint = urlWithSearchparams("https://graph.facebook.com/v19.0/oauth/access_token", {
-      client_id: "",
-      client_secret: "",
+      client_id: process.env.FACEBOOK_CLIENT_ID,
+      client_secret: process.env.FACEBOOK_CLIENT_SECRET,
       redirect_uri: absUrl("/api/auth/callback/facebook"),
       code: code,
     });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const token = await fetch(token_endpoint, {
+      method: "GET",
+      cache: "no-store",
+    }).then((r) => r.json());
+    console.log("token:", token);
+
+    /*
     const token = z.object({ access_token: z.string(), token_type: z.string(), expires_in: z.coerce.number() }).parse(
       await fetch(token_endpoint, {
         method: "GET",
         cache: "no-store",
       }).then((r) => r.json())
     );
+    */
 
     /*
     GET https://graph.facebook.com/v19.0/oauth/access_token?
@@ -77,11 +88,12 @@ export async function GET(request: NextRequest) {
     });
     */
   } catch (error) {
+    console.log(error);
     //console.error(errorMessageFromUnkown(error));
     return new Response(null, {
       status: 303,
       headers: {
-        Location: absUrl(),
+        Location: absUrl("/callbackerr"),
       },
     });
   }
