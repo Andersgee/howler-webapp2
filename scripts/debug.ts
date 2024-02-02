@@ -14,9 +14,9 @@ const userInfo = {
     },
   },
 };
-console.log(userInfo);
+//console.log(userInfo);
 
-function main() {
+async function main() {
   const db = dbfetch();
 
   //const r = await db.selectFrom("Event").selectAll().execute();
@@ -24,6 +24,7 @@ function main() {
 
   //const existingUser = await db.selectFrom("User").selectAll().where("email", "=", userInfo.email).executeTakeFirst();
 
+  /*
   const compiledQuery = db
     .insertInto("User")
     .values({
@@ -41,6 +42,10 @@ function main() {
 
   console.log("q:", q);
   console.log("encoded:", encodeURIComponent(q));
+  */
+
+  const r = await db.deleteFrom("Notification").execute();
+  console.log(r);
   return 1;
 }
 

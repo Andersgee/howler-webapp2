@@ -121,8 +121,14 @@ model UserNotificationPivot {
     userId         BigInt       @db.UnsignedBigInt
     notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
     notificationId BigInt       @db.UnsignedBigInt
+    //btw to change order of this. [notificationId,userID] to [userId, notificationId]
+    //I had to go into mysql cli and remove foreign key constraints, eg
+    //SHOW CREATE TABLE UserNotificationPivot;
+    //ALTER TABLE UserNotificationPivot DROP FOREIGN KEY UserNotificationPivot_notificationId_fkey
+    //ALTER TABLE UserNotificationPivot DROP FOREIGN KEY UserNotificationPivot_userId_fkey
+    //only then was it allowed to change primary key, which is DROP and then add
 
-    @@id([notificationId])
+    @@id([userId, notificationId])
 }
 
 model Notification {
