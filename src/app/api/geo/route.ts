@@ -9,7 +9,6 @@ export function GET(request: NextRequest) {
 
   if (lng !== undefined && lat !== undefined) {
     const geo = { lng, lat };
-    console.log("/api/geo, geo:", geo);
     return new Response(JSON.stringify(geo), { status: 200 });
   }
 

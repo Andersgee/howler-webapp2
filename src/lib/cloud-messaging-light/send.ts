@@ -53,7 +53,7 @@ export async function sendCloudMessage(userIds: bigint[], message: Message) {
         await handleBadFcmResponse(res, token);
       }
     } catch (err) {
-      console.log(err);
+      console.log("sendCloudMessage, err:", err);
     }
   }
 }
@@ -66,12 +66,12 @@ async function handleBadFcmResponse(res: Response, token: string) {
   if (res.status === 400) {
     console.log("INVALID_ARGUMENT... bad payload probably");
   } else if (res.status === 401) {
-    console.log("THIRD_PARTY_AUTH_ERROR... not super clear what to do here. prob delete token:", token);
+    //console.log("THIRD_PARTY_AUTH_ERROR... not super clear what to do here. prob delete token:", token);
     await db.deleteFrom("FcmToken").where("token", "=", token).execute();
   } else if (res.status === 403) {
     console.log("SENDER_ID_MISMATCH... this should never happen?");
   } else if (res.status === 404) {
-    console.log("UNREGISTERED... should remove token:", token);
+    //console.log("UNREGISTERED... should remove token:", token);
     await db.deleteFrom("FcmToken").where("token", "=", token).execute();
   } else if (res.status === 429) {
     console.log("QUOTA_EXCEEDED... should retry with exponential backoff, minimum initial delay of 1 minute.");

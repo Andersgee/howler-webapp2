@@ -64,7 +64,6 @@ export function CreateEventForm({ isSignedIn }: Props) {
   );
   useEffect(() => {
     if (googleMapsPickedPoint) {
-      console.log({ googleMapsPickedPoint });
       form.setValue("location", googleMapsPickedPoint);
     }
   }, [googleMapsPickedPoint, form]);
@@ -78,8 +77,7 @@ export function CreateEventForm({ isSignedIn }: Props) {
       form.reset();
       router.push(`/event/${hashid}`);
     },
-    onError: (error, variables, context) => {
-      console.log({ error, variables, context });
+    onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Could not create event", description: "Try again" });
     },
   });

@@ -46,7 +46,6 @@ export class GoogleMapsClass {
   mode: "pick-location" | "view-event" | "explore";
 
   constructor() {
-    console.log("GoogleMapsClass, constructor");
     this.mode = "view-event";
   }
 
@@ -61,7 +60,6 @@ export class GoogleMapsClass {
   }
 
   async init(element: HTMLDivElement, initialCenter: { lat: number; lng: number } | null) {
-    console.log("GoogleMapsClass, init");
     try {
       //load relevant libs
       //https://developers.google.com/maps/documentation/javascript/libraries#libraries-for-dynamic-library-import
@@ -129,10 +127,8 @@ export class GoogleMapsClass {
       }
       media.addEventListener("change", (ev) => {
         if (ev.matches) {
-          console.log("is now dark mode");
           this.map.setMapTypeId("andy_dm");
         } else {
-          console.log("is now light mode");
           this.map.setMapTypeId("andy_lm");
         }
       });
@@ -177,7 +173,6 @@ export class GoogleMapsClass {
 
       this.map.addListener("click", (e: EventClick) => {
         //click on map (not infowindow)
-        console.log("click, e:", e);
         const latLng = e.latLng;
         if (this.mode === "pick-location") {
           this.primaryMarker.position = latLng;

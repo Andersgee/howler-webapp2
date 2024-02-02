@@ -88,8 +88,8 @@ class FetchConnection implements DatabaseConnection {
         throw new Error("failed to parse response");
       }
     } else {
-      console.log("execute not ok");
-      console.log(await res.text());
+      const text = await res.text();
+      console.log("executeQuery not ok, res.text:", text);
       throw new Error(`${res.status} ${res.statusText}`);
     }
   }

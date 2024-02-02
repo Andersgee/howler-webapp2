@@ -134,7 +134,7 @@ export async function dbTransaction(
     }
   } else {
     const text = await res.text();
-    console.log("res not ok. text:", text);
+    console.log("dbTransaction not ok, res.text:", text);
     throw new Error(`${res.status} ${res.statusText}`);
   }
 }

@@ -37,9 +37,7 @@ export async function getSessionFromToken(token: string | undefined) {
 /** for route.ts files. (make sure the route exports `dynamic = "force-dynamic"`). */
 export async function getUserFromRequestCookie(req: NextRequest) {
   const token = req.cookies.get(USER_COOKIE_NAME)?.value;
-  //console.log("getUserFromRequestCookie, token:", token);
   const user = await getUserFromToken(token);
-  //console.log("getUserFromRequestCookie, user:", user);
   return user;
 }
 

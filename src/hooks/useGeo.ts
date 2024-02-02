@@ -33,8 +33,7 @@ async function getGeo() {
     } else {
       return null;
     }
-  } catch (err) {
-    console.log(err);
+  } catch {
     return null;
   }
 }

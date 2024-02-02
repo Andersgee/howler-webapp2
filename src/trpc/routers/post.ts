@@ -41,7 +41,6 @@ export const postRouter = createTRPCRouter({
         userId: ctx.user.id,
       })
       .executeTakeFirstOrThrow();
-    console.log("create, insertResult:", insertResult);
 
     //const { count } = await db.selectFrom("Post").select(eb=>eb.fn.count<bigint>("id").as("count")).executeTakeFirstOrThrow()
     const createdPost = await db
@@ -51,7 +50,6 @@ export const postRouter = createTRPCRouter({
       .select(["User.image as userImage", "User.name as userName"])
       .where("Post.id", "=", insertResult.insertId!)
       .executeTakeFirstOrThrow();
-    console.log("create, createdPost:", createdPost);
 
     return createdPost;
   }),
@@ -66,7 +64,6 @@ export const postRouter = createTRPCRouter({
         userId: ctx.user.id,
       })
       .executeTakeFirstOrThrow();
-    console.log("insertResult:", insertResult);
 
     return insertResult;
   }),

@@ -41,8 +41,7 @@ async function getSession() {
     } else {
       return null;
     }
-  } catch (err) {
-    console.log(err);
+  } catch {
     return null;
   }
 }

@@ -29,7 +29,6 @@ export function NotificationsButton({ user }: { user: TokenUser }) {
 
   const onLastItemInView = () => {
     if (!isFetchingNextPage && hasNextPage) {
-      console.log("running fetchNextPage");
       void fetchNextPage();
     }
   };

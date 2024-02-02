@@ -74,8 +74,6 @@ function Content() {
               //  //heading: 0,
               //  //zoom: 11,
               //});
-            } else {
-              console.log("no google maps");
             }
           }
         }}

@@ -16,14 +16,11 @@ const FIREBASE_CONFIG = {
 
 export function initCloudMessaging(onMsg: (payload: MessagePayload) => void) {
   const app = initializeApp(FIREBASE_CONFIG);
-  //console.log("app:", app);
   const messaging = getMessaging(app);
-  //console.log("messaging:", messaging);
 
   const _unsubscribeOnMessage = onMessage(messaging, (payload) => {
-    console.log("Message received. ", payload);
+    console.log("Message received, payload:", payload);
     onMsg(payload);
-    // ...
   });
   return messaging;
 }

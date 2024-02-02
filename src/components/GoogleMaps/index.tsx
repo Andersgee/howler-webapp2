@@ -35,14 +35,7 @@ function MountGoogleMaps() {
 
   useEffect(() => {
     if (!googleMapsScriptIsLoaded || !element || initialCenter === undefined) return;
-
-    initGoogleMaps(element, initialCenter)
-      .then(() => {
-        console.log("initGoogleMaps ok");
-      })
-      .catch(() => {
-        console.log("initGoogleMaps fail");
-      });
+    void initGoogleMaps(element, initialCenter);
   }, [googleMapsScriptIsLoaded, element, initialCenter]);
 
   return (
