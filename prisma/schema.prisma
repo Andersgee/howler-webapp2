@@ -127,6 +127,8 @@ model UserNotificationPivot {
     //ALTER TABLE UserNotificationPivot DROP FOREIGN KEY UserNotificationPivot_notificationId_fkey
     //ALTER TABLE UserNotificationPivot DROP FOREIGN KEY UserNotificationPivot_userId_fkey
     //only then was it allowed to change primary key, which is DROP and then add
+    //also it seems useless to do [userId, notificationId]. can just do [userId] instead
+    //because prisma adds indexing to all "relation" fields anyway
 
     @@id([userId, notificationId])
 }
