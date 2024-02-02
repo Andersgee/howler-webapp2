@@ -1,6 +1,4 @@
-import { revalidateTag } from "next/cache";
 import { type NextRequest } from "next/server";
-import { tagsUser } from "#src/trpc/routers/userTags";
 import {
   GITHUB_EMAILINFO,
   GITHUB_EMAILS_URL,
@@ -8,18 +6,13 @@ import {
   GITHUB_TOKEN_URL,
   GITHUB_USERINFO,
   GITHUB_USERINFO_URL,
-  USER_COOKIE_MAXAGE,
-  userCookieString,
 } from "#src/utils/auth/schema";
-import { createTokenFromUser, getSessionFromRequestCookie, verifyStateToken } from "#src/utils/jwt";
-import type { TokenUser } from "#src/utils/jwt/schema";
+import { getSessionFromRequestCookie, verifyStateToken } from "#src/utils/jwt";
 import { absUrl, encodeParams } from "#src/utils/url";
-import { dbfetch } from "#src/db";
+import { createOrUpdateUser } from "../authenticate";
 
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
-
-const db = dbfetch();
 
 export async function GET(request: NextRequest) {
   try {
@@ -83,46 +76,18 @@ export async function GET(request: NextRequest) {
     }
 
     // Authenticate the user
-    const existingUser = await db.selectFrom("User").selectAll().where("email", "=", userInfo.email).executeTakeFirst();
-
-    let tokenUser: TokenUser | undefined = undefined;
-
-    if (existingUser) {
-      if (!existingUser.githubUserId) {
-        await db.updateTable("User").set({ githubUserId: userInfo.id }).where("id", "=", existingUser.id).execute();
-      }
-
-      tokenUser = {
-        id: existingUser.id,
-        name: existingUser.name,
-        image: existingUser.image ?? "",
-      };
-    } else {
-      const insertResult = await db
-        .insertInto("User")
-        .values({
-          name: userInfo.name,
-          email: userInfo.email,
-          githubUserId: userInfo.id,
-          image: userInfo.avatar_url,
-        })
-        .executeTakeFirstOrThrow();
-
-      tokenUser = {
-        id: insertResult.insertId!,
-        name: userInfo.name,
-        image: userInfo.avatar_url,
-      };
-    }
-    revalidateTag(tagsUser.info({ userId: tokenUser.id }));
-
-    const userCookie = await createTokenFromUser(tokenUser);
+    const { usercookiestring } = await createOrUpdateUser({
+      email: userInfo.email,
+      name: userInfo.name,
+      image: userInfo.avatar_url,
+      githubUserId: userInfo.id,
+    });
 
     return new Response(null, {
       status: 303,
       headers: {
         "Location": absUrl(state.route),
-        "Set-Cookie": userCookieString(userCookie, USER_COOKIE_MAXAGE),
+        "Set-Cookie": usercookiestring,
       },
     });
   } catch (error) {

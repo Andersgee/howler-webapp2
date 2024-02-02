@@ -1,23 +1,16 @@
-import { revalidateTag } from "next/cache";
 import { type NextRequest } from "next/server";
-import { tagsUser } from "#src/trpc/routers/userTags";
 import {
   GOOGLE_discoveryDocument,
   GOOGLE_OPENID_DISCOVERY_URL,
   GOOGLE_TOKEN,
   GOOGLE_USERINFO,
-  USER_COOKIE_MAXAGE,
-  userCookieString,
 } from "#src/utils/auth/schema";
-import { createTokenFromUser, getSessionFromRequestCookie, verifyStateToken } from "#src/utils/jwt";
-import { type TokenUser } from "#src/utils/jwt/schema";
+import { getSessionFromRequestCookie, verifyStateToken } from "#src/utils/jwt";
 import { absUrl, encodeParams } from "#src/utils/url";
-import { dbfetch } from "#src/db";
+import { createOrUpdateUser } from "../authenticate";
 
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
-
-const db = dbfetch();
 
 export async function GET(request: NextRequest) {
   try {
@@ -67,46 +60,18 @@ export async function GET(request: NextRequest) {
     const userInfo = GOOGLE_USERINFO.parse(JSON.parse(Buffer.from(id_token_payload, "base64url").toString()));
 
     // Authenticate the user
-    const existingUser = await db.selectFrom("User").selectAll().where("email", "=", userInfo.email).executeTakeFirst();
-
-    let tokenUser: TokenUser | undefined = undefined;
-
-    if (existingUser) {
-      if (!existingUser.googleUserSub) {
-        await db.updateTable("User").set({ googleUserSub: userInfo.sub }).where("id", "=", existingUser.id).execute();
-      }
-
-      tokenUser = {
-        id: existingUser.id,
-        name: existingUser.name,
-        image: existingUser.image ?? "",
-      };
-    } else {
-      const insertResult = await db
-        .insertInto("User")
-        .values({
-          name: userInfo.name,
-          email: userInfo.email,
-          googleUserSub: userInfo.sub,
-          image: userInfo.picture,
-        })
-        .executeTakeFirstOrThrow();
-
-      tokenUser = {
-        id: insertResult.insertId!,
-        name: userInfo.name,
-        image: userInfo.picture,
-      };
-    }
-    revalidateTag(tagsUser.info({ userId: tokenUser.id }));
-
-    const userCookie = await createTokenFromUser(tokenUser);
+    const { usercookiestring } = await createOrUpdateUser({
+      email: userInfo.email,
+      name: userInfo.name,
+      image: userInfo.picture,
+      googleUserSub: userInfo.sub,
+    });
 
     return new Response(null, {
       status: 303,
       headers: {
         "Location": absUrl(state.route),
-        "Set-Cookie": userCookieString(userCookie, USER_COOKIE_MAXAGE),
+        "Set-Cookie": usercookiestring,
       },
     });
   } catch (error) {

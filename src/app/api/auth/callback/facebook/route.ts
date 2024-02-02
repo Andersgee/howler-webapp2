@@ -1,12 +1,8 @@
-import { revalidateTag } from "next/cache";
 import { type NextRequest } from "next/server";
-import { tagsUser } from "#src/trpc/routers/userTags";
-import { USER_COOKIE_MAXAGE, userCookieString } from "#src/utils/auth/schema";
-import { createTokenFromUser, getSessionFromRequestCookie, verifyStateToken } from "#src/utils/jwt";
-import type { TokenUser } from "#src/utils/jwt/schema";
+import { getSessionFromRequestCookie, verifyStateToken } from "#src/utils/jwt";
 import { absUrl, urlWithSearchparams } from "#src/utils/url";
-import { dbfetch } from "#src/db";
 import { z } from "zod";
+import { createOrUpdateUser } from "../authenticate";
 
 /*
 https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow/
@@ -15,8 +11,6 @@ https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow/
 
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
-
-const db = dbfetch();
 
 export async function GET(request: NextRequest) {
   try {
@@ -84,46 +78,18 @@ export async function GET(request: NextRequest) {
       );
 
     // Authenticate the user
-    const existingUser = await db.selectFrom("User").selectAll().where("email", "=", userInfo.email).executeTakeFirst();
+    const { usercookiestring } = await createOrUpdateUser({
+      email: userInfo.email,
+      name: userInfo.name,
+      image: userInfo.picture.data.url,
+      facebookdUserId: userInfo.id,
+    });
 
-    console.log("existingUser:", existingUser);
-
-    let tokenUser: TokenUser | undefined = undefined;
-    if (existingUser) {
-      if (!existingUser.facebookdUserId) {
-        await db.updateTable("User").set({ facebookdUserId: userInfo.id }).where("id", "=", existingUser.id).execute();
-      }
-
-      tokenUser = {
-        id: existingUser.id,
-        name: existingUser.name,
-        image: existingUser.image ?? "",
-      };
-    } else {
-      const insertResult = await db
-        .insertInto("User")
-        .values({
-          name: userInfo.name,
-          email: userInfo.email,
-          facebookdUserId: userInfo.id,
-          image: userInfo.picture.data.url,
-        })
-        .executeTakeFirstOrThrow();
-
-      tokenUser = {
-        id: insertResult.insertId!,
-        name: userInfo.name,
-        image: userInfo.picture.data.url,
-      };
-    }
-    revalidateTag(tagsUser.info({ userId: tokenUser.id }));
-
-    const userCookie = await createTokenFromUser(tokenUser);
     return new Response(null, {
       status: 303,
       headers: {
         "Location": absUrl(state.route),
-        "Set-Cookie": userCookieString(userCookie, USER_COOKIE_MAXAGE),
+        "Set-Cookie": usercookiestring,
       },
     });
   } catch (error) {
