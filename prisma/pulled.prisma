@@ -38,9 +38,9 @@ model Event {
   imageBlurData Bytes? @db.VarBinary(255)
   imageAspect Float @db.Float @default(1)
 
-  @@id([id])
   @@index([creatorId])
   @@fulltext([title, locationName])
+  @@id([id])
 
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
 
@@ -52,8 +52,8 @@ model FcmToken {
   token String @db.VarChar(200)
   userId BigInt @db.UnsignedBigInt
 
-  @@id([token])
   @@index([userId])
+  @@id([token])
 
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
 
@@ -70,7 +70,6 @@ model Notification {
   @@id([id])
 
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
-  UserNotificationPivot_notificationId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_notificationId_fkey")
 }
 
 model Post {
@@ -80,8 +79,8 @@ model Post {
   updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
   userId BigInt @db.UnsignedBigInt
 
-  @@id([id])
   @@index([userId])
+  @@id([id])
 
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
 
@@ -102,20 +101,19 @@ model User {
   facebookdUserId String?
 
   @@id([id])
-  @@unique([email])
-  @@unique([googleUserSub])
   @@unique([discordUserId])
-  @@unique([githubUserId])
+  @@unique([email])
   @@unique([facebookdUserId])
+  @@unique([githubUserId])
+  @@unique([googleUserSub])
 
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
-  FcmToken_userId_fkey FcmToken[] @relation("FcmToken_userId_fkey")
-  UserEventPivot_userId_fkey UserEventPivot[] @relation("UserEventPivot_userId_fkey")
-  Post_userId_fkey Post[] @relation("Post_userId_fkey")
   Event_creatorId_fkey Event[] @relation("Event_creatorId_fkey")
+  FcmToken_userId_fkey FcmToken[] @relation("FcmToken_userId_fkey")
+  Post_userId_fkey Post[] @relation("Post_userId_fkey")
+  UserEventPivot_userId_fkey UserEventPivot[] @relation("UserEventPivot_userId_fkey")
   UserUserPivot_userId_fkey UserUserPivot[] @relation("UserUserPivot_userId_fkey")
   UserUserPivot_followerId_fkey UserUserPivot[] @relation("UserUserPivot_followerId_fkey")
-  UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")
 }
 
 model UserEventPivot {
@@ -136,13 +134,9 @@ model UserNotificationPivot {
   userId BigInt @db.UnsignedBigInt
   notificationId BigInt @db.UnsignedBigInt
 
-  @@id([userId, notificationId])
-  @@index([notificationId])
+  @@id([notificationId])
 
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
-
-  UserNotificationPivot_notificationId_fkey Notification @relation("UserNotificationPivot_notificationId_fkey", fields: [notificationId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  UserNotificationPivot_userId_fkey User @relation("UserNotificationPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model UserUserPivot {
