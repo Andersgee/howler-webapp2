@@ -11,103 +11,9 @@ generator client {
 model CloudMessageAccessToken {
     id      BigInt   @db.UnsignedBigInt
     token   String   @db.VarChar(2000) //it seems to be 1024 long
-    expires DateTime
+    expires DateTime @db.DateTime(3)
 
     @@id([id])
-}
-
-model User {
-    id              BigInt   @default(autoincrement()) @db.UnsignedBigInt
-    email           String   @unique //allow multiple sign in methods, but same email would be same user.
-    googleUserSub   String?  @unique
-    discordUserId   String?  @unique
-    githubUserId    Int?     @unique
-    facebookdUserId String?  @unique
-    image           String?
-    name            String
-    createdAt       DateTime @default(now())
-    updatedAt       DateTime @default(now()) @updatedAt
-    role            Role     @default(USER)
-
-    Post                  Post[]
-    Event                 Event[]
-    UserEventPivot        UserEventPivot[]
-    FcmToken              FcmToken[]
-    UserNotificationPivot UserNotificationPivot[]
-
-    UserUserPivotrecievedFollows UserUserPivot[] @relation("recievedFollows")
-    UserUserPivotsentFollows     UserUserPivot[] @relation("sentFollows")
-
-    @@id([id])
-}
-
-model UserUserPivot {
-    user       User     @relation("recievedFollows", fields: [userId], references: [id], onDelete: Cascade)
-    userId     BigInt   @db.UnsignedBigInt
-    follower   User     @relation("sentFollows", fields: [followerId], references: [id], onDelete: Cascade)
-    followerId BigInt   @db.UnsignedBigInt
-    createdAt  DateTime @default(now())
-
-    @@id([userId, followerId])
-}
-
-model FcmToken {
-    token  String @db.VarChar(200) //They seem to be 163 long but that might change? they used to be shorter.
-    userId BigInt @db.UnsignedBigInt
-
-    User User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@id([token])
-}
-
-enum Role {
-    USER
-    ADMIN
-}
-
-model Post {
-    id        BigInt   @default(autoincrement()) @db.UnsignedBigInt
-    text      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
-    userId    BigInt   @db.UnsignedBigInt
-
-    User User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@id([id])
-}
-
-model UserEventPivot {
-    user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId   BigInt   @db.UnsignedBigInt
-    event    Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-    eventId  BigInt   @db.UnsignedBigInt
-    joinDate DateTime @default(now())
-
-    @@id([eventId, userId])
-}
-
-model Event {
-    id            BigInt                @default(autoincrement()) @db.UnsignedBigInt
-    createdAt     DateTime              @default(now())
-    updatedAt     DateTime              @default(now()) @updatedAt
-    title         String                @db.VarChar(55)
-    date          DateTime              @default(now())
-    location      Unsupported("point")? //https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html
-    locationName  String?               @db.VarChar(55)
-    creatorId     BigInt                @db.UnsignedBigInt
-    image         String?               @db.VarChar(100)
-    //imageBlurData String?               @db.VarChar(200) //for <Image placeholder="blur" blurDataURL={imageBlurData}> actually why not just store bytes instead...
-    imageBlurData Bytes?                @db.VarBinary(255) //4x4=16 pixels ends up around 127 bytes, so go with 255 (btw, dont do tinyblob here. presence of blobs hurt read speed, but necessary for Large OBjects)
-    imageAspect   Float                 @default(1) @db.Float()
-
-    User           User             @relation(fields: [creatorId], references: [id], onDelete: Cascade)
-    UserEventPivot UserEventPivot[]
-
-    //I added this aswell (btw, found out apparently prisma has @@fulltext if enabling preview feature)
-    //ALTER TABLE `Event` ADD FULLTEXT `Event_title_locationName_fulltextidx` (`title`, `locationName`)
-    @@id([id])
-    @@fulltext([title, locationName])
 }
 
 model DeletedEventImages {
@@ -116,11 +22,110 @@ model DeletedEventImages {
     @@id([image])
 }
 
+model Event {
+    id            BigInt                @default(autoincrement()) @db.UnsignedBigInt
+    createdAt     DateTime              @default(now()) @db.DateTime(3)
+    updatedAt     DateTime              @default(now()) @updatedAt @db.DateTime(3)
+    title         String                @db.VarChar(55)
+    date          DateTime              @default(now()) @db.DateTime(3)
+    location      Unsupported("point")? //https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html
+    locationName  String?               @db.VarChar(55)
+    creatorId     BigInt                @db.UnsignedBigInt
+    image         String?               @db.VarChar(100)
+    imageBlurData Bytes?                @db.VarBinary(255) //4x4=16 pixels ends up around 127 bytes, so go with 255 (btw, dont do tinyblob here. presence of blobs hurt read speed, but necessary for Large OBjects)
+    imageAspect   Float                 @default(1) @db.Float
+
+    Event_creatorId_fkey        User             @relation("Event_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    UserEventPivot_eventId_fkey UserEventPivot[] @relation("UserEventPivot_eventId_fkey")
+
+    @@id([id])
+    @@index([creatorId])
+    @@fulltext([title, locationName])
+}
+
+model FcmToken {
+    token  String @db.VarChar(200) //They seem to be 163 long but that might change? they used to be shorter.
+    userId BigInt @db.UnsignedBigInt
+
+    FcmToken_userId_fkey User @relation("FcmToken_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+    @@id([token])
+    @@index([userId])
+}
+
+model Notification {
+    id           BigInt   @default(autoincrement()) @db.UnsignedBigInt
+    title        String   @db.VarChar(55)
+    body         String   @db.VarChar(55)
+    relativeLink String   @db.VarChar(55)
+    createdAt    DateTime @default(now()) @db.DateTime(3)
+
+    UserNotificationPivot_notificationId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_notificationId_fkey")
+
+    @@id([id])
+}
+
+model Post {
+    id        BigInt   @default(autoincrement()) @db.UnsignedBigInt
+    text      String
+    createdAt DateTime @default(now()) @db.DateTime(3)
+    updatedAt DateTime @default(now()) @updatedAt @db.DateTime(3)
+    userId    BigInt   @db.UnsignedBigInt
+
+    Post_userId_fkey User @relation("Post_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+    @@id([id])
+    @@index([userId])
+}
+
+model User {
+    id              BigInt         @default(autoincrement()) @db.UnsignedBigInt
+    email           String //allow multiple sign in methods, but same email would be same user.
+    googleUserSub   String?
+    discordUserId   String?
+    githubUserId    Int?
+    image           String?
+    name            String
+    createdAt       DateTime       @default(now()) @db.DateTime(3)
+    updatedAt       DateTime       @default(now()) @updatedAt @db.DateTime(3)
+    role            User_role_enum @default(USER)
+    facebookdUserId String?
+
+    FcmToken_userId_fkey              FcmToken[]              @relation("FcmToken_userId_fkey")
+    Post_userId_fkey                  Post[]                  @relation("Post_userId_fkey")
+    Event_creatorId_fkey              Event[]                 @relation("Event_creatorId_fkey")
+    UserUserPivot_userId_fkey         UserUserPivot[]         @relation("UserUserPivot_userId_fkey")
+    UserUserPivot_followerId_fkey     UserUserPivot[]         @relation("UserUserPivot_followerId_fkey")
+    UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")
+    UserEventPivot_userId_fkey        UserEventPivot[]        @relation("UserEventPivot_userId_fkey")
+
+    @@id([id])
+    @@unique([email])
+    @@unique([googleUserSub])
+    @@unique([discordUserId])
+    @@unique([githubUserId])
+    @@unique([facebookdUserId])
+}
+
+model UserEventPivot {
+    userId   BigInt   @db.UnsignedBigInt
+    eventId  BigInt   @db.UnsignedBigInt
+    joinDate DateTime @default(now()) @db.DateTime(3)
+
+    UserEventPivot_eventId_fkey Event @relation("UserEventPivot_eventId_fkey", fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    UserEventPivot_userId_fkey  User  @relation("UserEventPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+    @@id([eventId, userId])
+    @@index([userId])
+}
+
 model UserNotificationPivot {
-    user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId         BigInt       @db.UnsignedBigInt
-    notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
-    notificationId BigInt       @db.UnsignedBigInt
+    userId         BigInt @db.UnsignedBigInt
+    notificationId BigInt @db.UnsignedBigInt
+
+    UserNotificationPivot_notificationId_fkey Notification @relation("UserNotificationPivot_notificationId_fkey", fields: [notificationId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    UserNotificationPivot_userId_fkey         User         @relation("UserNotificationPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
     //btw to change order of this. [notificationId,userID] to [userId, notificationId]
     //I had to go into mysql cli and remove foreign key constraints, eg
     //SHOW CREATE TABLE UserNotificationPivot;
@@ -129,18 +134,23 @@ model UserNotificationPivot {
     //only then was it allowed to change primary key, which is DROP and then add
     //also it seems useless to do [userId, notificationId]. can just do [userId] instead
     //because prisma adds indexing to all "relation" fields anyway
-
     @@id([userId, notificationId])
+    @@index([notificationId])
 }
 
-model Notification {
-    id           BigInt   @default(autoincrement()) @db.UnsignedBigInt
-    title        String   @db.VarChar(55)
-    body         String   @db.VarChar(55)
-    relativeLink String   @db.VarChar(55)
-    createdAt    DateTime @default(now())
+model UserUserPivot {
+    userId     BigInt   @db.UnsignedBigInt
+    followerId BigInt   @db.UnsignedBigInt
+    createdAt  DateTime @default(now()) @db.DateTime(3)
 
-    UserNotificationPivot UserNotificationPivot[]
+    UserUserPivot_userId_fkey     User @relation("UserUserPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    UserUserPivot_followerId_fkey User @relation("UserUserPivot_followerId_fkey", fields: [followerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-    @@id([id])
+    @@id([userId, followerId])
+    @@index([followerId])
+}
+
+enum User_role_enum {
+    USER
+    ADMIN
 }
