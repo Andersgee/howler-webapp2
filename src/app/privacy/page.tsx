@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Page() {
   return (
     <div className="flex justify-center">
@@ -26,7 +28,9 @@ export default function Page() {
         </p>
         <p>We also store the content you create, upload, or receive from others when using our services.</p>
         <h2>Deleting your information</h2>
-        <p>You can delete your account.</p>
+        <p>
+          You can delete your account at <Link href="/profile">your profile</Link>
+        </p>
       </div>
     </div>
   );

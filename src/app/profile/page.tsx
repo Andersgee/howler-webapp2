@@ -70,7 +70,7 @@ export default async function Page() {
             <Link href="/terms">terms</Link> for details.
           </p>
         </section>
-
+        <hr className="py-2" />
         <section>
           <h2>Danger zone</h2>
           <DeleteAccountButton />
