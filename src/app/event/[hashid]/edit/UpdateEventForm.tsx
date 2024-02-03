@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { type RouterOutputs, api } from "#src/hooks/api";
-import { Button } from "#src/ui/button";
+import { Button, buttonVariants } from "#src/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "#src/ui/form";
 import { Input } from "#src/ui/input";
 import { useToast } from "#src/ui/use-toast";
@@ -25,6 +25,8 @@ import { setGoogleMapsPickedPoint } from "#src/store/slices/map";
 import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { actionRevalidateTagAndRedirect } from "#src/app/actions";
 import { tagsEvent } from "#src/trpc/routers/eventTags";
+import Link from "next/link";
+import { hashidFromId } from "#src/utils/hashid";
 
 const zFormData = z.object({
   id: z.bigint(),
@@ -185,9 +187,14 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
           )}
         />
 
-        <Button type="submit" disabled={eventUpdate.isPending}>
-          Save
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button type="submit" disabled={eventUpdate.isPending}>
+            Save
+          </Button>
+          <Link href={`/event/${hashidFromId(initialEvent.id)}`} className={buttonVariants({ variant: "outline" })}>
+            Back
+          </Link>
+        </div>
       </form>
     </Form>
   );

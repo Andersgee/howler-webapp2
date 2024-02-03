@@ -39,12 +39,12 @@ export function ShareButton({ className, title }: Props) {
             }
           }
         } catch {
-          toast({
-            variant: "warn",
-            title: "Could not share.",
-            description: "You can copy paste the url from adress bar instead.",
-          });
-          //ignore
+          //ignore, this happens when a user goes back from "share" menu on phone
+          //toast({
+          //  variant: "warn",
+          //  title: "Could not share.",
+          //  description: "You can copy paste the url from adress bar instead.",
+          //});
         }
       }}
     >
