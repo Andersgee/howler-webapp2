@@ -187,11 +187,11 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
           )}
         />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center gap-4">
           <Button type="submit" disabled={eventUpdate.isPending}>
             Save
           </Button>
-          <Link href={`/event/${hashidFromId(initialEvent.id)}`} className={buttonVariants({ variant: "outline" })}>
+          <Link href={`/event/${hashidFromId(initialEvent.id)}`} className={buttonVariants({ variant: "icon" })}>
             Back
           </Link>
         </div>
