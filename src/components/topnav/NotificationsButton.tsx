@@ -10,13 +10,17 @@ import { api } from "#src/hooks/api";
 import { useIntersectionObserverCallback } from "#src/hooks/useIntersectionObserverCallback";
 import { IconSettings } from "#src/icons/Settings";
 import { buttonVariants } from "#src/ui/button";
-import { IconLoadingSpinner } from "#src/icons/special";
+import { IconBellWithNumber, IconLoadingSpinner } from "#src/icons/special";
 import { useToast } from "#src/ui/use-toast";
+import { useEffect, useState } from "react";
+import { z } from "zod";
 
 export function NotificationsButton({ user }: { user: TokenUser }) {
   //const user = useStore.use.user();
   const dialogValue = useStore.use.dialogValue();
+  const fcmMessagePayload = useStore.use.fcmMessagePayload();
   const maybeRequestNotifications = useStore.use.maybeRequestNotifications();
+  const utils = api.useUtils();
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = api.notification.infinite.useInfiniteQuery(
     {},
     {
@@ -26,6 +30,41 @@ export function NotificationsButton({ user }: { user: TokenUser }) {
       //initialData: { pages: [initialPosts], pageParams: [] },
     }
   );
+  const [unreadNumber, setUnreadNumber] = useState(0);
+
+  useEffect(() => {
+    if (fcmMessagePayload) {
+      const p = z
+        .object({
+          notification: z.object({
+            title: z.string(),
+            body: z.string(),
+          }),
+          data: z.object({
+            id: z.string(),
+            relativeLink: z.string(),
+          }),
+        })
+        .safeParse(fcmMessagePayload);
+      if (p.success) {
+        utils.notification.infinite.setInfiniteData({}, (oldData) => {
+          if (!oldData) return oldData;
+
+          const data = structuredClone(oldData);
+          data.pages.at(0)?.items.unshift({
+            title: p.data.notification.title,
+            body: p.data.notification.body,
+            relativeLink: p.data.data.relativeLink,
+            id: BigInt(p.data.data.id),
+          });
+          return data;
+        });
+        setUnreadNumber((prev) => prev + 1);
+      } else {
+        console.log("NotificationButton, fcmMessagePayload not expected format");
+      }
+    }
+  }, [fcmMessagePayload, utils]);
 
   const onLastItemInView = () => {
     if (!isFetchingNextPage && hasNextPage) {
@@ -40,7 +79,10 @@ export function NotificationsButton({ user }: { user: TokenUser }) {
       description:
         "Open your browser preferences or click the lock near the address bar to change your notification preferences.",
     });
-  const onTriggerClick = () => maybeRequestNotifications(onDenied);
+  const onTriggerClick = () => {
+    setUnreadNumber(0);
+    void maybeRequestNotifications(onDenied);
+  };
 
   return (
     <Popover
@@ -51,7 +93,7 @@ export function NotificationsButton({ user }: { user: TokenUser }) {
         className="rounded-md p-1.5 outline-none hover:bg-color-neutral-200 focus-visible:focusring"
         onClick={onTriggerClick}
       >
-        <IconBell />
+        <IconBellWithNumber number={unreadNumber} />
       </PopoverTrigger>
       <PopoverContent>
         <div className="">

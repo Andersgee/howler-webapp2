@@ -1,4 +1,5 @@
 import { dbfetch } from "#src/db";
+import { JSONE } from "#src/utils/jsone";
 import { absUrl } from "#src/utils/url";
 import { sendCloudMessage } from "./send";
 
@@ -36,6 +37,7 @@ export async function notify(userIds: bigint[], message: Message) {
 
   await sendCloudMessage(userIds, {
     data: {
+      id: insertResult.insertId!.toString(),
       relativeLink: message.relativeLink,
     },
     notification: {

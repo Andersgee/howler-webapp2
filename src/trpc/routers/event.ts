@@ -45,6 +45,12 @@ export const eventRouter = createTRPCRouter({
         .where("userId", "=", ctx.user.id)
         .execute();
       const notifyUserIds = userUserPivots.map((x) => x.followerId);
+
+      //in dev, also notify creator
+      if (process.env.NODE_ENV === "development") {
+        notifyUserIds.push(ctx.user.id);
+      }
+
       //TODO: decide who to notify... for now just send to creator
       //const notifyUserIds = [ctx.user.id];
       try {

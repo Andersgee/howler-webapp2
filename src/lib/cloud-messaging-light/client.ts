@@ -19,7 +19,25 @@ export function initCloudMessaging(onMsg: (payload: MessagePayload) => void) {
   const messaging = getMessaging(app);
 
   const _unsubscribeOnMessage = onMessage(messaging, (payload) => {
-    console.log("Message received, payload:", payload);
+    //console.log("Message received, payload:", payload);
+    /*
+    {
+  "from": "942074740899",
+  "messageId": "633d7f7a-495f-4f79-888f-51e04f728450",
+  "notification": {
+    "title": "Anders Gustafsson howled!",
+    "body": "test selfnotify",
+    "icon": "http://localhost:3000/icons/favicon-48.png"
+  },
+  "data": {
+    "id": "23"
+    "relativeLink": "/event/M0J20"
+  },
+  "fcmOptions": {
+    "link": "http://localhost:3000/event/M0J20"
+  }
+}
+    */
     onMsg(payload);
   });
   return messaging;
