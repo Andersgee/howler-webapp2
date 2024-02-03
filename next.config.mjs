@@ -1,6 +1,7 @@
 import "./src/utils/validate-process-env.mjs";
 import { NEXTCONFIG_imageSizes, NEXTCONFIG_deviceSizes } from "./src/utils/image-sizes-constants.mjs";
-import withBundleAnalyzer from "@next/bundle-analyzer";
+//import withBundleAnalyzer from "@next/bundle-analyzer";
+import { withPlausibleProxy } from "next-plausible";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -48,4 +49,5 @@ const nextConfig = {
   //},
 };
 
-export default withBundleAnalyzer({ enabled: process.env.ANALYZE === "true" })(nextConfig);
+//export default withBundleAnalyzer({ enabled: process.env.ANALYZE === "true" })(nextConfig);
+export default withPlausibleProxy()(nextConfig);
