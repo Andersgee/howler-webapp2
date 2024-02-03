@@ -25,19 +25,16 @@ export async function notify(userIds: bigint[], message: Message) {
     })
     .executeTakeFirstOrThrow();
 
+  const notificationId = insertResult.insertId!;
+
   await db
     .insertInto("UserNotificationPivot")
-    .values(
-      userIds.map((userId) => ({
-        userId,
-        notificationId: insertResult.insertId!,
-      }))
-    )
+    .values(userIds.map((userId) => ({ userId, notificationId })))
     .execute();
 
   await sendCloudMessage(userIds, {
     data: {
-      id: insertResult.insertId!.toString(),
+      id: notificationId.toString(),
       relativeLink: message.relativeLink,
     },
     notification: {

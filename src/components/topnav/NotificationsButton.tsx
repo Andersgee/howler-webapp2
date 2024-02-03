@@ -5,15 +5,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "#src/ui/popover";
 import { dialogDispatch } from "#src/store/slices/dialog";
 import Link from "next/link";
 import { type TokenUser } from "#src/utils/jwt/schema";
-import { IconBell } from "#src/icons/Bell";
+//import { IconBell } from "#src/icons/Bell";
 import { api } from "#src/hooks/api";
 import { useIntersectionObserverCallback } from "#src/hooks/useIntersectionObserverCallback";
 import { IconSettings } from "#src/icons/Settings";
 import { buttonVariants } from "#src/ui/button";
-import { IconBellWithNumber, IconLoadingSpinner } from "#src/icons/special";
+import { IconLoadingSpinner } from "#src/icons/special";
 import { useToast } from "#src/ui/use-toast";
 import { useEffect, useState } from "react";
 import { z } from "zod";
+import { IconBellWithNumber } from "#src/icons/BellWithNumber";
 
 export function NotificationsButton({ user }: { user: TokenUser }) {
   //const user = useStore.use.user();
@@ -30,39 +31,46 @@ export function NotificationsButton({ user }: { user: TokenUser }) {
       //initialData: { pages: [initialPosts], pageParams: [] },
     }
   );
+
   const [unreadNumber, setUnreadNumber] = useState(0);
 
   useEffect(() => {
-    if (fcmMessagePayload) {
-      const p = z
-        .object({
-          notification: z.object({
-            title: z.string(),
-            body: z.string(),
-          }),
-          data: z.object({
-            id: z.string(),
-            relativeLink: z.string(),
-          }),
-        })
-        .safeParse(fcmMessagePayload);
-      if (p.success) {
-        utils.notification.infinite.setInfiniteData({}, (oldData) => {
-          if (!oldData) return oldData;
+    if (!fcmMessagePayload) return;
 
+    const safeParsed = z
+      .object({
+        notification: z.object({
+          title: z.string(),
+          body: z.string(),
+        }),
+        data: z.object({
+          id: z.coerce.bigint(),
+          relativeLink: z.string(),
+        }),
+      })
+      .safeParse(fcmMessagePayload);
+    if (safeParsed.success) {
+      utils.notification.infinite.setInfiniteData({}, (oldData) => {
+        if (!oldData) return oldData;
+
+        //for dev / hot-reload / double effect call without duplication
+        const existingItem = oldData.pages.at(0)?.items.find((x) => x.id === safeParsed.data.data.id);
+        if (!existingItem) {
           const data = structuredClone(oldData);
           data.pages.at(0)?.items.unshift({
-            title: p.data.notification.title,
-            body: p.data.notification.body,
-            relativeLink: p.data.data.relativeLink,
-            id: BigInt(p.data.data.id),
+            id: safeParsed.data.data.id,
+            title: safeParsed.data.notification.title,
+            body: safeParsed.data.notification.body,
+            relativeLink: safeParsed.data.data.relativeLink,
           });
           return data;
-        });
-        setUnreadNumber((prev) => prev + 1);
-      } else {
-        console.log("NotificationButton, fcmMessagePayload not expected format");
-      }
+        } else {
+          return oldData;
+        }
+      });
+      setUnreadNumber((prev) => prev + 1);
+    } else {
+      console.log("NotificationButton, fcmMessagePayload not expected format");
     }
   }, [fcmMessagePayload, utils]);
 
