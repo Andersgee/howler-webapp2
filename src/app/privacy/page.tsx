@@ -24,7 +24,7 @@ export default function Page() {
         </p>
         <h2>Things you create or provide to us</h2>
         <p>
-          When you create an account, you provide us with basic personal information like name, email and profile image.
+          When you create an account, you provide us with basic personal information: email, name and profile picture.
         </p>
         <p>We also store the content you create, upload, or receive from others when using our services.</p>
         <h2>Deleting your information</h2>
