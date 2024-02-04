@@ -4,7 +4,8 @@ export default function Page() {
   return (
     <div className="flex justify-center">
       <div className="px-2">
-        <h1 className="text-2xl">privacy policy</h1>
+        <h1 className="mb-6 text-2xl">privacy policy</h1>
+        <p>Effective Date: 2024-02-04</p>
         <p>
           This Privacy Policy is meant to help you understand what information we collect, why we collect it, and how
           you can delete your information.
@@ -24,7 +25,9 @@ export default function Page() {
         </p>
         <h2>Things you create or provide to us</h2>
         <p>
-          When you create an account, you provide us with basic personal information: email, name and profile picture.
+          When you create an account, by signin in with google for example, you provide us with basic personal
+          information: email, name and profile picture. This info is not shared with any third parties but is stored and
+          may be publicly visible by anyone using the app, on events you create for example.
         </p>
         <p>We also store the content you create, upload, or receive from others when using our services.</p>
         <h2>Deleting your information</h2>
