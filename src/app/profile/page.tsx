@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DeleteAccountButton } from "./DeleteAccountButton";
 import { seo } from "#src/utils/seo";
 import { NoUser } from "./NoUser";
+import { hashidFromId } from "#src/utils/hashid";
 
 export const metadata = seo({
   title: "Profile | Howler",
@@ -27,7 +28,9 @@ export default async function Page() {
     <div className="flex justify-center">
       <div className="px-2">
         <section className="flex flex-col items-center">
-          <UserImage96x96 alt={user.name} image={user.image ?? ""} />
+          <Link href={`/profile/${hashidFromId(user.id)}`}>
+            <UserImage96x96 alt={user.name} image={user.image ?? ""} />
+          </Link>
           <h1 className="mt-2">{`Welcome, ${user.name}`}</h1>
           <p>Manage your info</p>
         </section>

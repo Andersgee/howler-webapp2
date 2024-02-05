@@ -55,7 +55,8 @@ export default async function Page({ params }: Props) {
             <FollowUnfollowButton isFollowing={isFollowing} userId={user.id} />
           ) : null}
         </section>
-        <hr className="py-2" />
+        <hr className="py-4" />
+        <h2>Events</h2>
         <section className="flex flex-wrap justify-center gap-8">
           {events.map((event) => (
             <Link
