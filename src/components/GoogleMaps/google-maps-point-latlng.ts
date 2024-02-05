@@ -14,6 +14,6 @@ export function latLngLiteralFromPoint(point: GeoJson["Point"]): google.maps.Lat
   return { lat: point.coordinates[1], lng: point.coordinates[0] };
 }
 
-export function latLngFromPoint(point: GeoJson["Point"]): google.maps.LatLng {
-  return new google.maps.LatLng(point.coordinates[1], point.coordinates[0]);
-}
+//export function latLngFromPoint(point: GeoJson["Point"]): google.maps.LatLng {
+//  return new google.maps.LatLng(point.coordinates[1], point.coordinates[0]);
+//}
