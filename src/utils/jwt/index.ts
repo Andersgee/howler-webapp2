@@ -11,6 +11,7 @@ export async function getUserFromToken(token: string | undefined) {
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, SECRET);
+    //const { payload } = await jwtVerify(token, SECRET, { algorithms: ["HS256"] }); //will this be faster since only "trying" one alg?
 
     if (typeof payload.user !== "string") {
       return null;
