@@ -5,7 +5,7 @@ import { Eventinfo } from "./Eventinfo";
 import { EventActions } from "./EventActions";
 import Image from "next/image";
 import { imageSizes } from "#src/utils/image-sizes";
-import { base64 } from "rfc4648";
+//import { base64 } from "rfc4648";
 import { seo } from "#src/utils/seo";
 import { type ResolvingMetadata } from "next";
 
@@ -33,9 +33,9 @@ export async function generateMetadata({ params }: Props, _parent: ResolvingMeta
   });
 }
 
-function blurDataURLstring(data: Uint8Array) {
-  return `data:image/png;base64,${base64.stringify(data)}`;
-}
+//function blurDataURLstring(data: Uint8Array) {
+//  return `data:image/png;base64,${base64.stringify(data)}`;
+//}
 
 export default async function Page({ params }: Props) {
   const id = idFromHashid(params.hashid);
@@ -54,6 +54,7 @@ export default async function Page({ params }: Props) {
         <h1>Event</h1>
         {event.image && (
           <Image
+            priority
             src={event.image}
             alt={event.title}
             sizes={imageSizes("w-64", { md: "w-96" })}
@@ -61,8 +62,8 @@ export default async function Page({ params }: Props) {
             //width and height only for aspect ratio purpose
             width={256}
             height={Math.round(256 / event.imageAspect)}
-            placeholder={event.imageBlurData ? "blur" : undefined}
-            blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
+            //placeholder={event.imageBlurData ? "blur" : undefined}
+            //blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
           />
         )}
 
