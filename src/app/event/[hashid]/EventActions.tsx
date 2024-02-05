@@ -11,7 +11,6 @@ import { IconEdit } from "#src/icons/Edit";
 import { IconWhere } from "#src/icons/Where";
 import { useStore } from "#src/store";
 import { dialogDispatch } from "#src/store/slices/dialog";
-import { tagsEvent } from "#src/trpc/routers/eventTags";
 import { Button, buttonVariants } from "#src/ui/button";
 import { useToast } from "#src/ui/use-toast";
 import { hashidFromId } from "#src/utils/hashid";

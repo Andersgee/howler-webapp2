@@ -87,7 +87,7 @@ export const eventRouter = createTRPCRouter({
 
       revalidateTag(tagsEvent.info(input.id));
 
-      return { ...updateResult, hashid: hashidFromId(input.id) };
+      return { ...updateResult, hashid: hashidFromId(input.id), tag: tagsEvent.info(input.id) };
     }),
   explore: publicProcedure
     .input(

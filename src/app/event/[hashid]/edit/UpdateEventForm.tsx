@@ -24,7 +24,6 @@ import { zGeoJsonPoint, type GeoJson } from "#src/db/types-geojson";
 import { setGoogleMapsPickedPoint } from "#src/store/slices/map";
 import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { actionRevalidateTagAndRedirect } from "#src/app/actions";
-import { tagsEvent } from "#src/trpc/routers/eventTags";
 import Link from "next/link";
 import { hashidFromId } from "#src/utils/hashid";
 
@@ -86,13 +85,8 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
   const { toast } = useToast();
 
   const eventUpdate = api.event.update.useMutation({
-    onSuccess: ({ hashid }) => {
-      //form.reset();
-      //router.push(`/event/${hashid}`); //revalidating in route handler does not bust router cache
-      //void actionOnSuccess(initialEvent.id.toString()); //so revalidate in server action, and might aswell redirect there aswell
-      //await actionRevalidateTag(tagsEvent.info(initialEvent.id));
-      //toast({ variant: "default", title: "Saved" });
-      void actionRevalidateTagAndRedirect(tagsEvent.info(initialEvent.id), `/event/${hashid}`);
+    onSuccess: ({ hashid, tag }) => {
+      void actionRevalidateTagAndRedirect(tag, `/event/${hashid}`);
     },
     onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Could not update event", description: "Try again" });
