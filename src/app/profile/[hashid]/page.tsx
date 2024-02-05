@@ -56,9 +56,13 @@ export default async function Page({ params }: Props) {
           ) : null}
         </section>
         <hr className="py-2" />
-        <section>
+        <section className="flex flex-wrap justify-center gap-8">
           {events.map((event) => (
-            <Link key={event.id} href={`/event/${hashidFromId(event.id)}`}>
+            <Link
+              key={event.id}
+              href={`/event/${hashidFromId(event.id)}`}
+              className="block bg-color-neutral-0 hover:bg-color-neutral-300"
+            >
               <Eventinfo event={event} className="p-2" />
             </Link>
           ))}
