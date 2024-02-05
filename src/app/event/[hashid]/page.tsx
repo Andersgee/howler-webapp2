@@ -1,5 +1,5 @@
 import { apiRsc, apiRscPublic } from "#src/trpc/api-rsc";
-import { idFromHashid } from "#src/utils/hashid";
+import { hashidFromId, idFromHashid } from "#src/utils/hashid";
 import { notFound } from "next/navigation";
 import { Eventinfo } from "./Eventinfo";
 import { EventActions } from "./EventActions";
@@ -9,6 +9,7 @@ import { imageSizes } from "#src/utils/image-sizes";
 import { seo } from "#src/utils/seo";
 import { type ResolvingMetadata } from "next";
 import { RichResults } from "./RichResults";
+import Link from "next/link";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -54,7 +55,9 @@ export default async function Page({ params }: Props) {
       <RichResults event={event} />
       <div className="container mx-auto flex justify-center">
         <div className="flex w-full flex-col items-center">
-          <h1>Event</h1>
+          <Link href={`/profile/${hashidFromId(event.creatorId)}`}>
+            <h1>Event by {event.creatorName}</h1>
+          </Link>
           {event.image && (
             <Image
               priority

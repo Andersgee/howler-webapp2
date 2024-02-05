@@ -1,10 +1,14 @@
 import { apiRsc, apiRscPublic } from "#src/trpc/api-rsc";
-import { idFromHashid } from "#src/utils/hashid";
+import { hashidFromId, idFromHashid } from "#src/utils/hashid";
 import { notFound } from "next/navigation";
 import { seo } from "#src/utils/seo";
 import { type ResolvingMetadata } from "next";
 import { UserImage96x96 } from "#src/components/user/UserImage";
 import { Button } from "#src/ui/button";
+import Link from "next/link";
+import { Eventinfo } from "#src/app/event/[hashid]/Eventinfo";
+import { revalidateTag } from "next/cache";
+import { FollowUnfollowButton } from "./FollowUnfollowButton";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -38,7 +42,8 @@ export default async function Page({ params }: Props) {
   const user = await api.user.infoPublic({ userId: id });
   if (!user) notFound();
 
-  const isFollowing = tokenUser ? api.user.meIsFollowing({ id: user.id }) : false;
+  const isFollowing = tokenUser ? await api.user.meIsFollowing({ id: user.id }) : false;
+  const events = await api.event.latestByUserId({ userId: user.id });
 
   return (
     <div className="flex justify-center">
@@ -46,16 +51,17 @@ export default async function Page({ params }: Props) {
         <section className="flex flex-col items-center">
           <UserImage96x96 alt={user.name} image={user.image ?? ""} />
           <h1 className="mt-2">{`${user.name}`}</h1>
-          {tokenUser ? (
-            <Button
-              onClick={() => {
-                //ig
-              }}
-              variant="icon"
-            >
-              {isFollowing ? "Unfollow" : "Follow"}
-            </Button>
+          {tokenUser && tokenUser.id !== user.id ? (
+            <FollowUnfollowButton isFollowing={isFollowing} userId={user.id} />
           ) : null}
+        </section>
+        <hr className="py-2" />
+        <section>
+          {events.map((event) => (
+            <Link key={event.id} href={`/event/${hashidFromId(event.id)}`}>
+              <Eventinfo event={event} className="p-2" />
+            </Link>
+          ))}
         </section>
       </div>
     </div>

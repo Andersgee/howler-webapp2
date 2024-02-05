@@ -19,6 +19,18 @@ export const eventRouter = createTRPCRouter({
       .where("Event.id", "=", input.id)
       .executeTakeFirst();
   }),
+  latestByUserId: publicProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input }) => {
+    return await dbfetch()
+      .selectFrom("Event")
+      .innerJoin("User", "User.id", "Event.creatorId")
+      .selectAll("Event")
+      .select(["User.image as creatorImage", "User.name as creatorName"])
+      //.select()
+      .where("User.id", "=", input.userId)
+      .orderBy("Event.id desc")
+      .limit(10)
+      .execute();
+  }),
   create: protectedProcedure
     .input(
       z.object({
