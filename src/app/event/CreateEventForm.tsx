@@ -133,15 +133,15 @@ export function CreateEventForm({ isSignedIn }: Props) {
                     {...field}
                   />
                 </FormControl>
-                <Button variant="outline" onClick={() => setShowMap((prev) => !prev)}>
-                  {showMap ? "close map" : "show map"}
-                </Button>
               </div>
               <FormMessage className="ml-8" />
               {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
           )}
         />
+        <Button className="shrink-0" variant="outline" onClick={() => setShowMap((prev) => !prev)}>
+          {showMap ? "close map" : "show map"}
+        </Button>
         <Map show={showMap} />
 
         <FormField

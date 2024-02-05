@@ -32,12 +32,7 @@ export function EventActions(props: Props) {
 
   return (
     <>
-      <div className="mb-2 mt-4 flex gap-2">
-        {props.event.location && (
-          <Button variant="icon" onClick={() => setShowMap((prev) => !prev)}>
-            <IconWhere /> {showMap ? "close map" : "show map"}
-          </Button>
-        )}
+      <div className="flex flex-wrap justify-center gap-4 px-4 py-4">
         {props.isCreator && (
           <Link href={`/event/${hashidFromId(props.event.id)}/edit`} className={buttonVariants({ variant: "icon" })}>
             <IconEdit /> Edit
@@ -48,6 +43,11 @@ export function EventActions(props: Props) {
         )}
         <ShareButton title={props.event.title} />
 
+        {props.event.location && (
+          <Button variant="icon" onClick={() => setShowMap((prev) => !prev)}>
+            <IconWhere /> {showMap ? "close map" : "show map"}
+          </Button>
+        )}
         {!props.isCreator && <JoinLeaveButton user={props.user} id={props.event.id} isJoined={props.isJoined} />}
       </div>
       <Map show={showMap} location={props.event.location} />

@@ -26,7 +26,7 @@ export function EventImage({ event, className }: Props) {
   });
 
   return (
-    <div className={cn("max-w-[384px]", className)}>
+    <div className={cn("max-w-[384px] py-4", className)}>
       {uploadTimerIsReached && (
         <div className="w-64 md:w-96">
           <p className="animate-pulse-tmp">
@@ -81,9 +81,7 @@ export function EventImage({ event, className }: Props) {
           width={256}
           height={Math.round(256 / img.imageAspect)}
         />
-      ) : (
-        <div>no image</div>
-      )}
+      ) : null}
     </div>
   );
 }

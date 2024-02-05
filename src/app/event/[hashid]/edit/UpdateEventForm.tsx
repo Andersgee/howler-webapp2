@@ -150,15 +150,15 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
                     {...field}
                   />
                 </FormControl>
-                <Button variant="outline" onClick={() => setShowMap((prev) => !prev)}>
-                  {showMap ? "close map" : "show map"}
-                </Button>
               </div>
               <FormMessage className="ml-8" />
               {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
           )}
         />
+        <Button variant="outline" onClick={() => setShowMap((prev) => !prev)}>
+          {showMap ? "close map" : "show map"}
+        </Button>
         <Map show={showMap} initialLocation={initialEvent.location} />
 
         <FormField
@@ -187,13 +187,13 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
           )}
         />
 
-        <div className="flex items-center justify-center gap-4">
-          <Button type="submit" disabled={eventUpdate.isPending}>
-            Save
-          </Button>
+        <div className="flex items-center justify-center gap-4 py-4">
           <Link href={`/event/${hashidFromId(initialEvent.id)}`} className={buttonVariants({ variant: "icon" })}>
             Back
           </Link>
+          <Button type="submit" disabled={eventUpdate.isPending}>
+            Save
+          </Button>
         </div>
       </form>
     </Form>
