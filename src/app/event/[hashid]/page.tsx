@@ -8,6 +8,7 @@ import { imageSizes } from "#src/utils/image-sizes";
 //import { base64 } from "rfc4648";
 import { seo } from "#src/utils/seo";
 import { type ResolvingMetadata } from "next";
+import { RichResults } from "./RichResults";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -49,33 +50,36 @@ export default async function Page({ params }: Props) {
   const isFollowing = user ? await api.user.meIsFollowing({ id: event.creatorId }) : false;
 
   return (
-    <div className="container mx-auto flex justify-center">
-      <div className="flex w-full flex-col items-center">
-        <h1>Event</h1>
-        {event.image && (
-          <Image
-            priority
-            src={event.image}
-            alt={event.title}
-            sizes={imageSizes("w-64", { md: "w-96" })}
-            className="mb-8 h-auto w-64 md:w-96"
-            //width and height only for aspect ratio purpose
-            width={256}
-            height={Math.round(256 / event.imageAspect)}
-            //placeholder={event.imageBlurData ? "blur" : undefined}
-            //blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
-          />
-        )}
+    <>
+      <RichResults event={event} />
+      <div className="container mx-auto flex justify-center">
+        <div className="flex w-full flex-col items-center">
+          <h1>Event</h1>
+          {event.image && (
+            <Image
+              priority
+              src={event.image}
+              alt={event.title}
+              sizes={imageSizes("w-64", { md: "w-96" })}
+              className="mb-8 h-auto w-64 md:w-96"
+              //width and height only for aspect ratio purpose
+              width={256}
+              height={Math.round(256 / event.imageAspect)}
+              //placeholder={event.imageBlurData ? "blur" : undefined}
+              //blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
+            />
+          )}
 
-        <Eventinfo event={event} />
-        <EventActions
-          event={event}
-          user={user}
-          isCreator={user?.id === event.creatorId}
-          isJoined={isJoined}
-          isFollowing={isFollowing}
-        />
+          <Eventinfo event={event} />
+          <EventActions
+            event={event}
+            user={user}
+            isCreator={user?.id === event.creatorId}
+            isJoined={isJoined}
+            isFollowing={isFollowing}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
