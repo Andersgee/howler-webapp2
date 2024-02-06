@@ -7,6 +7,7 @@ export type Message = {
   title: string;
   body: string;
   relativeLink: string;
+  icon?: string;
   image?: string;
 };
 
@@ -44,7 +45,7 @@ export async function notify(userIds: bigint[], message: Message) {
     },
     webpush: {
       notification: {
-        icon: absUrl("/icons/favicon-48.png"),
+        icon: message.icon ?? absUrl("/icons/favicon-48.png"),
         badge: absUrl("/icons/badge.png"),
       },
       fcm_options: {

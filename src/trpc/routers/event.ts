@@ -70,6 +70,7 @@ export const eventRouter = createTRPCRouter({
           title: `${ctx.user.name} howled!`,
           body: input.title,
           relativeLink: `/event/${hashid}`,
+          icon: ctx.user.image,
         });
       } catch (err) {
         console.log(err);
@@ -179,8 +180,9 @@ export const eventRouter = createTRPCRouter({
     .input(z.object({ id: z.bigint(), join: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
       const t = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
+      const db = dbfetch();
       if (input.join) {
-        await dbfetch()
+        await db
           .insertInto("UserEventPivot")
           .ignore()
           .values({
@@ -188,8 +190,22 @@ export const eventRouter = createTRPCRouter({
             userId: ctx.user.id,
           })
           .executeTakeFirstOrThrow();
+
+        const ev = await db.selectFrom("Event").select(["id", "creatorId", "title"]).executeTakeFirst();
+        if (ev) {
+          try {
+            await notify([], {
+              title: `${ctx.user.name} joined your howl!`,
+              body: `${ev.title}`,
+              relativeLink: `/event/${hashidFromId(ev.id)}`,
+              icon: ctx.user.image,
+            });
+          } catch (err) {
+            console.log(err);
+          }
+        }
       } else {
-        await dbfetch()
+        await db
           .deleteFrom("UserEventPivot")
           .where("eventId", "=", input.id)
           .where("userId", "=", ctx.user.id)
