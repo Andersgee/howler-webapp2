@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
 
   const input = z.object({ token: z.string() }).parse(JSONE.parse(await request.text()));
 
-  const insertResult = await dbfetch()
+  const _insertResult = await dbfetch()
     .insertInto("FcmToken")
     .ignore()
     .values({

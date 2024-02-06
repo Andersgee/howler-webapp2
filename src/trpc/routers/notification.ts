@@ -4,18 +4,18 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { sleep } from "#src/utils/sleep";
 
 export const notificationRouter = createTRPCRouter({
-  get10: protectedProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input, ctx }) => {
-    const notifications = await dbfetch()
-      .selectFrom("Notification")
-      .innerJoin("UserNotificationPivot", "UserNotificationPivot.notificationId", "Notification.id")
-      .select(["Notification.id", "Notification.title", "Notification.body", "Notification.relativeLink"])
-      .where("UserNotificationPivot.userId", "=", ctx.user.id)
-      .orderBy("Notification.id desc")
-      .limit(10)
-      .execute();
-
-    return notifications;
-  }),
+  //get10: protectedProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input, ctx }) => {
+  //  const notifications = await dbfetch()
+  //    .selectFrom("Notification")
+  //    .innerJoin("UserNotificationPivot", "UserNotificationPivot.notificationId", "Notification.id")
+  //    .select(["Notification.id", "Notification.title", "Notification.body", "Notification.relativeLink"])
+  //    .where("UserNotificationPivot.userId", "=", ctx.user.id)
+  //    .orderBy("Notification.id desc")
+  //    .limit(10)
+  //    .execute();
+  //
+  //  return notifications;
+  //}),
   infinite: protectedProcedure
     .input(
       z.object({

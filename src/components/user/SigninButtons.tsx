@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { IconGoogle, IconDiscord, IconGithub, IconFacebook } from "#src/icons/special";
+import { IconGoogle, IconDiscord, IconGithub } from "#src/icons/special";
+//import { IconFacebook } from "#src/icons/special";
 import { useUserAgent } from "#src/hooks/useUserAgent";
 
 const linkStyles =

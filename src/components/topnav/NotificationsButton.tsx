@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { IconBellWithNumber } from "#src/icons/BellWithNumber";
 
-export function NotificationsButton({ user }: { user: TokenUser }) {
+export function NotificationsButton({ user: _user }: { user: TokenUser }) {
   //const user = useStore.use.user();
   const dialogValue = useStore.use.dialogValue();
   const fcmMessagePayload = useStore.use.fcmMessagePayload();

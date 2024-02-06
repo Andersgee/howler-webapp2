@@ -1,8 +1,8 @@
 import { cookies, headers } from "next/headers";
 
 export default function Page() {
-  const cookieStore = cookies().getAll();
-  const headerStore = Object.fromEntries(headers().entries());
+  const _cookieStore = cookies().getAll();
+  const _headerStore = Object.fromEntries(headers().entries());
   return (
     <div>
       test

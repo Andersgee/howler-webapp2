@@ -4,10 +4,8 @@ import { notFound } from "next/navigation";
 import { seo } from "#src/utils/seo";
 import { type ResolvingMetadata } from "next";
 import { UserImage96x96 } from "#src/components/user/UserImage";
-import { Button } from "#src/ui/button";
 import Link from "next/link";
 import { Eventinfo } from "#src/app/event/[hashid]/Eventinfo";
-import { revalidateTag } from "next/cache";
 import { FollowUnfollowButton } from "./FollowUnfollowButton";
 
 type Props = {
