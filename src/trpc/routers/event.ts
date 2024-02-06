@@ -198,7 +198,7 @@ export const eventRouter = createTRPCRouter({
           .executeTakeFirst();
         if (ev) {
           try {
-            await notify([], {
+            await notify([ev.creatorId], {
               title: `${ctx.user.name} joined your howl!`,
               body: `${ev.title}`,
               relativeLink: `/event/${hashidFromId(ev.id)}`,
