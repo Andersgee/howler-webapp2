@@ -4,6 +4,8 @@ import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { tagsUser } from "./userTags";
 import { userCookieRemoveString } from "#src/utils/auth/schema";
+import { notify } from "#src/lib/cloud-messaging-light/notify";
+import { hashidFromId } from "#src/utils/hashid";
 
 export const userRouter = createTRPCRouter({
   info: protectedProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input }) => {
@@ -55,8 +57,9 @@ export const userRouter = createTRPCRouter({
     .input(z.object({ id: z.bigint(), join: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
       const t = tagsUser.isFollowing({ userId: input.id, followerId: ctx.user.id });
+      const db = dbfetch();
       if (input.join) {
-        await dbfetch()
+        await db
           .insertInto("UserUserPivot")
           .ignore()
           .values({
@@ -64,8 +67,19 @@ export const userRouter = createTRPCRouter({
             followerId: ctx.user.id,
           })
           .executeTakeFirstOrThrow();
+
+        try {
+          await notify([input.id], {
+            title: `${ctx.user.name} followed you`,
+            body: `see their profile`,
+            relativeLink: `/profile/${hashidFromId(ctx.user.id)}`,
+            icon: ctx.user.image,
+          });
+        } catch (err) {
+          console.log(err);
+        }
       } else {
-        await dbfetch()
+        await db
           .deleteFrom("UserUserPivot")
           .where("userId", "=", input.id)
           .where("followerId", "=", ctx.user.id)

@@ -191,7 +191,11 @@ export const eventRouter = createTRPCRouter({
           })
           .executeTakeFirstOrThrow();
 
-        const ev = await db.selectFrom("Event").select(["id", "creatorId", "title"]).executeTakeFirst();
+        const ev = await db
+          .selectFrom("Event")
+          .select(["id", "creatorId", "title"])
+          .where("id", "=", input.id)
+          .executeTakeFirst();
         if (ev) {
           try {
             await notify([], {
