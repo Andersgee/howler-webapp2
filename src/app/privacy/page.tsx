@@ -35,10 +35,10 @@ export default function Page() {
           <li>profile: See your personal info, including any personal info you&apos;ve made publicly available </li>
           <li>openid: Associate you with your personal info on Google</li>
         </ul>
+        <p>This info is stored and used to create your account on howler and associate you with a google user id.</p>
         <p>
-          This info is stored and used to create your account on howler and associate you with a google user id. Howler
-          is a public platform, meaning this info may be publicly visible: for example on events you create, on your
-          public profile or by search engines.
+          Howler is a public platform, meaning this (non-sensitive) info may be publicly visible: for example on events
+          you create, on your public profile or by search engines.
         </p>
         <h2>Things you create or provide to us</h2>
         <p>
