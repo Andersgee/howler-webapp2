@@ -6,7 +6,7 @@ export default function Page() {
     <Shell>
       <div className="flex justify-center">
         <div className="px-2">
-          <h1 className="mb-6 text-2xl">About this app</h1>
+          <h1 className="mb-6 text-2xl">About howler</h1>
 
           <p>Howler lets people create, organize and find events.</p>
 

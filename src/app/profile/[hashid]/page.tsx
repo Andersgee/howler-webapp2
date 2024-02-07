@@ -7,6 +7,7 @@ import { UserImage96x96 } from "#src/components/user/UserImage";
 import Link from "next/link";
 import { Eventinfo } from "#src/app/event/[hashid]/Eventinfo";
 import { FollowUnfollowButton } from "./FollowUnfollowButton";
+import { Shell } from "#src/components/Shell";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -44,29 +45,27 @@ export default async function Page({ params }: Props) {
   const events = await api.event.latestByUserId({ userId: user.id });
 
   return (
-    <div className="flex justify-center">
-      <div className="px-2">
-        <section className="flex flex-col items-center">
-          <UserImage96x96 alt={user.name} image={user.image ?? ""} />
-          <h1 className="mt-2">{`${user.name}`}</h1>
-          {tokenUser && tokenUser.id !== user.id ? (
-            <FollowUnfollowButton isFollowing={isFollowing} userId={user.id} />
-          ) : null}
-        </section>
-        <hr className="py-4" />
-        <h2>Events</h2>
-        <section className="flex flex-wrap justify-center gap-8">
-          {events.map((event) => (
-            <Link
-              key={event.id}
-              href={`/event/${hashidFromId(event.id)}`}
-              className="block bg-color-neutral-0 hover:bg-color-neutral-300"
-            >
-              <Eventinfo event={event} className="p-2" />
-            </Link>
-          ))}
-        </section>
-      </div>
-    </div>
+    <Shell>
+      <section className="flex flex-col items-center">
+        <UserImage96x96 alt={user.name} image={user.image ?? ""} />
+        <h1 className="mt-2">{`${user.name}`}</h1>
+        {tokenUser && tokenUser.id !== user.id ? (
+          <FollowUnfollowButton isFollowing={isFollowing} userId={user.id} />
+        ) : null}
+      </section>
+      <hr className="py-4" />
+      <h2>Events</h2>
+      <section className="flex flex-wrap justify-center gap-8">
+        {events.map((event) => (
+          <Link
+            key={event.id}
+            href={`/event/${hashidFromId(event.id)}`}
+            className="block bg-color-neutral-0 hover:bg-color-neutral-300"
+          >
+            <Eventinfo event={event} className="p-2" />
+          </Link>
+        ))}
+      </section>
+    </Shell>
   );
 }

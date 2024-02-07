@@ -3,6 +3,7 @@ import { idFromHashid } from "#src/utils/hashid";
 import { notFound, redirect } from "next/navigation";
 import { UpdateEventForm } from "./UpdateEventForm";
 import { EventImage } from "./EventImage";
+import { Shell } from "#src/components/Shell";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -21,12 +22,10 @@ export default async function Page({ params }: Props) {
   if (!user?.id || user.id !== event.creatorId) redirect(`/event/${params.hashid}`);
 
   return (
-    <div className="container mx-auto flex justify-center">
-      <div className="flex w-full flex-col items-center">
-        <h1>Edit Event</h1>
-        <EventImage event={event} />
-        <UpdateEventForm initialEvent={event} />
-      </div>
-    </div>
+    <Shell className="w-full">
+      <h1>Edit Event</h1>
+      <EventImage event={event} />
+      <UpdateEventForm initialEvent={event} />
+    </Shell>
   );
 }

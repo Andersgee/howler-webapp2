@@ -10,6 +10,7 @@ import { seo } from "#src/utils/seo";
 import { type ResolvingMetadata } from "next";
 import { RichResults } from "./RichResults";
 import Link from "next/link";
+import { Shell } from "#src/components/Shell";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -53,36 +54,34 @@ export default async function Page({ params }: Props) {
   return (
     <>
       <RichResults event={event} />
-      <div className="container mx-auto flex justify-center">
-        <div className="flex w-full flex-col items-center">
-          <Link href={`/profile/${hashidFromId(event.creatorId)}`}>
-            <h1>Event by {event.creatorName}</h1>
-          </Link>
-          {event.image && (
-            <Image
-              priority
-              src={event.image}
-              alt={event.title}
-              sizes={imageSizes("w-64", { md: "w-96" })}
-              className="mb-8 h-auto w-64 md:w-96"
-              //width and height only for aspect ratio purpose
-              width={256}
-              height={Math.round(256 / event.imageAspect)}
-              //placeholder={event.imageBlurData ? "blur" : undefined}
-              //blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
-            />
-          )}
-
-          <Eventinfo event={event} />
-          <EventActions
-            event={event}
-            user={user}
-            isCreator={user?.id === event.creatorId}
-            isJoined={isJoined}
-            isFollowing={isFollowing}
+      <Shell>
+        <Link href={`/profile/${hashidFromId(event.creatorId)}`}>
+          <h1>Event by {event.creatorName}</h1>
+        </Link>
+        {event.image && (
+          <Image
+            priority
+            src={event.image}
+            alt={event.title}
+            sizes={imageSizes("w-64", { md: "w-96" })}
+            className="mb-8 h-auto w-64 md:w-96"
+            //width and height only for aspect ratio purpose
+            width={256}
+            height={Math.round(256 / event.imageAspect)}
+            //placeholder={event.imageBlurData ? "blur" : undefined}
+            //blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
           />
-        </div>
-      </div>
+        )}
+
+        <Eventinfo event={event} />
+        <EventActions
+          event={event}
+          user={user}
+          isCreator={user?.id === event.creatorId}
+          isJoined={isJoined}
+          isFollowing={isFollowing}
+        />
+      </Shell>
     </>
   );
 }

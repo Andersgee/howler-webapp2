@@ -1,3 +1,4 @@
+import { Shell } from "#src/components/Shell";
 import { apiRsc } from "#src/trpc/api-rsc";
 import { seo } from "#src/utils/seo";
 import { CreateEventForm } from "./CreateEventForm";
@@ -12,11 +13,9 @@ export const metadata = seo({
 export default async function Page() {
   const { user } = await apiRsc();
   return (
-    <div className="container mx-auto flex justify-center">
-      <div>
-        <h1>create</h1>
-        <CreateEventForm isSignedIn={!!user} />
-      </div>
-    </div>
+    <Shell>
+      <h1>create</h1>
+      <CreateEventForm isSignedIn={!!user} />
+    </Shell>
   );
 }
