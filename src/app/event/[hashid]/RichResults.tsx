@@ -63,6 +63,8 @@ export function RichResults({ event }: Props) {
       //see google example: https://developers.google.com/search/docs/appearance/structured-data/event#mixed-online-event
       //and schema.org spec: https://schema.org/VirtualLocation
       //"address": event.locationName ?? "anywhere",
+      //The proper thing to do would be to get the actual adress from latLng, without letting user modify it
+      //and only include this location field if latLng exists
       "geo": latLng
         ? {
             "@type": "GeoCoordinates",
