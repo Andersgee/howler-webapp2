@@ -7,7 +7,7 @@ type Props = {
 
 export function Footer({ className }: Props) {
   return (
-    <div className={cn("flex w-full justify-between bg-color-neutral-100 p-2", className)}>
+    <div className={cn("flex w-full justify-between bg-color-neutral-100 p-2 text-sm", className)}>
       <div>
         <Link href="/about" prefetch={false} className="text-color-neutral-700 decoration-solid hover:underline">
           About
