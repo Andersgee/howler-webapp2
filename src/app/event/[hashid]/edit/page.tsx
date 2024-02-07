@@ -22,7 +22,7 @@ export default async function Page({ params }: Props) {
   if (!user?.id || user.id !== event.creatorId) redirect(`/event/${params.hashid}`);
 
   return (
-    <Shell className="w-full">
+    <Shell>
       <h1>Edit Event</h1>
       <EventImage event={event} />
       <UpdateEventForm initialEvent={event} />

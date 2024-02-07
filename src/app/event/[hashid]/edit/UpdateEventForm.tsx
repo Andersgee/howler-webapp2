@@ -134,11 +134,22 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center gap-2">
+                {/*
                 <IconWhere />
                 <FormLabel className="w-11 shrink-0">Where</FormLabel>
-                {/*<FormDescription>click on map (optional)</FormDescription>*/}
+                */}
+                <Button
+                  type="button"
+                  variant="icon"
+                  className="m-0 py-2 pl-0 pr-2"
+                  onClick={() => setShowMap((prev) => !prev)}
+                >
+                  <IconWhere />
+                  <div className="w-11 shrink-0">Where</div>
+                </Button>
                 <FormControl>
                   <InputWithAutocomplete
+                    aria-label="Where"
                     placeholder="Location name..."
                     suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLowerCase() })) ?? []}
                     {...field}
@@ -150,9 +161,6 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
             </FormItem>
           )}
         />
-        <Button variant="outline" onClick={() => setShowMap((prev) => !prev)}>
-          {showMap ? "close map" : "show map"}
-        </Button>
         <Map show={showMap} initialLocation={initialEvent.location} />
 
         <FormField

@@ -62,6 +62,15 @@ export function CreateEventForm({ isSignedIn }: Props) {
       enabled: isSignedIn && Boolean(googleMapsPickedPoint),
     }
   );
+
+  useEffect(() => {
+    //auto fill locationName if empty when picking a point
+    const ln = form.getValues("locationName");
+    if (!ln && pickedPointNames?.[0]) {
+      form.setValue("locationName", pickedPointNames[0]);
+    }
+  }, [pickedPointNames, form]);
+
   useEffect(() => {
     if (googleMapsPickedPoint) {
       form.setValue("location", googleMapsPickedPoint);
@@ -117,17 +126,30 @@ export function CreateEventForm({ isSignedIn }: Props) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="locationName"
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center gap-2">
+                {/*
                 <IconWhere />
                 <FormLabel className="w-11 shrink-0">Where</FormLabel>
+                */}
+                <Button
+                  type="button"
+                  variant="icon"
+                  className="m-0 py-2 pl-0 pr-2"
+                  onClick={() => setShowMap((prev) => !prev)}
+                >
+                  <IconWhere />
+                  <div className="w-11 shrink-0">Where</div>
+                </Button>
                 {/*<FormDescription>click on map (optional)</FormDescription>*/}
                 <FormControl>
                   <InputWithAutocomplete
+                    aria-label="Where"
                     placeholder="Location name..."
                     suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLowerCase() })) ?? []}
                     {...field}
@@ -139,9 +161,6 @@ export function CreateEventForm({ isSignedIn }: Props) {
             </FormItem>
           )}
         />
-        <Button className="shrink-0" variant="outline" onClick={() => setShowMap((prev) => !prev)}>
-          {showMap ? "close map" : "show map"}
-        </Button>
         <Map show={showMap} />
 
         <FormField
