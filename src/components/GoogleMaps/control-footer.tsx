@@ -14,11 +14,11 @@ export function ControlFooter() {
 
 function Content() {
   return (
-    <div className="flex  text-[10px]/[14px] text-color-unthemed-neutral-1000">
+    <div className="flex text-[10px]/[14px] text-color-unthemed-neutral-1000">
       <Link
         href="/privacy"
         prefetch={false}
-        className="bg-color-unthemed-neutral-100 bg-opacity-75 px-1.5 decoration-solid hover:underline"
+        className="bg-color-unthemed-neutral-100/75 px-1.5 decoration-solid hover:underline"
       >
         Privacy
       </Link>
@@ -26,7 +26,7 @@ function Content() {
       <Link
         href="/terms"
         prefetch={false}
-        className="bg-color-unthemed-neutral-100 bg-opacity-75 px-1.5 decoration-solid hover:underline"
+        className="bg-color-unthemed-neutral-100/75 bg-opacity-75 px-1.5 decoration-solid hover:underline"
       >
         Terms
       </Link>
