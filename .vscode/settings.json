@@ -4,5 +4,23 @@
     ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
     //["cva\\(([^)(]*(?:\\([^)(]*(?:\\([^)(]*(?:\\([^)(]*\\)[^)(]*)*\\)[^)(]*)*\\)[^)(]*)*)\\)", "\"(.*?)\""]
   ],
-  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "tw", ".*Styles"]
+  "tailwindCSS.classAttributes": ["class", "className", "ngClass", "tw", ".*Styles"],
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/.next": true,
+    "**/mysqldatadir": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "**/.next": true,
+    "**/mysqldatadir": true,
+    "**/node_modules": true
+  }
 }
