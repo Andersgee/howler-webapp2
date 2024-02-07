@@ -58,7 +58,11 @@ export function RichResults({ event }: Props) {
     "location": {
       "@type": "Place",
       "name": event.locationName ?? "anywhere",
-      "address": event.locationName ?? "anywhere",
+      //schema.org allows types "Text" or "PostalAdress" here but google reads it as "PostalAdress" either way. which is supposed to be "The mailing adress" of the place.
+      //not including this is fine? also google does support the "new" VirtualLocation
+      //see google example: https://developers.google.com/search/docs/appearance/structured-data/event#mixed-online-event
+      //and schema.org spec: https://schema.org/VirtualLocation
+      //"address": event.locationName ?? "anywhere",
       "geo": latLng
         ? {
             "@type": "GeoCoordinates",
