@@ -744,11 +744,12 @@ export default {
     }),
     minHeight: {
       0: "0px",
-      full: "100%",
-      screen: "100vh",
-      min: "min-content",
-      max: "max-content",
-      fit: "fit-content",
+      "full": "100%",
+      "screen": "100vh",
+      "min": "min-content",
+      "max": "max-content",
+      "fit": "fit-content",
+      "screen-minus-nav": "calc(100vh - 61px)",
     },
     minWidth: {
       0: "0px",
