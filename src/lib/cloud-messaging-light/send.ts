@@ -56,6 +56,27 @@ export async function sendCloudMessage(userIds: bigint[], message: Message) {
       console.log("sendCloudMessage, err:", err);
     }
   }
+
+  /*
+  //TODO: check how this plays with "limit on number of number of simulateous requests from serverless functions on vercel"
+  //there is also consideration of not spamming google cloud messaging service so awaiting each might be the way to go anyway
+  //although waiting to notify like 100 user followers, when creating an event, before event responding to client is not good either
+  try {
+    const results = await Promise.allSettled(
+      fcmTokens.map((fcmToken) => sendMessage(accessToken, { token: fcmToken.token, ...message }))
+    );
+    for (const [i, result] of results.entries()) {
+      if (result.status === "fulfilled") {
+        const res = result.value;
+        if (!res.ok) {
+          await handleBadFcmResponse(res, fcmTokens[i]!.token);
+        }
+      }
+    }
+  } catch (err) {
+    console.log("sendCloudMessage, err:", err);
+  }
+  */
 }
 
 async function handleBadFcmResponse(res: Response, token: string) {

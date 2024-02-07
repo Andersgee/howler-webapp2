@@ -1,6 +1,6 @@
 import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { type RouterOutputs } from "#src/hooks/api";
-import { iso8601Date } from "#src/utils/ISO-8601";
+import { iso8601DateTime } from "#src/utils/ISO-8601";
 import { hashidFromId } from "#src/utils/hashid";
 import { absUrl } from "#src/utils/url";
 import Script from "next/script";
@@ -50,8 +50,8 @@ export function RichResults({ event }: Props) {
       },
     ],
     "description": description,
-    "startDate": iso8601Date(event.date),
-    "endDate": iso8601Date(endDate),
+    "startDate": iso8601DateTime(event.date),
+    "endDate": iso8601DateTime(endDate),
     //"duration": "P0Y0M0DT0H16M7S",
     "headline": event.title,
     //"image": event.image ? [event.image] : undefined, //how to know if this image is safe? google might block the site or smth

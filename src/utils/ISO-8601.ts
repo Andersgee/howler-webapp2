@@ -5,7 +5,7 @@
  *
  * turns out google doesnt use this. startDate and endDate is sufficient.
  */
-export function iso8601DurationFormat(startDate: Date, endDate: Date) {
+export function iso8601Duration(startDate: Date, endDate: Date) {
   let diffseconds = Math.max(1, Math.ceil((endDate.getTime() - startDate.getTime()) / 1000));
 
   //average month days 30.436875
@@ -26,9 +26,12 @@ export function iso8601DurationFormat(startDate: Date, endDate: Date) {
   return `P${Y}Y${M}M${D}DT${h}H${m}M${diffseconds}S`;
 }
 
+/** YYYY-MM-DDThh:mm:ss */
 export function iso8601DateTime(date: Date) {
   return `${date.toISOString().slice(0, 19)}Z`;
 }
-export function iso8601Date(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
+
+///** YYYY-MM-DD */
+//export function iso8601Date(date: Date) {
+//  return date.toISOString().slice(0, 10);
+//}
