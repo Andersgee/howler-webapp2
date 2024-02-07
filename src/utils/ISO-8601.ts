@@ -26,7 +26,7 @@ export function iso8601Duration(startDate: Date, endDate: Date) {
   return `P${Y}Y${M}M${D}DT${h}H${m}M${diffseconds}S`;
 }
 
-/** YYYY-MM-DDThh:mm:ss */
+/** YYYY-MM-DDThh:mm:ssZ */
 export function iso8601DateTime(date: Date) {
   return `${date.toISOString().slice(0, 19)}Z`;
 }
