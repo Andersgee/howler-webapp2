@@ -36,7 +36,7 @@ export function RichResults({ event }: Props) {
   const creatorUrl = absUrl(`/profile/${hashidFromId(event.creatorId)}`);
   const description = `${event.title} ${event.locationName}`;
   const latLng = event.location ? latLngLiteralFromPoint(event.location) : null;
-  const endDate = new Date(event.date.getTime() + 1000 * 60 * 60 * 2); //dont have endDate on events yet... go 2 hours for now
+  //const endDate = new Date(event.date.getTime() + 1000 * 60 * 60 * 2); //dont have endDate on events yet... go 2 hours for now
 
   const ldjson = {
     "@context": "https://schema.org",
@@ -44,7 +44,7 @@ export function RichResults({ event }: Props) {
     "name": event.title,
     //"url": url,
     //"eventStatus": "EventScheduled", //google defaults to this, or actually they default to "https://schema.org/EventScheduled", not sure if difference
-    "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
+    //"eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
     "organizer": [
       {
         "@type": "Person",
@@ -54,20 +54,22 @@ export function RichResults({ event }: Props) {
     ],
     "description": description,
     "startDate": iso8601DateTime(event.date),
-    "endDate": iso8601DateTime(endDate),
+    //"endDate": iso8601DateTime(endDate),
     //"duration": "P0Y0M0DT0H16M7S",
     //"image": event.image ? [event.image] : undefined, //how to know if this image is safe? google might block the site or smth
+    //see https://developers.google.com/search/docs/appearance/structured-data/event#structured-data-type-definitions
+    // location has requirements from googles bots...
+    // if type is "Place" then "adress" is required, which google reads as a "PostalAdress" type even though schema.org alowws just "Text" type
+    // if type is "VirtualLocation" then "url" is required
+    // btw its fine to use an array "location": [{},{}] if its a mix
     "location": event.locationName
       ? {
           "@type": "Place",
           "name": event.locationName,
-          //schema.org allows types "Text" or "PostalAdress" here but google reads it as "PostalAdress" either way. which is supposed to be "The mailing adress" of the place.
-          //not including this is fine? also google also supports VirtualLocation
-          //see google example: https://developers.google.com/search/docs/appearance/structured-data/event#mixed-online-event
-          //and schema.org spec: https://schema.org/VirtualLocation
-          //"address": event.locationName ?? "anywhere",
-          //The proper thing to do would be to get the actual adress from latLng, without letting user modify it
-          //and only include this location field if latLng exists
+          //"address": {
+          //  "@type": "PostalAddress",
+          //  "name": "some detailed street adress",
+          //},
           "geo": latLng
             ? {
                 "@type": "GeoCoordinates",
