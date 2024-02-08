@@ -11,6 +11,8 @@ export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
   try {
+    const fontData = await fetch(new URL("./Inter-Regular.ttf", import.meta.url)).then((res) => res.arrayBuffer());
+
     //const p = JSON.stringify(Object.entries(request.nextUrl.search));
     const hashid = request.nextUrl.searchParams.get("hashid");
     if (!hashid) return new Response(null, { status: 404 }); //actually this is guaranteed to exist
@@ -31,6 +33,8 @@ export async function GET(request: NextRequest) {
       (
         <div
           style={{
+            fontFamily: "Inter",
+            fontWeight: 400,
             display: "flex",
             flexDirection: "column",
             gap: "16px",
@@ -202,6 +206,14 @@ export async function GET(request: NextRequest) {
         width: 600,
         height: 315,
         //debug: true,
+        fonts: [
+          {
+            data: fontData,
+            name: "Inter",
+            weight: 400,
+            style: "normal",
+          },
+        ],
       }
     );
   } catch (err) {
