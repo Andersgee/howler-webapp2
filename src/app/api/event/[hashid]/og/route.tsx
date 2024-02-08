@@ -32,16 +32,19 @@ export async function GET(request: NextRequest) {
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
+            gap: "16px",
             fontSize: 16,
             //fontSize: 40,
-            //color: "black",
-            background: "white",
+            color: "#000000",
+            background: "#fafaf9",
             width: "100%",
             height: "100%",
             //padding: "50px 200px",
             //textAlign: "center",
             justifyContent: "center",
             alignItems: "center",
+            //borderRadius: "8px",
           }}
         >
           <div
@@ -49,9 +52,10 @@ export async function GET(request: NextRequest) {
             style={{
               display: "flex",
               flexDirection: "column",
-              gap: "8px",
+              gap: "16px",
               padding: "16px",
-              background: "#acacac",
+              background: "#ffffff",
+              borderRadius: "8px",
             }}
           >
             <div
@@ -78,7 +82,7 @@ export async function GET(request: NextRequest) {
                 <path d="M6 6h.008v.008H6V6z" />
               </svg>
               <div tw="w-11 shrink-0">What</div>
-              <div tw="">{`Lorem ipsum dolor sit amet consectetur adipisicing elit`}</div>
+              <div tw="">{event.title}</div>
             </div>
             <div
               //tw="flex items-center gap-2" //gap
@@ -153,6 +157,42 @@ export async function GET(request: NextRequest) {
               <div tw="w-11 shrink-0">Who</div>
               <div>anyone</div>
             </div>
+          </div>
+          <div tw="flex items-center">
+            <svg width="36" height="36" viewBox="0 0 475 475" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="237" cy="237" r="220" fill="#fff" />
+              <path stroke="#000" stroke-width="21" d="M 237 17 A 220 220 0 0 1 457 237" />
+              <path
+                stroke="#172554"
+                fill="#2563eb"
+                stroke-width="14"
+                d="M 326.5 351
+	L 289 449
+	A 220 220 0 0 1 50.5 352.5
+	L 50.5 352.5
+	L 138.5 208.5
+	L 106.5 152.5
+	L 179.5 145.5
+	L 241 110.5
+	H 277.5
+	L 380 29
+	L 397 69
+	L 386 110.5
+	L 401 96
+	L 424.5 105.5
+	V 134 
+	L 367 195.5
+	L 326.5 277	
+	z"
+              />
+              <path stroke="#000" stroke-width="21" d="M 237 17 A 220 220 0 1 0 457 237 " />
+            </svg>
+            <div
+              style={{
+                marginLeft: "8px",
+                color: "#57534e",
+              }}
+            >{`Howl by ${event.creatorName}`}</div>
           </div>
         </div>
       ),
