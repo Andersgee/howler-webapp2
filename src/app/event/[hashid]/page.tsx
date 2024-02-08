@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props, _parent: ResolvingMeta
     title: `${event.title} | Howler`,
     description: `Howl by ${event.creatorName}`, //"Quickly find/plan stuff to do with friends, or with anyone really.",
     url: `/event/${params.hashid}`,
-    image: "/howler.png",
+    image: `/event/${params.hashid}/image.png`,
   });
 }
 

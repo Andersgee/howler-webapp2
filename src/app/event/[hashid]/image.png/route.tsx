@@ -9,9 +9,12 @@ import { type NextRequest } from "next/server";
 export const runtime = "edge";
 //export const preferredRegion = ["arn1"];
 
+const font = fetch(new URL("../../../../assets/Inter-Regular.ttf", import.meta.url)).then((res) => res.arrayBuffer());
+
 export async function GET(request: NextRequest) {
   try {
-    const fontData = await fetch(new URL("./Inter-Regular.ttf", import.meta.url)).then((res) => res.arrayBuffer());
+    //const fontData = await fetch(new URL("./Inter-Regular.ttf", import.meta.url)).then((res) => res.arrayBuffer());
+    const fontData = await font;
 
     //const p = JSON.stringify(Object.entries(request.nextUrl.search));
     const hashid = request.nextUrl.searchParams.get("hashid");
