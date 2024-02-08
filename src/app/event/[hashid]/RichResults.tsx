@@ -22,6 +22,9 @@ google recommends JSON-LD for rich results
 The schema.org spec: https://schema.org/docs/full.html
 in particular: https://schema.org/Event
        or even https://schema.org/SocialEvent
+
+see googles example of Event type here: https://developers.google.com/search/docs/appearance/structured-data/event
+
 */
 
 type Props = {
@@ -40,7 +43,7 @@ export function RichResults({ event }: Props) {
     "@type": "Event",
     "name": event.title,
     //"url": url,
-    "eventStatus": "EventScheduled",
+    //"eventStatus": "EventScheduled", //google defaults to this, or actually they default to "https://schema.org/EventScheduled", not sure if difference
     "eventAttendanceMode": "https://schema.org/OnlineEventAttendanceMode",
     "organizer": [
       {
@@ -53,26 +56,27 @@ export function RichResults({ event }: Props) {
     "startDate": iso8601DateTime(event.date),
     "endDate": iso8601DateTime(endDate),
     //"duration": "P0Y0M0DT0H16M7S",
-    "headline": event.title,
     //"image": event.image ? [event.image] : undefined, //how to know if this image is safe? google might block the site or smth
-    "location": {
-      "@type": "Place",
-      "name": event.locationName ?? "anywhere",
-      //schema.org allows types "Text" or "PostalAdress" here but google reads it as "PostalAdress" either way. which is supposed to be "The mailing adress" of the place.
-      //not including this is fine? also google does support the "new" VirtualLocation
-      //see google example: https://developers.google.com/search/docs/appearance/structured-data/event#mixed-online-event
-      //and schema.org spec: https://schema.org/VirtualLocation
-      //"address": event.locationName ?? "anywhere",
-      //The proper thing to do would be to get the actual adress from latLng, without letting user modify it
-      //and only include this location field if latLng exists
-      "geo": latLng
-        ? {
-            "@type": "GeoCoordinates",
-            "latitude": latLng.lat.toString(),
-            "longitude": latLng.lng.toString(),
-          }
-        : undefined,
-    },
+    "location": event.locationName
+      ? {
+          "@type": "Place",
+          "name": event.locationName,
+          //schema.org allows types "Text" or "PostalAdress" here but google reads it as "PostalAdress" either way. which is supposed to be "The mailing adress" of the place.
+          //not including this is fine? also google also supports VirtualLocation
+          //see google example: https://developers.google.com/search/docs/appearance/structured-data/event#mixed-online-event
+          //and schema.org spec: https://schema.org/VirtualLocation
+          //"address": event.locationName ?? "anywhere",
+          //The proper thing to do would be to get the actual adress from latLng, without letting user modify it
+          //and only include this location field if latLng exists
+          "geo": latLng
+            ? {
+                "@type": "GeoCoordinates",
+                "latitude": latLng.lat.toString(),
+                "longitude": latLng.lng.toString(),
+              }
+            : undefined,
+        }
+      : undefined,
   };
 
   return (
