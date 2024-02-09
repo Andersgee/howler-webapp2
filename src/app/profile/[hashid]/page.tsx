@@ -1,4 +1,5 @@
-import { apiRsc, apiRscPublic } from "#src/trpc/api-rsc";
+import { apiRsc } from "#src/trpc/api-rsc";
+import { apiRscPublic } from "#src/trpc/api-rsc-public";
 import { hashidFromId, idFromHashid } from "#src/utils/hashid";
 import { notFound } from "next/navigation";
 import { seo } from "#src/utils/seo";

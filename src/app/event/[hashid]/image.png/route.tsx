@@ -1,4 +1,4 @@
-import { apiRscPublic } from "#src/trpc/api-rsc";
+import { apiRscPublic } from "#src/trpc/api-rsc-public";
 import { prettyDate } from "#src/utils/date";
 import { idFromHashid } from "#src/utils/hashid";
 import { ImageResponse } from "next/og";
