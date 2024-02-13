@@ -16,7 +16,7 @@ export function EventinfoWho({ eventId }: Props) {
       <span className="mr-1">anyone</span>
       {data && data.count > 0 ? (
         <Link
-          className="block underline decoration-dotted duration-200 animate-in fade-in"
+          className="block underline decoration-dotted duration-500 animate-in fade-in"
           href={`/event/${hashidFromId(eventId)}/people`}
         >{`(${data.count} people joined)`}</Link>
       ) : null}
