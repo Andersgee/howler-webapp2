@@ -89,6 +89,9 @@ export default async function Page({ params }: Props) {
             {event.creatorName}
           </Link>
         </div>
+        <Link href={`/event/${params.hashid}/people`} prefetch={false}>
+          joinedUsers
+        </Link>
       </Shell>
     </>
   );

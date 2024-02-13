@@ -4,7 +4,12 @@ import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
 import { IconWho } from "#src/icons/Who";
+import { apiRscPublic } from "#src/trpc/api-rsc-public";
+import { buttonVariants } from "#src/ui/button";
 import { cn } from "#src/utils/cn";
+import { hashidFromId } from "#src/utils/hashid";
+import Link from "next/link";
+import { Suspense } from "react";
 
 type Props = {
   className?: string;
@@ -34,8 +39,29 @@ export function Eventinfo({ event, className }: Props) {
       <div className="flex items-center gap-2">
         <IconWho />
         <div className="w-12 shrink-0">Who</div>
-        <div>anyone</div>
+        <Suspense fallback={<div>anyone</div>}>
+          <EventinfoWho eventId={event.id} />
+        </Suspense>
       </div>
+    </div>
+  );
+}
+
+async function EventinfoWho({ eventId }: { eventId: bigint }) {
+  const { api } = apiRscPublic();
+  const joinedUsersCount = await api.event.joinedUsersCount({ id: eventId });
+
+  if (joinedUsersCount < 1) {
+    return <div>anyone</div>;
+  }
+
+  return (
+    <div>
+      anyone{" "}
+      <Link
+        className={buttonVariants({ variant: "outline" })}
+        href={`/event/${hashidFromId(eventId)}/people`}
+      >{`(${joinedUsersCount}) people joined`}</Link>
     </div>
   );
 }

@@ -19,6 +19,23 @@ export const eventRouter = createTRPCRouter({
       .where("Event.id", "=", input.id)
       .executeTakeFirst();
   }),
+  joinedUsers: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
+    const joinedUsers = await dbfetch()
+      .selectFrom("UserEventPivot")
+      .where("UserEventPivot.eventId", "=", input.id)
+      .innerJoin("User", "User.id", "UserEventPivot.userId")
+      .select(["User.id", "User.image", "User.name"])
+      .execute();
+    return joinedUsers;
+  }),
+  joinedUsersCount: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
+    const userEventPivots = await dbfetch()
+      .selectFrom("UserEventPivot")
+      .select(sql<number>`COUNT(*)`.as("count"))
+      .where("UserEventPivot.eventId", "=", input.id)
+      .executeTakeFirst();
+    return userEventPivots ? userEventPivots.count : 0;
+  }),
   latestByUserId: publicProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input }) => {
     return await dbfetch()
       .selectFrom("Event")
