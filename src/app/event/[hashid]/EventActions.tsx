@@ -31,7 +31,7 @@ export function EventActions(props: Props) {
 
   return (
     <>
-      <div className="flex flex-wrap justify-center gap-4 px-4 py-4">
+      <div className="flex flex-wrap justify-center gap-4 px-4 py-6">
         {props.isCreator && (
           <Link href={`/event/${hashidFromId(props.event.id)}/edit`} className={buttonVariants({ variant: "icon" })}>
             <IconEdit /> Edit

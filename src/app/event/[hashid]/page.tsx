@@ -56,10 +56,7 @@ export default async function Page({ params }: Props) {
     <>
       <RichResults event={event} />
       <Shell>
-        <Link href={`/profile/${hashidFromId(event.creatorId)}`}>
-          <h1>Event by {event.creatorName}</h1>
-        </Link>
-        {event.image && (
+        {event.image ? (
           <Image
             priority
             src={event.image}
@@ -72,8 +69,9 @@ export default async function Page({ params }: Props) {
             //placeholder={event.imageBlurData ? "blur" : undefined}
             //blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
           />
+        ) : (
+          <div className="py-4"></div>
         )}
-
         <Eventinfo event={event} />
         <EventActions
           event={event}
@@ -82,6 +80,15 @@ export default async function Page({ params }: Props) {
           isJoined={isJoined}
           isFollowing={isFollowing}
         />
+        <div className="text-balance py-4 text-center text-color-neutral-600">
+          Event created by{" "}
+          <Link
+            href={`/profile/${hashidFromId(event.creatorId)}`}
+            className="underline decoration-dotted hover:decoration-solid"
+          >
+            {event.creatorName}
+          </Link>
+        </div>
       </Shell>
     </>
   );
