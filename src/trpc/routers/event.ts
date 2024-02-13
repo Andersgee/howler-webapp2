@@ -34,7 +34,7 @@ export const eventRouter = createTRPCRouter({
       .select(sql<number>`COUNT(*)`.as("count"))
       .where("UserEventPivot.eventId", "=", input.id)
       .executeTakeFirst();
-    return userEventPivots ? userEventPivots.count : 0;
+    return userEventPivots;
   }),
   latestByUserId: publicProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input }) => {
     return await dbfetch()
