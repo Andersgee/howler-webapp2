@@ -20,7 +20,7 @@ export function UserImage32x32ById({ userId }: { userId: bigint }) {
   );
 }
 */
-export function UserImage32x32({ image, alt }: { image?: string; alt: string }) {
+export function UserImage32x32({ image, alt }: { image?: string | null; alt: string }) {
   return (
     <div className="relative h-8 w-8 shrink-0">
       {image && (
