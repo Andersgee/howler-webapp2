@@ -24,7 +24,7 @@ export default async function Page({ params }: Props) {
         {joinedUsers.map((user) => (
           <Link
             key={user.id}
-            className="flex items-center bg-color-neutral-0 px-3 py-2"
+            className="flex items-center gap-2 bg-color-neutral-0 px-3 py-2 hover:bg-color-neutral-200"
             href={`/profile/${hashidFromId(user.id)}`}
             prefetch={false}
           >

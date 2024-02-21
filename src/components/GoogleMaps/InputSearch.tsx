@@ -22,7 +22,10 @@ export function InputSearch({ className, suggestions, value, onChange }: Props) 
   const [open, setOpen] = useState(false);
 
   return (
-    <Command className="w-72 text-base text-color-neutral-1000">
+    <Command
+      className="w-72 text-base text-color-neutral-1000"
+      shouldFilter={false} //Im filtering (and sorting) at db level with fulltext query
+    >
       <div className="relative">
         <Command.Input
           placeholder="anything / anywhere..."
