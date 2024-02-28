@@ -2,6 +2,7 @@
 
 import { actionRevalidateTag } from "#src/app/actions";
 import { GoogleMaps } from "#src/components/GoogleMaps";
+import { ControlDirections } from "#src/components/GoogleMaps/control-directions";
 import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { ShareButton } from "#src/components/ShareButton";
 import { UserImage32x32 } from "#src/components/user/UserImage";
@@ -49,7 +50,7 @@ export function EventActions(props: Props) {
         )}
         {!props.isCreator && <JoinLeaveButton user={props.user} id={props.event.id} isJoined={props.isJoined} />}
       </div>
-      <Map show={showMap} location={props.event.location} />
+      {props.event.location && <Map show={showMap} location={props.event.location} />}
     </>
   );
 }
@@ -112,11 +113,11 @@ function JoinLeaveButton({ user, id, isJoined }: { user: TokenUser | null; id: b
   );
 }
 
-function Map({ show, location }: { show: boolean; location: null | GeoJson["Point"] }) {
+function Map({ show, location }: { show: boolean; location: GeoJson["Point"] }) {
   const googleMaps = useStore.use.googleMaps();
   const didRun = useRef(false);
   useEffect(() => {
-    if (!googleMaps || !location || !show) return;
+    if (!googleMaps || !show) return;
 
     if (!didRun.current) {
       googleMaps.setMode("view-event");
@@ -136,6 +137,7 @@ function Map({ show, location }: { show: boolean; location: null | GeoJson["Poin
     show && (
       <div className="h-96 w-full">
         <GoogleMaps />
+        <ControlDirections location={location} />
       </div>
     )
   );
