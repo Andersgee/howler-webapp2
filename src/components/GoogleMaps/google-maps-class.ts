@@ -3,7 +3,7 @@ import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
 import { HOWLER_MAP_DARK, HOWLER_MAP_LIGHT } from "./custom-theme";
-import { latLngLiteralFromPoint, pointFromlatLng } from "./google-maps-point-latlng";
+import { latLngLiteralFromPoint, pointFromlatLng, pointFromlatLngLiteral } from "./google-maps-point-latlng";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -159,7 +159,7 @@ export class GoogleMapsClass {
       this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.controls_element_search);
 
       this.controls_element_locate = document.createElement("div");
-      this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM]!.push(this.controls_element_locate);
+      this.map.controls[google.maps.ControlPosition.TOP_RIGHT]!.push(this.controls_element_locate);
 
       this.controls_element_unpick_point = document.createElement("div");
       this.map.controls[google.maps.ControlPosition.TOP_RIGHT]!.push(this.controls_element_unpick_point);
@@ -187,8 +187,9 @@ export class GoogleMapsClass {
         //click on map (not infowindow)
         const latLng = e.latLng;
         if (this.mode === "pick-location") {
-          this.primaryMarker.position = latLng;
-          setGoogleMapsPickedPoint(pointFromlatLng(latLng));
+          this.setPickedPointAndMarker({ lat: latLng.lat(), lng: latLng.lng() });
+          //this.primaryMarker.position = latLng;
+          //setGoogleMapsPickedPoint(pointFromlatLng(latLng));
         }
         if (this.mode === "explore") {
           setGoogleMapsExploreSelectedEventId(null);
@@ -200,6 +201,11 @@ export class GoogleMapsClass {
     } catch (error) {
       return false;
     }
+  }
+
+  setPickedPointAndMarker(latLng: google.maps.LatLngLiteral | null) {
+    this.primaryMarker.position = latLng;
+    setGoogleMapsPickedPoint(latLng ? pointFromlatLngLiteral(latLng) : null);
   }
 
   addEventsAsMarkers(events: RouterOutputs["event"]["explore"]["events"]) {

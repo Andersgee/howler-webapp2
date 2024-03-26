@@ -26,6 +26,7 @@ import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-p
 import { actionRevalidateTagAndRedirect } from "#src/app/actions";
 import Link from "next/link";
 import { hashidFromId } from "#src/utils/hashid";
+import { ControlLocate } from "#src/components/GoogleMaps/control-locate";
 
 const zFormData = z.object({
   id: z.bigint(),
@@ -226,6 +227,14 @@ function Map({ show, initialLocation }: { show: boolean; initialLocation: null |
       <div className="h-96 w-full">
         <GoogleMaps />
         <ControlUnpickPoint />
+        <ControlLocate
+          onLocated={(p) => {
+            if (googleMaps) {
+              googleMaps.map.setOptions({ center: p, zoom: 15 });
+              googleMaps.setPickedPointAndMarker(p);
+            }
+          }}
+        />
       </div>
     </>
   ) : null;
