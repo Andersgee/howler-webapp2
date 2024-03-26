@@ -1,16 +1,18 @@
-"use client";
+//"use client";
 
 import { useStore } from "#src/store";
 import { createPortal } from "react-dom";
 import { LocateButton } from "../LocateButton";
 
-export function ControlLocate() {
+type Props = {
+  onLocated: (p: { lng: number; lat: number }) => void;
+};
+export function ControlLocate({ onLocated }: Props) {
   const googleMaps = useStore.use.googleMaps();
   if (!googleMaps?.controls_element_locate) {
     return null;
   }
-  return createPortal(
-    <LocateButton onLocated={(p) => googleMaps.map.setOptions({ center: p, zoom: 15 })} />,
-    googleMaps.controls_element_locate
-  );
+
+  //(p) => googleMaps.map.setOptions({ center: p, zoom: 15 })},
+  return createPortal(<LocateButton onLocated={onLocated} />, googleMaps.controls_element_locate);
 }
