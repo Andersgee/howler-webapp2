@@ -22,6 +22,7 @@ import { dialogDispatch } from "#src/store/slices/dialog";
 import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { ControlLocate } from "#src/components/GoogleMaps/control-locate";
 import { getCurrentPosition } from "#src/utils/geolocation";
+import { ControlUnpickPoint } from "#src/components/GoogleMaps/control-unpick-point";
 
 const zFormData = z.object({
   title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
@@ -236,6 +237,7 @@ function Map({ show }: { show: boolean }) {
   return show ? (
     <div className="h-96 w-full">
       <GoogleMaps />
+      <ControlUnpickPoint />
       <ControlLocate
         onLocated={(latLng) => {
           if (googleMaps) {
