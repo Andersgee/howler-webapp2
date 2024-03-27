@@ -15,7 +15,7 @@ export function LocateButton({ className, onLocated }: Props) {
       aria-label="locate"
       className={className}
       onClick={() => {
-        if (navigator.geolocation) {
+        if ("geolocation" in navigator) {
           navigator.geolocation.getCurrentPosition(
             (p) => onLocated({ lat: p.coords.latitude, lng: p.coords.longitude }),
             () =>

@@ -21,6 +21,7 @@ import { IconWhere } from "#src/icons/Where";
 import { dialogDispatch } from "#src/store/slices/dialog";
 import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { ControlLocate } from "#src/components/GoogleMaps/control-locate";
+import { getCurrentPosition } from "#src/utils/geolocation";
 
 const zFormData = z.object({
   title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
@@ -211,21 +212,35 @@ export function CreateEventForm({ isSignedIn }: Props) {
 
 function Map({ show }: { show: boolean }) {
   const didRun = useRef(false);
+  const didRun2 = useRef(false);
   const googleMaps = useStore.use.googleMaps();
   useEffect(() => {
+    //initialize mode (once)
     if (!googleMaps || didRun.current) return;
     googleMaps.setMode("pick-location");
     didRun.current = true;
   }, [googleMaps]);
 
+  useEffect(() => {
+    //auto place marker on location (once, and only if granted)
+    if (!googleMaps || !show || didRun2.current) return;
+    getCurrentPosition((res) => {
+      if (res.ok) {
+        googleMaps.map.setOptions({ center: res.latLng, zoom: 15 });
+        googleMaps.setPickedPointAndMarker(res.latLng);
+      }
+    });
+    didRun2.current = true;
+  }, [googleMaps, show]);
+
   return show ? (
     <div className="h-96 w-full">
       <GoogleMaps />
       <ControlLocate
-        onLocated={(p) => {
+        onLocated={(latLng) => {
           if (googleMaps) {
-            googleMaps.map.setOptions({ center: p, zoom: 15 });
-            googleMaps.setPickedPointAndMarker(p);
+            googleMaps.map.setOptions({ center: latLng, zoom: 15 });
+            googleMaps.setPickedPointAndMarker(latLng);
           }
         }}
       />
