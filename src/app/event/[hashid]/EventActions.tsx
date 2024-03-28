@@ -158,6 +158,9 @@ export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["ge
   const geo = p ? `${p.lat.toFixed(6)};${p.lng.toFixed(6)}` : undefined;
   const eventurl = absUrl(`/event/${hashid}`);
 
+  const endDate = new Date(event.date.getTime() + 1000 * 60 * 60 * 2); //dont have endDate on events yet... go 2 hours for now
+  const dtend = endDate.toISOString().slice(0, 19).replaceAll("-", "").replaceAll(":", "");
+
   //https://www.kanzaki.com/docs/ical/
   const x = ["BEGIN:VCALENDAR"];
   x.push("VERSION:2.0");
@@ -168,10 +171,13 @@ export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["ge
   x.push(`SUMMARY:${summary}`);
   x.push(`DTSTAMP:${dtstamp}Z`);
   x.push(`DTSTART:${dtstart}Z`);
+  x.push(`DTEND:${dtend}Z`);
   x.push(`URL:${eventurl}`);
   if (geo) {
     x.push(`GEO:${geo}`);
   }
+  x.push(`LOCATION:${event.locationName ?? "anywhere"}`);
+
   x.push("END:VEVENT");
 
   x.push("END:VCALENDAR");
