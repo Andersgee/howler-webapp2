@@ -16,6 +16,7 @@ import { Button, buttonVariants } from "#src/ui/button";
 import { useToast } from "#src/ui/use-toast";
 import { hashidFromId } from "#src/utils/hashid";
 import { type TokenUser } from "#src/utils/jwt/schema";
+import { absUrl } from "#src/utils/url";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
@@ -154,7 +155,8 @@ export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["ge
   const dtstamp = event.createdAt.toISOString().slice(0, 19).replaceAll("-", "").replaceAll(":", "");
   const dtstart = event.date.toISOString().slice(0, 19).replaceAll("-", "").replaceAll(":", "");
   const p = event.location ? latLngLiteralFromPoint(event.location) : undefined;
-  const geo = p ? `${p.lat};${p.lng}` : undefined;
+  const geo = p ? `${p.lat.toFixed(6)};${p.lng.toFixed(6)}` : undefined;
+  const eventurl = absUrl(`/event/${hashid}`);
 
   //https://www.kanzaki.com/docs/ical/
   const x = ["BEGIN:VCALENDAR"];
@@ -166,6 +168,7 @@ export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["ge
   x.push(`SUMMARY:${summary}`);
   x.push(`DTSTAMP:${dtstamp}Z`);
   x.push(`DTSTART:${dtstart}Z`);
+  x.push(`URL:${eventurl}`);
   if (geo) {
     x.push(`GEO:${geo}`);
   }
