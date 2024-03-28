@@ -174,7 +174,11 @@ export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["ge
   x.push(`DTSTART:${dtstart}Z`);
   x.push(`DTEND:${dtend}Z`);
   //x.push(`URL:${eventurl}`);
-  x.push(`DESCRIPTION:${eventurl} - Howl by ${event.creatorName}`);
+  x.push(
+    `DESCRIPTION:${eventurl}\\nHowl by ${event.creatorName}.\\nWhat: ${event.title}\\nWhere: ${
+      event.locationName ?? "anywhere"
+    }`
+  );
   if (geo) {
     x.push(`GEO:${geo}`);
   }
