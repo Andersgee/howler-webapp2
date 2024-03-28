@@ -49,6 +49,9 @@ export function EventActions(props: Props) {
           </Button>
         )}
         {!props.isCreator && <JoinLeaveButton user={props.user} id={props.event.id} isJoined={props.isJoined} />}
+        <Button variant="icon" onClick={() => downloadEventAsIcs(props.event)}>
+          .ics
+        </Button>
       </div>
       {props.event.location && <Map show={showMap} location={props.event.location} />}
     </>
@@ -141,4 +144,46 @@ function Map({ show, location }: { show: boolean; location: GeoJson["Point"] }) 
       </div>
     )
   );
+}
+
+export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["getById"]>) {
+  const hashid = hashidFromId(event.id);
+  const filename = `howler-event-${hashid}.ics`;
+
+  const summary = event.title.replaceAll("\n", " ");
+  const dtstamp = event.createdAt.toISOString().slice(0, 19).replaceAll("-", "").replaceAll(":", "");
+  const dtstart = event.date.toISOString().slice(0, 19).replaceAll("-", "").replaceAll(":", "");
+  const p = event.location ? latLngLiteralFromPoint(event.location) : undefined;
+  const geo = p ? `${p.lat};${p.lng}` : undefined;
+
+  //https://www.kanzaki.com/docs/ical/
+  const x = ["BEGIN:VCALENDAR"];
+  x.push("VERSION:2.0");
+  x.push("PRODID:-//HOWLER//EVENT//EN");
+
+  x.push("BEGIN:VEVENT");
+  x.push(`UID:howler-event-${hashid}`);
+  x.push(`SUMMARY:${summary}`);
+  x.push(`DTSTAMP:${dtstamp}Z`);
+  x.push(`DTSTART:${dtstart}Z`);
+  if (geo) {
+    x.push(`GEO:${geo}`);
+  }
+  x.push("END:VEVENT");
+
+  x.push("END:VCALENDAR");
+
+  const text = x.join("\n");
+  const file = new File([text], filename, { type: "text/calendar" });
+
+  const url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  URL.revokeObjectURL(url);
 }
