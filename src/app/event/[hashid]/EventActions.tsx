@@ -156,6 +156,7 @@ export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["ge
   const dtstart = event.date.toISOString().slice(0, 19).replaceAll("-", "").replaceAll(":", "");
   const p = event.location ? latLngLiteralFromPoint(event.location) : undefined;
   const geo = p ? `${p.lat.toFixed(6)};${p.lng.toFixed(6)}` : undefined;
+  const location = p ? `${p.lat.toFixed(6)},${p.lng.toFixed(6)}` : undefined; //google calendar doesnt use "GEO", but lat,lng (with comma between) works in "LOCATION" text field
   const eventurl = absUrl(`/event/${hashid}`);
 
   const endDate = new Date(event.date.getTime() + 1000 * 60 * 60 * 2); //dont have endDate on events yet... go 2 hours for now
@@ -173,12 +174,12 @@ export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["ge
   x.push(`DTSTART:${dtstart}Z`);
   x.push(`DTEND:${dtend}Z`);
   //x.push(`URL:${eventurl}`);
-  x.push(`DESCRIPTION:Howl by ${event.creatorName}: ${eventurl}`);
+  x.push(`DESCRIPTION:${eventurl} - Howl by ${event.creatorName}`);
   if (geo) {
     x.push(`GEO:${geo}`);
   }
-  if (event.locationName) {
-    x.push(`LOCATION:${event.locationName}`);
+  if (location) {
+    x.push(`LOCATION:${location}`);
   }
 
   x.push("END:VEVENT");
