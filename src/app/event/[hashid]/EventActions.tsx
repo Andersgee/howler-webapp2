@@ -172,14 +172,16 @@ export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["ge
   x.push(`DTSTAMP:${dtstamp}Z`);
   x.push(`DTSTART:${dtstart}Z`);
   x.push(`DTEND:${dtend}Z`);
-  x.push(`URL:${eventurl}`);
+  //x.push(`URL:${eventurl}`);
+  x.push(`DESCRIPTION:Howl by ${event.creatorName}: ${eventurl}`);
   if (geo) {
     x.push(`GEO:${geo}`);
   }
-  x.push(`LOCATION:${event.locationName ?? "anywhere"}`);
+  if (event.locationName) {
+    x.push(`LOCATION:${event.locationName}`);
+  }
 
   x.push("END:VEVENT");
-
   x.push("END:VCALENDAR");
 
   const text = x.join("\n");
