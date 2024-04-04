@@ -19,6 +19,9 @@ const userInfo = {
 async function main() {
   const db = dbfetch();
 
+  const hmm = await db.selectFrom("User").selectAll().execute();
+  console.log(hmm);
+
   //const r = await db.selectFrom("Event").selectAll().execute();
   //const r = await db.deleteFrom("Notification").execute();
 
@@ -44,8 +47,8 @@ async function main() {
   console.log("encoded:", encodeURIComponent(q));
   */
 
-  const r = await db.deleteFrom("Notification").execute();
-  console.log(r);
+  //const r = await db.deleteFrom("Notification").execute();
+  //console.log(r);
   return 1;
 }
 

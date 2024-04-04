@@ -57,21 +57,24 @@ export default async function Page({ params }: Props) {
       <RichResults event={event} />
       <Shell>
         {event.image ? (
-          <Image
-            priority
-            src={event.image}
-            alt={event.title}
-            sizes={imageSizes("w-64", { md: "w-96" })}
-            className="mb-8 h-auto w-64 md:w-96"
-            //width and height only for aspect ratio purpose
-            width={256}
-            height={Math.round(256 / event.imageAspect)}
-            //placeholder={event.imageBlurData ? "blur" : undefined}
-            //blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
-          />
+          <div className="flex justify-center">
+            <Image
+              priority
+              src={event.image}
+              alt={event.title}
+              sizes={imageSizes("w-64", { md: "w-96" })}
+              className="mb-8 h-auto w-64 md:w-96"
+              //width and height only for aspect ratio purpose
+              width={256}
+              height={Math.round(256 / event.imageAspect)}
+              //placeholder={event.imageBlurData ? "blur" : undefined}
+              //blurDataURL={event.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
+            />
+          </div>
         ) : (
           <div className="py-4"></div>
         )}
+
         <Eventinfo event={event} />
         <EventActions
           event={event}
