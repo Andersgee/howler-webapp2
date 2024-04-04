@@ -24,7 +24,9 @@ export default async function Page({ params }: Props) {
   return (
     <Shell>
       <h1>Edit Event</h1>
-      <EventImage event={event} />
+      <div className="flex justify-center">
+        <EventImage event={event} />
+      </div>
       <UpdateEventForm initialEvent={event} />
     </Shell>
   );
