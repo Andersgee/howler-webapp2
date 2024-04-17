@@ -16,6 +16,20 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { IconBellWithNumber } from "#src/icons/BellWithNumber";
 
+/*
+const TEST_NOTIFICATIONS: {
+  id: bigint;
+  title: string;
+  body: string;
+  relativeLink: string;
+}[] = Array.from({ length: 30 }).map((_, i) => ({
+  id: BigInt(i),
+  title: i.toString().repeat(7),
+  body: i.toString().repeat(23),
+  relativeLink: "/",
+}));
+*/
+
 export function NotificationsButton({ user: _user }: { user: TokenUser }) {
   //const user = useStore.use.user();
   const dialogValue = useStore.use.dialogValue();
@@ -104,7 +118,7 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
         <IconBellWithNumber number={unreadNumber} />
       </PopoverTrigger>
       <PopoverContent>
-        <div className="">
+        <div className="h-[70vh] overflow-y-scroll">
           <div className="flex items-center justify-between p-4">
             <div>Notifications</div>
             <Link
@@ -116,6 +130,7 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
             </Link>
           </div>
           <hr />
+
           {data?.pages
             .map((page) => page.items)
             .flat()
