@@ -117,8 +117,8 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       >
         <IconBellWithNumber number={unreadNumber} />
       </PopoverTrigger>
-      <PopoverContent>
-        <div className="h-[70vh] overflow-y-scroll">
+      <PopoverContent className="">
+        <div className="">
           <div className="flex items-center justify-between p-4">
             <div>Notifications</div>
             <Link
@@ -131,10 +131,9 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
           </div>
           <hr />
 
-          {data?.pages
-            .map((page) => page.items)
-            .flat()
-            .map((notification) => (
+          <div className="max-h-popper-available-minus-a-bit overflow-y-auto">
+            {/*
+            {TEST_NOTIFICATIONS.map((notification) => (
               <Link
                 key={notification.id}
                 onClick={() => dialogDispatch({ type: "hide", name: "notifications" })}
@@ -149,6 +148,27 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
                 <hr />
               </Link>
             ))}
+            */}
+
+            {data?.pages
+              .map((page) => page.items)
+              .flat()
+              .map((notification) => (
+                <Link
+                  key={notification.id}
+                  onClick={() => dialogDispatch({ type: "hide", name: "notifications" })}
+                  prefetch={false}
+                  className="block p-2 hover:bg-color-neutral-200"
+                  href={notification.relativeLink}
+                >
+                  <div>
+                    <div>{notification.title}</div>
+                    <p>{notification.body}</p>
+                  </div>
+                  <hr />
+                </Link>
+              ))}
+          </div>
 
           <IntersectionObserverDiv onVisible={onLastItemInView} />
           <div className="flex justify-center p-2">
