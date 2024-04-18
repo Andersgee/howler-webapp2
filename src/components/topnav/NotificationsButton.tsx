@@ -168,19 +168,19 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
                   <hr />
                 </Link>
               ))}
-          </div>
 
-          <IntersectionObserverDiv onVisible={onLastItemInView} />
-          <div className="flex justify-center p-2">
-            {hasNextPage ? (
-              isFetchingNextPage ? (
-                <IconLoadingSpinner />
+            <IntersectionObserverDiv onVisible={onLastItemInView} />
+            <div className="flex justify-center p-2">
+              {hasNextPage ? (
+                isFetchingNextPage ? (
+                  <IconLoadingSpinner />
+                ) : (
+                  <div>more...</div>
+                )
               ) : (
-                <div>more...</div>
-              )
-            ) : (
-              <div>{data && data.pages.length > 1 ? "you have reached the end" : ""}</div>
-            )}
+                <div>{data && data.pages.length > 1 ? "you have reached the end" : ""}</div>
+              )}
+            </div>
           </div>
         </div>
       </PopoverContent>
