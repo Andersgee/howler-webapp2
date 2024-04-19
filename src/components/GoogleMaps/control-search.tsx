@@ -22,20 +22,23 @@ export function ControlSearch() {
   return createPortal(<Content />, googleMaps.controls_element_search);
 }
 
-const MS_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
+//const MS_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
+const MS_ONE_YEAR = 1000 * 60 * 60 * 24 * 365;
 
 function Content() {
   const googleMaps = useStore.use.googleMaps();
   const [titleOrLocationName, setTitleOrLocationName] = useState("");
-  const [advancedSearch, setAdvancedSearch] = useState(false);
+  const [showSearchFilters, setShowSearchFilters] = useState(true);
   const [minDate, setMinDate] = useState<Date>(new Date());
-  const [maxDate, setMaxDate] = useState<Date>(new Date(Date.now() + MS_ONE_WEEK));
+  const [maxDate, setMaxDate] = useState<Date>(new Date(Date.now() + MS_ONE_YEAR));
 
   const { data } = api.event.explore.useQuery(
     {
       titleOrLocationName: titleOrLocationName.trim(),
-      minDate: advancedSearch ? minDate : undefined,
-      maxDate: advancedSearch ? maxDate : undefined,
+      //minDate: showSearchFilters ? minDate : undefined,
+      //maxDate: showSearchFilters ? maxDate : undefined,
+      minDate: minDate,
+      maxDate: maxDate,
     },
     {
       staleTime: 10000, //just for testing
@@ -54,7 +57,7 @@ function Content() {
   }, [data, googleMaps]);
 
   return (
-    <Collapsible open={advancedSearch} onOpenChange={setAdvancedSearch} className="m-2">
+    <Collapsible open={showSearchFilters} onOpenChange={setShowSearchFilters} className="m-2">
       <InputSearch
         suggestions={data?.withSearch ? data.events.map(suggestionFromEvent) : []}
         value={titleOrLocationName}
