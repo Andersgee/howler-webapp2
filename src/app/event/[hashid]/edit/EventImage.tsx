@@ -73,6 +73,7 @@ export function EventImage({ event, className }: Props) {
 
       {img.image ? (
         <Image
+          priority
           src={img.image}
           alt={event.title}
           sizes={imageSizes("w-64", { md: "w-96" })}

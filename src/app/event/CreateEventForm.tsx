@@ -202,7 +202,7 @@ export function CreateEventForm({ isSignedIn }: Props) {
               <Button variant="positive" onClick={() => dialogDispatch({ type: "show", name: "profilebutton" })}>
                 Create
               </Button>
-              <p className="text-color-neutral-700">must sign in to create events</p>
+              <p className="text-color-neutral-600">sign in to create events</p>
             </>
           )}
         </div>
