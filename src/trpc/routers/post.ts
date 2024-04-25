@@ -109,7 +109,7 @@ export const postRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      await sleep(1000);
+      //await sleep(1000);
       const limit = 5;
 
       let query = dbfetch()
