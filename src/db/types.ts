@@ -3,16 +3,17 @@ import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
-  Post: Post;
+  CloudMessageAccessToken: CloudMessageAccessToken;
   UserUserPivot: UserUserPivot;
   UserNotificationPivot: UserNotificationPivot;
   UserEventPivot: UserEventPivot;
   User: User;
+  Post: Post;
   Notification: Notification;
   FcmToken: FcmToken;
-  CloudMessageAccessToken: CloudMessageAccessToken;
   Event: Event;
   DeletedEventImages: DeletedEventImages;
+  Comment: Comment;
 };
 
 export type CloudMessageAccessToken = {
@@ -22,6 +23,17 @@ export type CloudMessageAccessToken = {
   token: string;
   /** dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   expires: Date;
+};
+
+export type Comment = {
+  /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  id: Generated<bigint>;
+  /** indexed: (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  userId: bigint;
+  /** indexed: (eventId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  eventId: bigint;
+  /** dbtype: 'varchar(280)', eg string with max 280 chars */
+  text: string;
 };
 
 export type DeletedEventImages = {

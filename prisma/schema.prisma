@@ -37,6 +37,7 @@ model Event {
 
     Event_creatorId_fkey        User             @relation("Event_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
     UserEventPivot_eventId_fkey UserEventPivot[] @relation("UserEventPivot_eventId_fkey")
+    Comment_eventId_fkey        Comment[]        @relation("Comment_eventId_fkey")
 
     @@id([id])
     @@index([creatorId])
@@ -98,6 +99,7 @@ model User {
     UserUserPivot_followerId_fkey     UserUserPivot[]         @relation("UserUserPivot_followerId_fkey")
     UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")
     UserEventPivot_userId_fkey        UserEventPivot[]        @relation("UserEventPivot_userId_fkey")
+    Comment_userId_fkey               Comment[]               @relation("Comment_userId_fkey")
 
     @@id([id])
     @@unique([email])
@@ -159,4 +161,16 @@ model UserUserPivot {
 enum User_role_enum {
     USER
     ADMIN
+}
+
+model Comment {
+    id      BigInt @default(autoincrement()) @db.UnsignedBigInt
+    userId  BigInt @db.UnsignedBigInt
+    eventId BigInt @db.UnsignedBigInt
+    text    String @db.VarChar(280) //twitter uses 280 so I guess thats an ok len
+
+    Comment_userId_fkey  User  @relation("Comment_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+    Comment_eventId_fkey Event @relation("Comment_eventId_fkey", fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+    @@id([id])
 }
