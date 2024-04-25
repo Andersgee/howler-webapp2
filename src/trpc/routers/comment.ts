@@ -28,7 +28,7 @@ export const commentRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      await sleep(1000);
+      //await sleep(1000);
       const limit = 10;
 
       let query = dbfetch()
