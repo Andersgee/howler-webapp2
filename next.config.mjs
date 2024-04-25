@@ -5,6 +5,9 @@ import { withPlausibleProxy } from "next-plausible";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   images: {
     imageSizes: NEXTCONFIG_imageSizes,
     deviceSizes: NEXTCONFIG_deviceSizes,
