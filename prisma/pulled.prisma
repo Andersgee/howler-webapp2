@@ -17,6 +17,22 @@ model CloudMessageAccessToken {
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
 }
 
+model Comment {
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  userId BigInt @db.UnsignedBigInt
+  eventId BigInt @db.UnsignedBigInt
+  text String @db.VarChar(280)
+
+  @@id([id])
+  @@index([userId])
+  @@index([eventId])
+
+  //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+
+  Comment_userId_fkey User @relation("Comment_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  Comment_eventId_fkey Event @relation("Comment_eventId_fkey", fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+}
+
 model DeletedEventImages {
   image String @db.VarChar(100)
 
@@ -45,6 +61,7 @@ model Event {
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
 
   Event_creatorId_fkey User @relation("Event_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  Comment_eventId_fkey Comment[] @relation("Comment_eventId_fkey")
   UserEventPivot_eventId_fkey UserEventPivot[] @relation("UserEventPivot_eventId_fkey")
 }
 
@@ -109,6 +126,7 @@ model User {
   @@unique([facebookdUserId])
 
   //any relation fields below here are for prisma syntax only (they dont do anything at db level)
+  Comment_userId_fkey Comment[] @relation("Comment_userId_fkey")
   Event_creatorId_fkey Event[] @relation("Event_creatorId_fkey")
   FcmToken_userId_fkey FcmToken[] @relation("FcmToken_userId_fkey")
   Post_userId_fkey Post[] @relation("Post_userId_fkey")

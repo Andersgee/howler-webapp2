@@ -154,11 +154,13 @@ export const schema_insert_Comment = z.object({
   userId: z.bigint(),
   eventId: z.bigint(),
   text: z.string(),
+  createdAt: z.date().optional(),
 });
 export const schema_update_Comment = z.object({
   id: z.bigint().optional(),
   userId: z.bigint().optional(),
   eventId: z.bigint().optional(),
   text: z.string().optional(),
+  createdAt: z.date().optional(),
 });
 

@@ -34,6 +34,8 @@ export type Comment = {
   eventId: bigint;
   /** dbtype: 'varchar(280)', eg string with max 280 chars */
   text: string;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
 };
 
 export type DeletedEventImages = {
