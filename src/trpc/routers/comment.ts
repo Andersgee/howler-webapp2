@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { sleep } from "#src/utils/sleep";
 
 export const commentRouter = createTRPCRouter({
   create: protectedProcedure
@@ -27,7 +28,7 @@ export const commentRouter = createTRPCRouter({
       })
     )
     .query(async ({ input, ctx }) => {
-      //await sleep(1000);
+      await sleep(1000);
       const limit = 10;
 
       let query = dbfetch()
