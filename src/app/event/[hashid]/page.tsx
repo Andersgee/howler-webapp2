@@ -12,6 +12,8 @@ import { type ResolvingMetadata } from "next";
 import { RichResults } from "./RichResults";
 import Link from "next/link";
 import { Shell } from "#src/components/Shell";
+import { CreateCommentForm } from "./CreateCommentForm";
+import { CommentsList } from "./CommentsList";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -92,6 +94,9 @@ export default async function Page({ params }: Props) {
             {event.creatorName}
           </Link>
         </div>
+        <h2>Comments</h2>
+        <CreateCommentForm eventId={event.id} />
+        <CommentsList eventId={event.id} />
       </Shell>
     </>
   );
