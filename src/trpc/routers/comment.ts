@@ -12,14 +12,22 @@ export const commentRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const db = dbfetch();
-      const insertResult = await db
+      const insertResult = await dbfetch()
         .insertInto("Comment")
         .values({ ...input, userId: ctx.user.id })
         .executeTakeFirstOrThrow();
 
       return insertResult;
     }),
+  delete: protectedProcedure.input(z.object({ commentId: z.bigint() })).mutation(async ({ input, ctx }) => {
+    const deleteResult = await dbfetch()
+      .deleteFrom("Comment")
+      .where("id", "=", input.commentId)
+      .where("userId", "=", ctx.user.id)
+      .executeTakeFirstOrThrow();
+
+    return deleteResult;
+  }),
   infinite: protectedProcedure
     .input(
       z.object({
@@ -40,15 +48,6 @@ export const commentRouter = createTRPCRouter({
         .orderBy("id desc")
         .limit(limit + 1); //one extra to know first item of next page
 
-      /*
-      let query = dbfetch()
-        .selectFrom("Notification")
-        .innerJoin("UserNotificationPivot", "UserNotificationPivot.notificationId", "Notification.id")
-        .select(["Notification.id", "Notification.title", "Notification.body", "Notification.relativeLink"])
-        .where("UserNotificationPivot.userId", "=", ctx.user.id)
-        .orderBy("Notification.id desc")
-        .limit(limit + 1); //one extra to know first item of next page
-      */
       if (input.cursor !== undefined) {
         query = query.where("Comment.id", "<=", input.cursor);
       }

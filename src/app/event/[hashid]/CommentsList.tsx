@@ -1,6 +1,7 @@
 "use client";
 
-import { api } from "#src/hooks/api";
+import { UserImage32x32 } from "#src/components/user/UserImage";
+import { type RouterOutputs, api } from "#src/hooks/api";
 import { useIntersectionObserverCallback } from "#src/hooks/useIntersectionObserverCallback";
 import { IconLoadingSpinner } from "#src/icons/special";
 import { cn } from "#src/utils/cn";
@@ -40,15 +41,7 @@ export function CommentsList({ className, eventId }: Props) {
       {data?.pages
         .map((page) => page.items)
         .flat()
-        .map((comment) => (
-          <div key={comment.id}>
-            <div className="">
-              <div>{comment.userName}</div>
-              <pre className="max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-800">{comment.text}</pre>
-            </div>
-            <hr />
-          </div>
-        ))}
+        .map((comment) => <Comment key={comment.id} comment={comment} />)}
       <div ref={ref} className="min-h-[1px] min-w-[1px]"></div>
       <div className="flex justify-center p-2">
         {hasNextPage ? (
@@ -60,6 +53,18 @@ export function CommentsList({ className, eventId }: Props) {
         ) : (
           <div>{data && data.pages.length > 1 ? "you have reached the end" : ""}</div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function Comment({ comment }: { comment: RouterOutputs["comment"]["infinite"]["items"][number] }) {
+  return (
+    <div className="flex">
+      <UserImage32x32 image={comment.userImage} alt={comment.userName} />
+      <div>
+        <div>{comment.userName}</div>
+        <pre className="max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-800">{comment.text}</pre>
       </div>
     </div>
   );

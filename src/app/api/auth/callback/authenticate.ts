@@ -22,13 +22,20 @@ export async function createOrUpdateUser(info: Info) {
   let tokenUser: TokenUser | undefined = undefined;
 
   if (existingUser) {
-    if (!existingUser.googleUserSub) {
-      await db
-        .updateTable("User")
-        .set({ googleUserSub: info.googleUserSub })
-        .where("id", "=", existingUser.id)
-        .execute();
-    }
+    //actually, update info even if already existing... they might have changed profile pic (on facebook or whatever)
+    await db
+      .updateTable("User")
+      .set({
+        //email: info.email,
+        name: info.name,
+        image: info.image,
+        googleUserSub: info.googleUserSub,
+        discordUserId: info.discordUserId,
+        facebookdUserId: info.facebookdUserId,
+        githubUserId: info.githubUserId,
+      })
+      .where("id", "=", existingUser.id)
+      .execute();
 
     tokenUser = {
       id: existingUser.id,

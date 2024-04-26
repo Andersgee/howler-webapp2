@@ -169,6 +169,7 @@ model Comment {
     eventId   BigInt   @db.UnsignedBigInt
     text      String   @db.VarChar(280) //twitter uses 280 so I guess thats an ok len
     createdAt DateTime @default(now()) @db.DateTime(3)
+    //pinned Boolean
 
     Comment_userId_fkey  User  @relation("Comment_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
     Comment_eventId_fkey Event @relation("Comment_eventId_fkey", fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
