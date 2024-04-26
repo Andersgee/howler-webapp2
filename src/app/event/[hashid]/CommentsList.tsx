@@ -73,7 +73,7 @@ function Comment({ comment }: { comment: RouterOutputs["comment"]["infinite"]["i
           <h3 className="text-base text-color-neutral-800">{comment.userName}</h3>
           <span className="ml-2 text-sm text-color-neutral-600">{PrettyDate({ date: comment.createdAt })}</span>
         </div>
-        <pre className="max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">
+        <p className="max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">
           {separateTextUrls(comment.text).map((x, i) => {
             if (x.type === "url") {
               if (x.str.startsWith(process.env.NEXT_PUBLIC_ABSURL)) {
@@ -91,7 +91,7 @@ function Comment({ comment }: { comment: RouterOutputs["comment"]["infinite"]["i
               return <span key={i}>{x.str}</span>;
             }
           })}
-        </pre>
+        </p>
       </div>
     </div>
   );
