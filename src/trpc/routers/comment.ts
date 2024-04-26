@@ -2,6 +2,8 @@ import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { sleep } from "#src/utils/sleep";
+import { notify } from "#src/lib/cloud-messaging-light/notify";
+import { hashidFromId } from "#src/utils/hashid";
 
 export const commentRouter = createTRPCRouter({
   create: protectedProcedure
@@ -12,10 +14,28 @@ export const commentRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      const insertResult = await dbfetch()
+      const db = dbfetch();
+      const insertResult = await db
         .insertInto("Comment")
         .values({ ...input, userId: ctx.user.id })
         .executeTakeFirstOrThrow();
+
+      try {
+        const event = await db
+          .selectFrom("Event")
+          .select("creatorId")
+          .where("id", "=", input.eventId)
+          .executeTakeFirstOrThrow();
+        const notifyUserIds = [event.creatorId];
+        await notify(notifyUserIds, {
+          title: `${ctx.user.name} commented on your howl!`,
+          body: input.text.length > 20 ? `${input.text.slice(0, 18)}...` : input.text,
+          relativeLink: `/event/${hashidFromId(input.eventId)}`,
+          icon: ctx.user.image,
+        });
+      } catch (err) {
+        console.log(err);
+      }
 
       return insertResult;
     }),
