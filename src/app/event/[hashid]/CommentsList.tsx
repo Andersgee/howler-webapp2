@@ -7,6 +7,7 @@ import { useIntersectionObserverCallback } from "#src/hooks/useIntersectionObser
 import { IconLoadingSpinner } from "#src/icons/special";
 import { cn } from "#src/utils/cn";
 import { hashidFromId } from "#src/utils/hashid";
+import { separateTextUrls } from "#src/utils/separate-text-urls";
 import Link from "next/link";
 
 type Props = {
@@ -72,7 +73,25 @@ function Comment({ comment }: { comment: RouterOutputs["comment"]["infinite"]["i
           <h3 className="text-base text-color-neutral-800">{comment.userName}</h3>
           <span className="ml-2 text-sm text-color-neutral-600">{PrettyDate({ date: comment.createdAt })}</span>
         </div>
-        <pre className="max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">{comment.text}</pre>
+        <pre className="max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">
+          {separateTextUrls(comment.text).map((x, i) => {
+            if (x.type === "url") {
+              if (x.str.startsWith(process.env.NEXT_PUBLIC_ABSURL)) {
+                <Link key={i} prefetch={false} href={x.str.split(process.env.NEXT_PUBLIC_ABSURL)[1] ?? "/"}>
+                  {x.str}
+                </Link>;
+              } else {
+                return (
+                  <a key={i} href={x.str}>
+                    {x.str}
+                  </a>
+                );
+              }
+            } else {
+              return <span key={i}>{x.str}</span>;
+            }
+          })}
+        </pre>
       </div>
     </div>
   );
