@@ -31,10 +31,12 @@ export function CreateCommentForm({ className, eventId }: Props) {
   });
 
   const { toast } = useToast();
+  const utils = api.useUtils();
   const commentCreate = api.comment.create.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
       form.reset();
       //router.push(`/event/${hashid}`);
+      await utils.comment.infinite.invalidate();
     },
     onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Could not add comment", description: "Try again" });
