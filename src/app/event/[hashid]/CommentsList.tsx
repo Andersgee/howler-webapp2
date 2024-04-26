@@ -40,7 +40,7 @@ export function CommentsList({ className, eventId }: Props) {
   );
 
   return (
-    <div className={cn("", className)}>
+    <div className={cn("max-w-[384px]", className)}>
       {data?.pages
         .map((page) => page.items)
         .flat()

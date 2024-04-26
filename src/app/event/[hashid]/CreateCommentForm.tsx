@@ -71,9 +71,11 @@ export function CreateCommentForm({ className, eventId }: Props) {
             </FormItem>
           )}
         />
-        <Button variant="primary" type="submit" disabled={commentCreate.isPending}>
-          Post
-        </Button>
+        <div className="flex justify-end">
+          <Button variant="primary" type="submit" disabled={commentCreate.isPending}>
+            Post
+          </Button>
+        </div>
       </form>
     </Form>
   );
