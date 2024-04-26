@@ -1,10 +1,13 @@
 "use client";
 
+import { PrettyDate } from "#src/components/PrettyDate";
 import { UserImage32x32 } from "#src/components/user/UserImage";
 import { type RouterOutputs, api } from "#src/hooks/api";
 import { useIntersectionObserverCallback } from "#src/hooks/useIntersectionObserverCallback";
 import { IconLoadingSpinner } from "#src/icons/special";
 import { cn } from "#src/utils/cn";
+import { hashidFromId } from "#src/utils/hashid";
+import Link from "next/link";
 
 type Props = {
   eventId: bigint;
@@ -60,11 +63,16 @@ export function CommentsList({ className, eventId }: Props) {
 
 function Comment({ comment }: { comment: RouterOutputs["comment"]["infinite"]["items"][number] }) {
   return (
-    <div className="flex">
-      <UserImage32x32 image={comment.userImage} alt={comment.userName} />
+    <div className="flex gap-2 py-3">
+      <Link prefetch={false} className="block" href={`/profile/${hashidFromId(comment.userId)}`}>
+        <UserImage32x32 image={comment.userImage} alt={comment.userName} />
+      </Link>
       <div>
-        <div>{comment.userName}</div>
-        <pre className="max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-800">{comment.text}</pre>
+        <div className="flex items-baseline">
+          <h3 className="text-base text-color-neutral-800">{comment.userName}</h3>
+          <span className="ml-2 text-sm text-color-neutral-600">{PrettyDate({ date: comment.createdAt })}</span>
+        </div>
+        <pre className="max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">{comment.text}</pre>
       </div>
     </div>
   );
