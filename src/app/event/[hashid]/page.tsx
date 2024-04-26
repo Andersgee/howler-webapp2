@@ -85,7 +85,7 @@ export default async function Page({ params }: Props) {
           isJoined={isJoined}
           isFollowing={isFollowing}
         />
-        <div className="text-balance py-4 text-center text-color-neutral-600">
+        <div className="text-balance pb-2 text-center text-color-neutral-600">
           Event created by{" "}
           <Link
             href={`/profile/${hashidFromId(event.creatorId)}`}
@@ -94,7 +94,7 @@ export default async function Page({ params }: Props) {
             {event.creatorName}
           </Link>
         </div>
-        <h2>Comments</h2>
+        <div className="py-6"></div>
         <CreateCommentForm eventId={event.id} />
         <CommentsList eventId={event.id} />
       </Shell>

@@ -58,7 +58,7 @@ export function CreateCommentForm({ className, eventId }: Props) {
                 <FormControl>
                   <TextArea
                     rows={2}
-                    placeholder="your comment"
+                    placeholder="Your comment..."
                     autoCapitalize="none"
                     autoComplete="off"
                     autoCorrect="off"
