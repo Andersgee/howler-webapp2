@@ -29,7 +29,7 @@ export const commentRouter = createTRPCRouter({
         const notifyUserIds = [event.creatorId];
         await notify(notifyUserIds, {
           title: `${ctx.user.name} commented on your howl!`,
-          body: input.text.length > 20 ? `${input.text.slice(0, 18)}...` : input.text,
+          body: input.text.length > 20 ? `${input.text.trim().slice(0, 18)}...` : input.text.trim(),
           relativeLink: `/event/${hashidFromId(input.eventId)}`,
           icon: ctx.user.image,
         });
