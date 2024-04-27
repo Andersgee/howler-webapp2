@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { dbfetch } from "#src/db";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { sleep } from "#src/utils/sleep";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
 import { hashidFromId } from "#src/utils/hashid";
@@ -48,7 +48,7 @@ export const commentRouter = createTRPCRouter({
 
     return deleteResult;
   }),
-  infinite: protectedProcedure
+  infinite: publicProcedure
     .input(
       z.object({
         eventId: z.bigint(),

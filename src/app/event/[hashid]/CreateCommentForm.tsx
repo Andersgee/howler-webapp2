@@ -8,8 +8,10 @@ import { cn } from "#src/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "#src/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "#src/ui/form";
 import { Button } from "#src/ui/button";
+import { type TokenUser } from "#src/utils/jwt/schema";
+import { dialogDispatch } from "#src/store/slices/dialog";
 
 const zFormData = z.object({
   text: z.string().min(3, { message: "at least 3 characters" }).max(280, { message: "at most 280 characters" }),
@@ -19,10 +21,11 @@ type FormData = z.infer<typeof zFormData>;
 
 type Props = {
   className?: string;
+  user: TokenUser | null;
   eventId: bigint;
 };
 
-export function CreateCommentForm({ className, eventId }: Props) {
+export function CreateCommentForm({ className, user, eventId }: Props) {
   const form = useForm<FormData>({
     resolver: zodResolver(zFormData),
     defaultValues: {
@@ -49,7 +52,16 @@ export function CreateCommentForm({ className, eventId }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onValid)} className="space-y-2">
+      <form
+        onSubmit={() => {
+          if (user) {
+            form.handleSubmit(onValid);
+          } else {
+            dialogDispatch({ type: "show", name: "profilebutton" });
+          }
+        }}
+        className="space-y-2"
+      >
         <FormField
           control={form.control}
           name="text"

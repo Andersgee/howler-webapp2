@@ -95,7 +95,7 @@ export default async function Page({ params }: Props) {
           </Link>
         </div>
         <div className="py-6"></div>
-        <CreateCommentForm eventId={event.id} />
+        <CreateCommentForm user={user} eventId={event.id} />
         <CommentsList eventId={event.id} />
       </Shell>
     </>
