@@ -48,6 +48,18 @@ export const commentRouter = createTRPCRouter({
 
     return deleteResult;
   }),
+  update: protectedProcedure
+    .input(z.object({ commentId: z.bigint(), text: z.string().min(3).max(280) }))
+    .mutation(async ({ input, ctx }) => {
+      const updateResult = await dbfetch()
+        .updateTable("Comment")
+        .where("id", "=", input.commentId)
+        .where("userId", "=", ctx.user.id)
+        .set({ text: input.text })
+        .executeTakeFirstOrThrow();
+
+      return updateResult;
+    }),
   infinite: publicProcedure
     .input(
       z.object({

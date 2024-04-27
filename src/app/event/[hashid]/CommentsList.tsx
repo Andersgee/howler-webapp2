@@ -9,6 +9,7 @@ import { cn } from "#src/utils/cn";
 import { hashidFromId } from "#src/utils/hashid";
 import { separateTextUrls } from "#src/utils/separate-text-urls";
 import Link from "next/link";
+import { CommentOptionsDropdown } from "./CommentOptionsDropdown";
 
 type Props = {
   eventId: bigint;
@@ -68,11 +69,16 @@ function Comment({ comment }: { comment: RouterOutputs["comment"]["infinite"]["i
       <Link prefetch={false} className="block" href={`/profile/${hashidFromId(comment.userId)}`}>
         <UserImage32x32 image={comment.userImage} alt={comment.userName} />
       </Link>
+
       <div>
-        <div className="flex items-baseline">
-          <h3 className="text-base text-color-neutral-800">{comment.userName}</h3>
-          <span className="ml-2 text-sm text-color-neutral-600">{PrettyDate({ date: comment.createdAt })}</span>
+        <div className="flex items-center">
+          <div className="flex items-baseline">
+            <h3 className="text-base text-color-neutral-800">{comment.userName}</h3>
+            <span className="ml-2 text-sm text-color-neutral-600">{PrettyDate({ date: comment.createdAt })}</span>
+          </div>
+          <CommentOptionsDropdown comment={comment} />
         </div>
+
         <p className="my-0 max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">
           {separateTextUrls(comment.text).map((x, i) => {
             if (x.type === "url") {
