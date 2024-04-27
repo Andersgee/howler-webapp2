@@ -47,21 +47,16 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
   });
 
   const onValid = (data: FormData) => {
-    commentCreate.mutate({ ...data, eventId });
+    if (user) {
+      commentCreate.mutate({ ...data, eventId });
+    } else {
+      dialogDispatch({ type: "show", name: "profilebutton" });
+    }
   };
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={() => {
-          if (user) {
-            form.handleSubmit(onValid);
-          } else {
-            dialogDispatch({ type: "show", name: "profilebutton" });
-          }
-        }}
-        className="space-y-2"
-      >
+      <form onSubmit={form.handleSubmit(onValid)} className="space-y-2">
         <FormField
           control={form.control}
           name="text"
