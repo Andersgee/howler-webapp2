@@ -10,13 +10,15 @@ import { hashidFromId } from "#src/utils/hashid";
 import { separateTextUrls } from "#src/utils/separate-text-urls";
 import Link from "next/link";
 import { CommentOptionsDropdown } from "./CommentOptionsDropdown";
+import { type TokenUser } from "#src/utils/jwt/schema";
 
 type Props = {
+  user: TokenUser | null;
   eventId: bigint;
   className?: string;
 };
 
-export function CommentsList({ className, eventId }: Props) {
+export function CommentsList({ user, className, eventId }: Props) {
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = api.comment.infinite.useInfiniteQuery(
     { eventId },
     {
@@ -46,7 +48,7 @@ export function CommentsList({ className, eventId }: Props) {
       {data?.pages
         .map((page) => page.items)
         .flat()
-        .map((comment) => <Comment key={comment.id} comment={comment} />)}
+        .map((comment) => <Comment user={user} key={comment.id} comment={comment} />)}
       <div ref={ref} className="min-h-[1px] min-w-[1px]"></div>
       <div className="flex justify-center p-2">
         {hasNextPage ? (
@@ -63,7 +65,13 @@ export function CommentsList({ className, eventId }: Props) {
   );
 }
 
-function Comment({ comment }: { comment: RouterOutputs["comment"]["infinite"]["items"][number] }) {
+function Comment({
+  user,
+  comment,
+}: {
+  user: TokenUser | null;
+  comment: RouterOutputs["comment"]["infinite"]["items"][number];
+}) {
   return (
     <div className="flex gap-2 py-3">
       <Link prefetch={false} className="block" href={`/profile/${hashidFromId(comment.userId)}`}>
@@ -76,7 +84,7 @@ function Comment({ comment }: { comment: RouterOutputs["comment"]["infinite"]["i
             <h3 className="text-base text-color-neutral-800">{comment.userName}</h3>
             <span className="ml-2 text-sm text-color-neutral-600">{PrettyDate({ date: comment.createdAt })}</span>
           </div>
-          <CommentOptionsDropdown comment={comment} />
+          <CommentOptionsDropdown user={user} comment={comment} />
         </div>
 
         <p className="my-0 max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">

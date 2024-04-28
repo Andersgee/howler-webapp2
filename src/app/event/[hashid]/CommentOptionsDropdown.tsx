@@ -7,12 +7,14 @@ import { Button } from "#src/ui/button";
 import { ButtonWithConfirmDialog } from "#src/ui/button-with-confirm";
 
 import { Popover, PopoverContent, PopoverTrigger } from "#src/ui/popover";
+import { type TokenUser } from "#src/utils/jwt/schema";
 
 type Props = {
+  user: TokenUser | null;
   comment: RouterOutputs["comment"]["infinite"]["items"][number];
 };
 
-export function CommentOptionsDropdown({ comment }: Props) {
+export function CommentOptionsDropdown({ user, comment }: Props) {
   const utils = api.useUtils();
   const commentDelete = api.comment.delete.useMutation({
     onSuccess: () => utils.comment.infinite.invalidate({ eventId: comment.eventId }),
@@ -21,6 +23,10 @@ export function CommentOptionsDropdown({ comment }: Props) {
   //const commentUpdate = api.comment.update.useMutation({
   //  onSuccess: () => utils.comment.infinite.invalidate({ eventId: comment.eventId }),
   //});
+
+  if (comment.userId !== user?.id) {
+    return null;
+  }
 
   return (
     <Popover
