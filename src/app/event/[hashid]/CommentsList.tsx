@@ -83,7 +83,8 @@ function Comment({ comment }: { comment: RouterOutputs["comment"]["infinite"]["i
           {separateTextUrls(comment.text).map((x, i) => {
             if (x.type === "url") {
               if (x.str.startsWith(process.env.NEXT_PUBLIC_ABSURL)) {
-                <Link key={i} prefetch={false} href={x.str.split(process.env.NEXT_PUBLIC_ABSURL)[1] ?? "/"}>
+                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+                <Link key={i} prefetch={false} href={x.str.split(process.env.NEXT_PUBLIC_ABSURL)[1] || "/"}>
                   {x.str}
                 </Link>;
               } else {
