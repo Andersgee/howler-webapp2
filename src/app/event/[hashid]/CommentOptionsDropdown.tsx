@@ -34,17 +34,19 @@ export function CommentOptionsDropdown({ comment }: Props) {
         <IconMoreHorizontal />
       </PopoverTrigger>
       <PopoverContent>
+        {/*
         <Button variant="icon" className="">
           <IconPin /> Pin to top
         </Button>
         <Button variant="icon" className="">
           <IconEdit /> Edit
         </Button>
+        */}
         <ButtonWithConfirmDialog
           className=""
           variant="icon"
           title="Are you sure?"
-          description="Delete comment. This can not be undone."
+          description="Delete this comment. This can not be undone."
           disabled={commentDelete.isPending}
           actionLabel="Delete"
           actionVariant="danger"
