@@ -88,22 +88,22 @@ function Comment({
         </div>
 
         <p className="my-0 max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">
-          {separateTextUrls(comment.text).map((x, i) => {
+          {separateTextUrls(comment.text).map((x) => {
             if (x.type === "url") {
               if (x.str.startsWith(process.env.NEXT_PUBLIC_ABSURL)) {
                 // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-                <Link key={i} prefetch={false} href={x.str.split(process.env.NEXT_PUBLIC_ABSURL)[1] || "/"}>
+                <Link key={comment.id} prefetch={false} href={x.str.split(process.env.NEXT_PUBLIC_ABSURL)[1] || "/"}>
                   {x.str}
                 </Link>;
               } else {
                 return (
-                  <a key={i} href={x.str}>
+                  <a key={comment.id} href={x.str}>
                     {x.str}
                   </a>
                 );
               }
             } else {
-              return <span key={i}>{x.str}</span>;
+              return <span key={comment.id}>{x.str}</span>;
             }
           })}
         </p>
