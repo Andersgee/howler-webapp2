@@ -43,7 +43,7 @@ export const commentRouter = createTRPCRouter({
           .select("creatorId")
           .where("id", "=", input.eventId)
           .executeTakeFirstOrThrow();
-        const notifyUserIds = [event.creatorId];
+        const notifyUserIds = [event.creatorId].filter((id) => id !== ctx.user.id);
         await notify(notifyUserIds, {
           title: `${ctx.user.name} commented on your howl!`,
           body: input.text.length > 20 ? `${input.text.trim().slice(0, 18)}...` : input.text.trim(),
