@@ -11,6 +11,8 @@ import { separateTextUrls } from "#src/utils/separate-text-urls";
 import Link from "next/link";
 import { CommentOptionsDropdown } from "./CommentOptionsDropdown";
 import { type TokenUser } from "#src/utils/jwt/schema";
+import { useState } from "react";
+import { EditCommentForm } from "./EditCommentForm";
 
 type Props = {
   user: TokenUser | null;
@@ -72,42 +74,51 @@ function Comment({
   user: TokenUser | null;
   comment: RouterOutputs["comment"]["infinite"]["items"][number];
 }) {
+  const [isEditing, setIsEditing] = useState(false);
   return (
     <div className="flex gap-2 py-3">
       <Link prefetch={false} className="block" href={`/profile/${hashidFromId(comment.userId)}`}>
         <UserImage32x32 image={comment.userImage} alt={comment.userName} />
       </Link>
-
       <div>
         <div className="flex items-center">
           <div className="flex items-baseline">
             <h3 className="text-base text-color-neutral-800">{comment.userName}</h3>
             <span className="ml-2 text-sm text-color-neutral-600">{PrettyDate({ date: comment.createdAt })}</span>
           </div>
-          <CommentOptionsDropdown user={user} comment={comment} />
+          <CommentOptionsDropdown user={user} comment={comment} onEditClick={() => setIsEditing(true)} />
         </div>
-
-        <p className="my-0 max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">
-          {separateTextUrls(comment.text).map((x) => {
-            if (x.type === "url") {
-              if (x.str.startsWith(process.env.NEXT_PUBLIC_ABSURL)) {
-                // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-                <Link key={comment.id} prefetch={false} href={x.str.split(process.env.NEXT_PUBLIC_ABSURL)[1] || "/"}>
-                  {x.str}
-                </Link>;
-              } else {
-                return (
-                  <a key={comment.id} href={x.str}>
-                    {x.str}
-                  </a>
-                );
-              }
-            } else {
-              return <span key={comment.id}>{x.str}</span>;
-            }
-          })}
-        </p>
+        {isEditing ? (
+          <EditCommentForm user={user} comment={comment} onStopEditing={() => setIsEditing(false)} />
+        ) : (
+          <CommentText comment={comment} />
+        )}
       </div>
     </div>
+  );
+}
+
+function CommentText({ comment }: { comment: RouterOutputs["comment"]["infinite"]["items"][number] }) {
+  return (
+    <p className="my-0 max-w-[55ch] whitespace-pre-wrap font-sans text-color-neutral-700">
+      {separateTextUrls(comment.text).map((x) => {
+        if (x.type === "url") {
+          if (x.str.startsWith(process.env.NEXT_PUBLIC_ABSURL)) {
+            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+            <Link key={comment.id} prefetch={false} href={x.str.split(process.env.NEXT_PUBLIC_ABSURL)[1] || "/"}>
+              {x.str}
+            </Link>;
+          } else {
+            return (
+              <a key={comment.id} href={x.str}>
+                {x.str}
+              </a>
+            );
+          }
+        } else {
+          return <span key={comment.id}>{x.str}</span>;
+        }
+      })}
+    </p>
   );
 }

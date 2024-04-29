@@ -1,6 +1,4 @@
-"use client";
-
-import { api } from "#src/hooks/api";
+import { type RouterOutputs, api } from "#src/hooks/api";
 //import { Input } from "#src/ui/input";
 import { TextArea } from "#src/ui/textarea";
 import { useToast } from "#src/ui/use-toast";
@@ -22,15 +20,15 @@ type FormData = z.infer<typeof zFormData>;
 type Props = {
   className?: string;
   user: TokenUser | null;
-  commentId: bigint;
-  initialText: string;
+  comment: RouterOutputs["comment"]["infinite"]["items"][number];
+  onStopEditing: () => void;
 };
 
-export function EditCommentForm({ className, user, commentId, initialText }: Props) {
+export function EditCommentForm({ className, onStopEditing, user, comment }: Props) {
   const form = useForm<FormData>({
     resolver: zodResolver(zFormData),
     defaultValues: {
-      text: initialText,
+      text: comment.text,
     },
   });
 
@@ -40,7 +38,8 @@ export function EditCommentForm({ className, user, commentId, initialText }: Pro
     onSuccess: async () => {
       form.reset();
       //router.push(`/event/${hashid}`);
-      await utils.comment.infinite.invalidate();
+      await utils.comment.infinite.invalidate({ eventId: comment.eventId });
+      onStopEditing();
     },
     onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Could not edit comment", description: "Try again" });
@@ -49,7 +48,7 @@ export function EditCommentForm({ className, user, commentId, initialText }: Pro
 
   const onValid = (data: FormData) => {
     if (user) {
-      commentUpdate.mutate({ ...data, commentId });
+      commentUpdate.mutate({ ...data, commentId: comment.id });
     } else {
       dialogDispatch({ type: "show", name: "profilebutton" });
     }
@@ -63,30 +62,39 @@ export function EditCommentForm({ className, user, commentId, initialText }: Pro
           name="text"
           render={({ field }) => (
             <FormItem>
-              <div className="flex items-center gap-2">
-                {/*<FormLabel className="">Comment</FormLabel>*/}
-                <FormControl>
-                  <TextArea
-                    rows={2}
-                    placeholder="Your comment..."
-                    autoCapitalize="none"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    {...field}
-                  />
-                </FormControl>
-              </div>
-              <FormMessage className="ml-8" />
+              {/*<FormLabel className="">Comment</FormLabel>*/}
+              <FormControl>
+                <TextArea
+                  className="resize-y"
+                  rows={initialRows(comment.text)}
+                  //placeholder="Your comment..."
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck="false"
+                  {...field}
+                />
+              </FormControl>
               {/*<FormDescription>some string.</FormDescription>*/}
+              <FormMessage className="ml-8" />
             </FormItem>
           )}
         />
         <div className="flex justify-end">
+          <Button variant="outline" onClick={onStopEditing}>
+            Cancel
+          </Button>
           <Button variant="primary" type="submit" disabled={commentUpdate.isPending}>
-            Post
+            Save
           </Button>
         </div>
       </form>
     </Form>
   );
+}
+
+function initialRows(text: string) {
+  //some default textarea row height
+  const newlines = text.match(/\n/g)?.length ?? 0;
+  return 1 + Math.ceil(text.length / 55) + newlines;
 }

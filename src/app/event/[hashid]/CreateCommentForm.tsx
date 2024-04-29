@@ -62,21 +62,21 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
           name="text"
           render={({ field }) => (
             <FormItem>
-              <div className="flex items-center gap-2">
-                {/*<FormLabel className="">Comment</FormLabel>*/}
-                <FormControl>
-                  <TextArea
-                    rows={2}
-                    placeholder="Your comment..."
-                    autoCapitalize="none"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    {...field}
-                  />
-                </FormControl>
-              </div>
-              <FormMessage className="ml-8" />
+              {/*<FormLabel className="">Comment</FormLabel>*/}
+              <FormControl>
+                <TextArea
+                  className="resize-y"
+                  rows={2}
+                  placeholder="Your comment..."
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck="false"
+                  {...field}
+                />
+              </FormControl>
               {/*<FormDescription>some string.</FormDescription>*/}
+              <FormMessage className="ml-8" />
             </FormItem>
           )}
         />

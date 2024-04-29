@@ -12,9 +12,10 @@ import { type TokenUser } from "#src/utils/jwt/schema";
 type Props = {
   user: TokenUser | null;
   comment: RouterOutputs["comment"]["infinite"]["items"][number];
+  onEditClick: () => void;
 };
 
-export function CommentOptionsDropdown({ user, comment }: Props) {
+export function CommentOptionsDropdown({ user, onEditClick, comment }: Props) {
   const utils = api.useUtils();
   const commentDelete = api.comment.delete.useMutation({
     onSuccess: () => utils.comment.infinite.invalidate({ eventId: comment.eventId }),
@@ -44,10 +45,10 @@ export function CommentOptionsDropdown({ user, comment }: Props) {
         <Button variant="icon" className="">
           <IconPin /> Pin to top
         </Button>
-        <Button variant="icon" className="">
+        */}
+        <Button variant="icon" className="" onClick={onEditClick}>
           <IconEdit /> Edit
         </Button>
-        */}
         <ButtonWithConfirmDialog
           className=""
           variant="icon"
