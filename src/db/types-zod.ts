@@ -127,6 +127,7 @@ export const schema_insert_Event = z.object({
   image: z.string().nullish(),
   imageBlurData: zTypedArray.nullish(),
   imageAspect: z.number().optional(),
+  pinnedCommentId: z.bigint().nullish(),
 });
 export const schema_update_Event = z.object({
   id: z.bigint().optional(),
@@ -140,13 +141,7 @@ export const schema_update_Event = z.object({
   image: z.string().nullish(),
   imageBlurData: zTypedArray.nullish(),
   imageAspect: z.number().optional(),
-});
-
-export const schema_insert_DeletedEventImages = z.object({
-  image: z.string(),
-});
-export const schema_update_DeletedEventImages = z.object({
-  image: z.string().optional(),
+  pinnedCommentId: z.bigint().nullish(),
 });
 
 export const schema_insert_Comment = z.object({
@@ -162,5 +157,12 @@ export const schema_update_Comment = z.object({
   eventId: z.bigint().optional(),
   text: z.string().optional(),
   createdAt: z.date().optional(),
+});
+
+export const schema_insert_DeletedEventImages = z.object({
+  image: z.string(),
+});
+export const schema_update_DeletedEventImages = z.object({
+  image: z.string().optional(),
 });
 

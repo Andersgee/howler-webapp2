@@ -13,7 +13,8 @@ import { RichResults } from "./RichResults";
 import Link from "next/link";
 import { Shell } from "#src/components/Shell";
 import { CreateCommentForm } from "./CreateCommentForm";
-import { CommentsList } from "./CommentsList";
+import { CommentsList, PinnedComment } from "./CommentsList";
+import { JSONE } from "#src/utils/jsone";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -95,8 +96,11 @@ export default async function Page({ params }: Props) {
           </Link>
         </div>
         <div className="py-6"></div>
+        {event.pinnedCommentId !== null ? (
+          <PinnedComment commentId={event.pinnedCommentId} user={user} eventCreatorId={event.creatorId} />
+        ) : null}
         <CreateCommentForm user={user} eventId={event.id} />
-        <CommentsList user={user} eventId={event.id} />
+        <CommentsList user={user} event={event} />
       </Shell>
     </>
   );

@@ -12,8 +12,8 @@ export type DB = {
   Notification: Notification;
   FcmToken: FcmToken;
   Event: Event;
-  DeletedEventImages: DeletedEventImages;
   Comment: Comment;
+  DeletedEventImages: DeletedEventImages;
 };
 
 export type CloudMessageAccessToken = {
@@ -66,6 +66,8 @@ export type Event = {
   imageBlurData: Uint8Array | null;
   /** default: 1, dbtype: 'float' */
   imageAspect: Generated<number>;
+  /** dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  pinnedCommentId: bigint | null;
 };
 
 export type FcmToken = {

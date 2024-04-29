@@ -9,20 +9,21 @@ import { cn } from "#src/utils/cn";
 import { hashidFromId } from "#src/utils/hashid";
 import { separateTextUrls } from "#src/utils/separate-text-urls";
 import Link from "next/link";
-import { CommentOptionsDropdown } from "./CommentOptionsDropdown";
+import { CommentOptionsPopover } from "./CommentOptionsPopover";
 import { type TokenUser } from "#src/utils/jwt/schema";
 import { useState } from "react";
 import { EditCommentForm } from "./EditCommentForm";
+import { IconPin } from "#src/icons/Pin";
 
 type Props = {
   user: TokenUser | null;
-  eventId: bigint;
+  event: NonNullable<RouterOutputs["event"]["getById"]>;
   className?: string;
 };
 
-export function CommentsList({ user, className, eventId }: Props) {
+export function CommentsList({ user, className, event }: Props) {
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = api.comment.infinite.useInfiniteQuery(
-    { eventId },
+    { eventId: event.id },
     {
       //enabled: dialogValue === "notifications",
       getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -50,7 +51,11 @@ export function CommentsList({ user, className, eventId }: Props) {
       {data?.pages
         .map((page) => page.items)
         .flat()
-        .map((comment) => <Comment user={user} key={comment.id} comment={comment} />)}
+        .map((comment) =>
+          comment.id === event.pinnedCommentId ? null : (
+            <Comment user={user} key={comment.id} comment={comment} eventCreatorId={event.creatorId} />
+          )
+        )}
       <div ref={ref} className="min-h-[1px] min-w-[1px]"></div>
       <div className="flex justify-center p-2">
         {hasNextPage ? (
@@ -70,9 +75,13 @@ export function CommentsList({ user, className, eventId }: Props) {
 function Comment({
   user,
   comment,
+  eventCreatorId,
+  isPinned = false,
 }: {
   user: TokenUser | null;
   comment: RouterOutputs["comment"]["infinite"]["items"][number];
+  eventCreatorId: bigint;
+  isPinned?: boolean;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   return (
@@ -86,7 +95,13 @@ function Comment({
             <h3 className="text-base text-color-neutral-800">{comment.userName}</h3>
             <span className="ml-2 text-sm text-color-neutral-600">{PrettyDate({ date: comment.createdAt })}</span>
           </div>
-          <CommentOptionsDropdown user={user} comment={comment} onEditClick={() => setIsEditing(true)} />
+          <CommentOptionsPopover
+            user={user}
+            eventCreatorId={eventCreatorId}
+            comment={comment}
+            onEditClick={() => setIsEditing(true)}
+            isPinned={isPinned}
+          />
         </div>
         {isEditing ? (
           <EditCommentForm user={user} comment={comment} onStopEditing={() => setIsEditing(false)} />
@@ -120,5 +135,32 @@ function CommentText({ comment }: { comment: RouterOutputs["comment"]["infinite"
         }
       })}
     </p>
+  );
+}
+
+export function PinnedComment({
+  user,
+  //comment,
+  commentId,
+  eventCreatorId,
+}: {
+  user: TokenUser | null;
+  //comment: RouterOutputs["comment"]["infinite"]["items"][number];
+  commentId: bigint;
+  eventCreatorId: bigint;
+}) {
+  const { data } = api.comment.getById.useQuery({ id: commentId });
+  if (!data) {
+    return null;
+  }
+
+  return (
+    <div>
+      <div className="flex items-center">
+        <IconPin className="h-5 w-5 text-color-neutral-700" />{" "}
+        <span className="ml-1 text-xs text-color-neutral-700">pinned</span>
+      </div>
+      <Comment isPinned user={user} comment={data} eventCreatorId={eventCreatorId} />
+    </div>
   );
 }

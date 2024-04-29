@@ -119,6 +119,27 @@ export const eventRouter = createTRPCRouter({
 
       return { ...updateResult, hashid: hashidFromId(input.id), tag: tagsEvent.info(input.id) };
     }),
+  updatePinnedComment: protectedProcedure
+    .input(
+      z.object({
+        id: z.bigint(),
+        pinnedCommentId: z.bigint().nullable(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const updateResult = await dbfetch()
+        .updateTable("Event")
+        .where("id", "=", input.id)
+        .where("creatorId", "=", ctx.user.id)
+        .set({
+          pinnedCommentId: input.pinnedCommentId,
+        })
+        .executeTakeFirstOrThrow();
+
+      revalidateTag(tagsEvent.info(input.id));
+
+      return { ...updateResult, hashid: hashidFromId(input.id), tag: tagsEvent.info(input.id) };
+    }),
   explore: publicProcedure
     .input(
       z.object({

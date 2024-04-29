@@ -6,6 +6,23 @@ import { notify } from "#src/lib/cloud-messaging-light/notify";
 import { hashidFromId } from "#src/utils/hashid";
 
 export const commentRouter = createTRPCRouter({
+  getById: publicProcedure
+    .input(
+      z.object({
+        id: z.bigint(),
+      })
+    )
+    .query(async ({ input }) => {
+      const comment = await dbfetch()
+        .selectFrom("Comment")
+        .where("Comment.id", "=", input.id)
+        .innerJoin("User", "User.id", "Comment.userId")
+        .selectAll("Comment")
+        .select(["User.image as userImage", "User.name as userName"])
+        .executeTakeFirst();
+
+      return comment ?? null;
+    }),
   create: protectedProcedure
     .input(
       z.object({

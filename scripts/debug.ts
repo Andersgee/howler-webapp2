@@ -19,7 +19,7 @@ const userInfo = {
 async function main() {
   const db = dbfetch();
 
-  const hmm = await db.selectFrom("User").selectAll().execute();
+  const hmm = await db.selectFrom("Event").selectAll().execute();
   console.log(hmm);
 
   //const r = await db.selectFrom("Event").selectAll().execute();
