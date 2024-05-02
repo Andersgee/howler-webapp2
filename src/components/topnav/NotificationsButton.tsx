@@ -32,6 +32,7 @@ const TEST_NOTIFICATIONS: {
 */
 
 export function NotificationsButton({ user: _user }: { user: TokenUser }) {
+  const { toast } = useToast();
   //const user = useStore.use.user();
   const dialogValue = useStore.use.dialogValue();
   const fcmMessagePayload = useStore.use.fcmMessagePayload();
@@ -86,17 +87,21 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       });
       setUnreadNumber((prev) => prev + 1);
     } else {
+      toast({
+        variant: "default",
+        title: "otherPayload",
+        description: JSON.stringify(fcmMessagePayload),
+      });
       setOtherPayloads((prev) => [fcmMessagePayload, ...prev]);
       console.log("NotificationButton, fcmMessagePayload not expected format");
     }
-  }, [fcmMessagePayload, utils]);
+  }, [fcmMessagePayload, utils, toast]);
 
   const onLastItemInView = () => {
     if (!isFetchingNextPage && hasNextPage) {
       void fetchNextPage();
     }
   };
-  const { toast } = useToast();
   const onDenied = () =>
     toast({
       variant: "default",
