@@ -40,6 +40,18 @@ export function initCloudMessaging(onMsg: (payload: MessagePayload) => void) {
     */
     onMsg(payload);
   });
+
+  //so when clicking a notification...
+  // - if app is closed it opens it and navigates to fcm_options.link
+  // - if app is in focus then the above onMessage is triggered and nothing else
+  // - but if app is open (but not in focus), the firebase service worker only focuses the app but also does a client.postMessage(internalPayload)
+  //   that we can listen to: https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerContainer/message_event
+  //   also this was difficult to figure out... props to this guys comment: https://github.com/firebase/firebase-js-sdk/issues/3922#issuecomment-1197002484
+  //
+  // TODO: should prob have a different typed onMsg here
+  // for now just cast this data as MessagePayload.. writing this before knowing if it even works.
+  navigator.serviceWorker.onmessage = (ev) => onMsg(ev.data as MessagePayload);
+
   return messaging;
 }
 

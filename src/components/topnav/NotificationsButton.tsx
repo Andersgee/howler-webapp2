@@ -127,6 +127,11 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       </PopoverTrigger>
       <PopoverContent className="">
         <div className="">
+          <div>otherPayloads</div>
+          {otherPayloads.map((x, i) => (
+            <div key={x.messageId ?? i}>{JSON.stringify(x)}</div>
+          ))}
+          <hr />
           <div className="flex items-center justify-between p-4">
             <div>Notifications</div>
             <Link
@@ -137,11 +142,6 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
               <IconSettings />
             </Link>
           </div>
-          <hr />
-          <div>otherPayloads (test)</div>
-          {otherPayloads.map((x) => (
-            <div key={x.messageId}>{JSON.stringify(x)}</div>
-          ))}
           <hr />
 
           <div className="max-h-popper-available-minus-a-bit overflow-y-auto">
