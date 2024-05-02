@@ -47,7 +47,7 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       //initialData: { pages: [initialPosts], pageParams: [] },
     }
   );
-  const [otherPayloads, setOtherPayloads] = useState<MessagePayload[]>([]);
+  //const [otherPayloads, setOtherPayloads] = useState<MessagePayload[]>([]);
 
   const [unreadNumber, setUnreadNumber] = useState(0);
 
@@ -87,15 +87,15 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       });
       setUnreadNumber((prev) => prev + 1);
     } else {
-      toast({
-        variant: "default",
-        title: "otherPayload",
-        description: JSON.stringify(fcmMessagePayload),
-      });
-      setOtherPayloads((prev) => [fcmMessagePayload, ...prev]);
+      //toast({
+      //  variant: "default",
+      //  title: "otherPayload",
+      //  description: JSON.stringify(fcmMessagePayload),
+      //});
+      //setOtherPayloads((prev) => [fcmMessagePayload, ...prev]);
       console.log("NotificationButton, fcmMessagePayload not expected format");
     }
-  }, [fcmMessagePayload, utils, toast]);
+  }, [fcmMessagePayload, utils]);
 
   const onLastItemInView = () => {
     if (!isFetchingNextPage && hasNextPage) {
@@ -127,11 +127,12 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       </PopoverTrigger>
       <PopoverContent className="">
         <div className="">
-          <div>otherPayloads</div>
+          {/*<div>otherPayloads</div>
           {otherPayloads.map((x, i) => (
             <div key={x.messageId ?? i}>{JSON.stringify(x)}</div>
           ))}
           <hr />
+        */}
           <div className="flex items-center justify-between p-4">
             <div>Notifications</div>
             <Link
