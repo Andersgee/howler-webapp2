@@ -13,7 +13,7 @@ async function main() {
 
   const userIds = [user.id];
   await notify(userIds, {
-    title: `welp1`,
+    title: `kek2`,
     body: "Test body",
     relativeLink: "/event/R3AxD",
     //icon: user.image ?? undefined,
