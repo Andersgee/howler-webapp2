@@ -51,5 +51,12 @@ export async function notify(userIds: bigint[], message: Message) {
         link: absUrl(message.relativeLink),
       },
     },
+    //android: {
+    //  notification: {
+    //    //does this solve the "click only opens app, instead of opening app to correct url" issue?
+    //    //https://firebase.google.com/docs/reference/fcm/rest/v1/projects.messages#androidnotification
+    //    click_action: absUrl(message.relativeLink),
+    //  },
+    //},
   });
 }

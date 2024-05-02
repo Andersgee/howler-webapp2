@@ -7,7 +7,11 @@ const db = dbfetch();
 type Message = {
   data?: Record<string, string>;
   /** cross platform */
-  notification: { title: string; body: string; image?: string };
+  notification: {
+    title: string;
+    body: string;
+    image?: string;
+  };
   /** additional options for webpush. make sure to put link */
   webpush: {
     fcm_options: { link: string };

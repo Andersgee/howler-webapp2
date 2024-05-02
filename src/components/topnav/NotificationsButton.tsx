@@ -15,6 +15,7 @@ import { useToast } from "#src/ui/use-toast";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { IconBellWithNumber } from "#src/icons/BellWithNumber";
+import { type MessagePayload } from "firebase/messaging";
 
 /*
 const TEST_NOTIFICATIONS: {
@@ -45,6 +46,7 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       //initialData: { pages: [initialPosts], pageParams: [] },
     }
   );
+  const [otherPayloads, setOtherPayloads] = useState<MessagePayload[]>([]);
 
   const [unreadNumber, setUnreadNumber] = useState(0);
 
@@ -84,6 +86,7 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       });
       setUnreadNumber((prev) => prev + 1);
     } else {
+      setOtherPayloads((prev) => [fcmMessagePayload, ...prev]);
       console.log("NotificationButton, fcmMessagePayload not expected format");
     }
   }, [fcmMessagePayload, utils]);
@@ -129,6 +132,11 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
               <IconSettings />
             </Link>
           </div>
+          <hr />
+          <div>otherPayloads (test)</div>
+          {otherPayloads.map((x) => (
+            <div key={x.messageId}>{JSON.stringify(x)}</div>
+          ))}
           <hr />
 
           <div className="max-h-popper-available-minus-a-bit overflow-y-auto">
