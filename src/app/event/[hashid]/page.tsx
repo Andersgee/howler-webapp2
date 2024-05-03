@@ -14,6 +14,7 @@ import Link from "next/link";
 import { Shell } from "#src/components/Shell";
 import { CreateCommentForm } from "./CreateCommentForm";
 import { CommentsList, PinnedComment } from "./CommentsList";
+import { UserImage32x32 } from "#src/components/user/UserImage";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -86,11 +87,12 @@ export default async function Page({ params }: Props) {
           isFollowing={isFollowing}
         />
         <div className="text-balance pb-2 text-center text-color-neutral-600">
-          Event created by{" "}
+          Event by{" "}
           <Link
             href={`/profile/${hashidFromId(event.creatorId)}`}
-            className="underline decoration-dotted hover:decoration-solid"
+            className="flex items-center underline decoration-dotted hover:decoration-solid"
           >
+            <UserImage32x32 image={event.creatorImage} alt={event.creatorName} />
             {event.creatorName}
           </Link>
         </div>

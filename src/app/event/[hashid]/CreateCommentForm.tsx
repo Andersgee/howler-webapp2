@@ -67,7 +67,7 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
                 <TextArea
                   className="resize-y"
                   rows={2}
-                  placeholder="Your comment..."
+                  placeholder="Add comment..."
                   autoCapitalize="none"
                   autoComplete="off"
                   autoCorrect="off"
