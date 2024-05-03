@@ -86,13 +86,13 @@ export default async function Page({ params }: Props) {
           isJoined={isJoined}
           isFollowing={isFollowing}
         />
-        <div className="text-balance pb-2 text-center text-color-neutral-600">
-          Event by{" "}
+
+        <div className="text-center text-color-neutral-600">
+          <span className="mr-1">Event by</span>
           <Link
             href={`/profile/${hashidFromId(event.creatorId)}`}
-            className="flex items-center underline decoration-dotted hover:decoration-solid"
+            className="underline decoration-dotted hover:decoration-solid"
           >
-            <UserImage32x32 image={event.creatorImage} alt={event.creatorName} />
             {event.creatorName}
           </Link>
         </div>

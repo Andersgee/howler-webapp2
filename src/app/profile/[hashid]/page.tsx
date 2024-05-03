@@ -53,6 +53,7 @@ export default async function Page({ params }: Props) {
         {tokenUser && tokenUser.id !== user.id ? (
           <FollowUnfollowButton isFollowing={isFollowing} userId={user.id} />
         ) : null}
+        <p>Get notified when {user.name} howls</p>
       </section>
       <hr className="py-4" />
       <h2>Events</h2>
