@@ -1,5 +1,6 @@
 import type { StateCreator } from "zustand";
-import type { MessagePayload } from "firebase/messaging";
+//import type { MessagePayload } from "firebase/messaging";
+import { type MessagePayload } from "#src/lib/cloud-messaging-light/client";
 //import { useStore } from "..";
 import { getNotificationsIsAlreadyGranted, requestNotificationPermission } from "#src/utils/notification-permission";
 

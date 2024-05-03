@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { sleep } from "#src/utils/sleep";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
 import { hashidFromId } from "#src/utils/hashid";
 
@@ -84,7 +83,7 @@ export const commentRouter = createTRPCRouter({
         cursor: z.bigint().optional(),
       })
     )
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input }) => {
       //await sleep(1000);
       const limit = 10;
 

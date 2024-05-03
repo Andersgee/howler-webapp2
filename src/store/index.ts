@@ -5,7 +5,8 @@ import { createDialogSlice, type DialogSlice } from "./slices/dialog";
 import { createUserSlice, type Userlice } from "./slices/user";
 import { createMapSlice, type MapSlice } from "./slices/map";
 import { createFcmSlice, type Fcmslice } from "./slices/fcm";
-import { type MessagePayload } from "firebase/messaging";
+import { type MessagePayload } from "#src/lib/cloud-messaging-light/client";
+//import { type MessagePayload } from "firebase/messaging";
 
 type StoreState = DialogSlice & Userlice & MapSlice & Fcmslice;
 

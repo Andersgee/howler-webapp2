@@ -3,7 +3,7 @@ import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
 import { HOWLER_MAP_DARK, HOWLER_MAP_LIGHT } from "./custom-theme";
-import { latLngLiteralFromPoint, pointFromlatLng, pointFromlatLngLiteral } from "./google-maps-point-latlng";
+import { latLngLiteralFromPoint, pointFromlatLngLiteral } from "./google-maps-point-latlng";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";

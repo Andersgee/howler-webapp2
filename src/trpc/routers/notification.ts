@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { sleep } from "#src/utils/sleep";
 
 export const notificationRouter = createTRPCRouter({
   //get10: protectedProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input, ctx }) => {

@@ -14,7 +14,6 @@ import Link from "next/link";
 import { Shell } from "#src/components/Shell";
 import { CreateCommentForm } from "./CreateCommentForm";
 import { CommentsList, PinnedComment } from "./CommentsList";
-import { JSONE } from "#src/utils/jsone";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;

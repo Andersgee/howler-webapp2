@@ -15,7 +15,7 @@ import { useToast } from "#src/ui/use-toast";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { IconBellWithNumber } from "#src/icons/BellWithNumber";
-import { type MessagePayload } from "firebase/messaging";
+import { useRouter } from "next/navigation";
 
 /*
 const TEST_NOTIFICATIONS: {
@@ -51,6 +51,8 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
 
   const [unreadNumber, setUnreadNumber] = useState(0);
 
+  const router = useRouter();
+
   useEffect(() => {
     if (!fcmMessagePayload) return;
 
@@ -64,28 +66,35 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
           id: z.coerce.bigint(),
           relativeLink: z.string(),
         }),
+        triggeredByExternalNotificationClick: z.boolean().optional(),
       })
       .safeParse(fcmMessagePayload);
     if (safeParsed.success) {
+      const payload = safeParsed.data;
       utils.notification.infinite.setInfiniteData({}, (oldData) => {
         if (!oldData) return oldData;
 
         //for dev / hot-reload / double effect call without duplication
-        const existingItem = oldData.pages.at(0)?.items.find((x) => x.id === safeParsed.data.data.id);
+        const existingItem = oldData.pages.at(0)?.items.find((x) => x.id === payload.data.id);
         if (!existingItem) {
           const data = structuredClone(oldData);
           data.pages.at(0)?.items.unshift({
-            id: safeParsed.data.data.id,
-            title: safeParsed.data.notification.title,
-            body: safeParsed.data.notification.body,
-            relativeLink: safeParsed.data.data.relativeLink,
+            id: payload.data.id,
+            title: payload.notification.title,
+            body: payload.notification.body,
+            relativeLink: payload.data.relativeLink,
           });
           return data;
         } else {
           return oldData;
         }
       });
+
       setUnreadNumber((prev) => prev + 1);
+
+      if (payload.triggeredByExternalNotificationClick) {
+        router.push(payload.data.relativeLink);
+      }
     } else {
       //toast({
       //  variant: "default",
@@ -95,7 +104,7 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       //setOtherPayloads((prev) => [fcmMessagePayload, ...prev]);
       console.log("NotificationButton, fcmMessagePayload not expected format");
     }
-  }, [fcmMessagePayload, utils]);
+  }, [fcmMessagePayload, utils, router]);
 
   const onLastItemInView = () => {
     if (!isFetchingNextPage && hasNextPage) {

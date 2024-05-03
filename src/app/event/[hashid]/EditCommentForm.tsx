@@ -56,7 +56,7 @@ export function EditCommentForm({ className, onStopEditing, user, comment }: Pro
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onValid)} className="space-y-2">
+      <form onSubmit={form.handleSubmit(onValid)} className={cn("space-y-2", className)}>
         <FormField
           control={form.control}
           name="text"

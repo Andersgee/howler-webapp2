@@ -1,5 +1,13 @@
 import { initializeApp } from "firebase/app";
-import { type Messaging, getMessaging, getToken, onMessage, type MessagePayload } from "firebase/messaging";
+import {
+  type Messaging,
+  getMessaging,
+  getToken,
+  onMessage,
+  type MessagePayload as FirebaseMessagePayload,
+} from "firebase/messaging";
+
+export type MessagePayload = FirebaseMessagePayload & { triggeredByExternalNotificationClick?: boolean };
 
 /**
  * Note: The Firebase config object contains unique, but non-secret identifiers for your Firebase project.
@@ -50,7 +58,8 @@ export function initCloudMessaging(onMsg: (payload: MessagePayload) => void) {
   //
   // TODO: should prob have a different typed onMsg here
   // for now just cast this data as MessagePayload.. writing this before knowing if it even works.
-  navigator.serviceWorker.onmessage = (ev) => onMsg(ev.data as MessagePayload);
+  navigator.serviceWorker.onmessage = (ev) =>
+    onMsg({ ...ev.data, triggeredByExternalNotificationClick: true } as MessagePayload);
 
   return messaging;
 }
