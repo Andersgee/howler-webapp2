@@ -3,6 +3,7 @@
 import { actionRevalidateTag } from "#src/app/actions";
 import { api } from "#src/hooks/api";
 import { Button } from "#src/ui/button";
+import { cn } from "#src/utils/cn";
 
 type Props = {
   userId: bigint;
@@ -19,7 +20,11 @@ export function FollowUnfollowButton({ userId, isFollowing }: Props) {
   };
 
   return (
-    <Button onClick={handleClick} disabled={userFollowOrUnfollow.isPending}>
+    <Button
+      variant={isFollowing ? "warning" : "positive"}
+      onClick={handleClick}
+      disabled={userFollowOrUnfollow.isPending}
+    >
       {isFollowing ? "Unfollow" : "Follow"}
     </Button>
   );

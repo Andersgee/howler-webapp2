@@ -5,20 +5,21 @@ import { GoogleMaps } from "#src/components/GoogleMaps";
 import { ControlDirections } from "#src/components/GoogleMaps/control-directions";
 import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { ShareButton } from "#src/components/ShareButton";
-import { UserImage32x32 } from "#src/components/user/UserImage";
 import { type GeoJson } from "#src/db/types-geojson";
 import { api, type RouterOutputs } from "#src/hooks/api";
 import { IconEdit } from "#src/icons/Edit";
 import { IconWhere } from "#src/icons/Where";
+import { downloadEventAsIcs } from "#src/lib/ics";
 import { useStore } from "#src/store";
 import { dialogDispatch } from "#src/store/slices/dialog";
 import { Button, buttonVariants } from "#src/ui/button";
-import { useToast } from "#src/ui/use-toast";
 import { hashidFromId } from "#src/utils/hashid";
 import { type TokenUser } from "#src/utils/jwt/schema";
-import { absUrl } from "#src/utils/url";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+//import { useToast } from "#src/ui/use-toast";
+//import { UserImage32x32 } from "#src/components/user/UserImage";
+//import { absUrl } from "#src/utils/url";
 
 type Props = {
   event: NonNullable<RouterOutputs["event"]["getById"]>;
@@ -39,9 +40,9 @@ export function EventActions(props: Props) {
             <IconEdit /> Edit
           </Link>
         )}
-        {!props.isCreator && (
+        {/*!props.isCreator && (
           <FollowUnfollowButton event={props.event} user={props.user} isFollowing={props.isFollowing} />
-        )}
+        )*/}
         <ShareButton title={props.event.title} />
 
         {props.event.location && (
@@ -56,46 +57,6 @@ export function EventActions(props: Props) {
       </div>
       {props.event.location && <Map show={showMap} location={props.event.location} />}
     </>
-  );
-}
-
-function FollowUnfollowButton({
-  user,
-  isFollowing,
-  event,
-}: {
-  user: TokenUser | null;
-  isFollowing: boolean;
-  event: NonNullable<RouterOutputs["event"]["getById"]>;
-}) {
-  const maybeRequestNotifications = useStore.use.maybeRequestNotifications();
-  const { toast } = useToast();
-  const onDenied = () =>
-    toast({
-      variant: "default",
-      title: "You have blocked notifications",
-      description:
-        "Open your browser preferences or click the lock near the address bar to change your notification preferences.",
-    });
-
-  const userFollowOrUnfollow = api.user.followOrUnfollow.useMutation({
-    onSuccess: (tag) => actionRevalidateTag(tag),
-  });
-
-  const handleClick = async () => {
-    if (user) {
-      await maybeRequestNotifications(onDenied);
-      userFollowOrUnfollow.mutate({ id: event.creatorId, join: isFollowing ? false : true });
-    } else {
-      dialogDispatch({ type: "show", name: "profilebutton" });
-    }
-  };
-
-  return (
-    <Button onClick={handleClick} variant="icon" disabled={userFollowOrUnfollow.isPending}>
-      <UserImage32x32 image={event.creatorImage ?? ""} alt={event.creatorName} />{" "}
-      <span className="ml-1">{isFollowing ? "Unfollow" : "Follow"}</span>
-    </Button>
   );
 }
 
@@ -147,59 +108,45 @@ function Map({ show, location }: { show: boolean; location: GeoJson["Point"] }) 
   );
 }
 
-export function downloadEventAsIcs(event: NonNullable<RouterOutputs["event"]["getById"]>) {
-  const hashid = hashidFromId(event.id);
-  const filename = `howler-event-${hashid}.ics`;
+/*
 
-  const summary = event.title.replaceAll("\n", " ");
-  const dtstamp = event.createdAt.toISOString().slice(0, 19).replaceAll("-", "").replaceAll(":", "");
-  const dtstart = event.date.toISOString().slice(0, 19).replaceAll("-", "").replaceAll(":", "");
-  const p = event.location ? latLngLiteralFromPoint(event.location) : undefined;
-  const geo = p ? `${p.lat.toFixed(5)};${p.lng.toFixed(5)}` : undefined;
-  const location = p ? `${p.lat.toFixed(5)},${p.lng.toFixed(5)}` : undefined; //google calendar doesnt use "GEO", but lat,lng (with comma between) works in "LOCATION" text field
-  const eventurl = absUrl(`/event/${hashid}`);
+function FollowUnfollowButton({
+  user,
+  isFollowing,
+  event,
+}: {
+  user: TokenUser | null;
+  isFollowing: boolean;
+  event: NonNullable<RouterOutputs["event"]["getById"]>;
+}) {
+  const maybeRequestNotifications = useStore.use.maybeRequestNotifications();
+  const { toast } = useToast();
+  const onDenied = () =>
+    toast({
+      variant: "default",
+      title: "You have blocked notifications",
+      description:
+        "Open your browser preferences or click the lock near the address bar to change your notification preferences.",
+    });
 
-  const endDate = new Date(event.date.getTime() + 1000 * 60 * 60 * 2); //dont have endDate on events yet... go 2 hours for now
-  const dtend = endDate.toISOString().slice(0, 19).replaceAll("-", "").replaceAll(":", "");
+  const userFollowOrUnfollow = api.user.followOrUnfollow.useMutation({
+    onSuccess: (tag) => actionRevalidateTag(tag),
+  });
 
-  //https://www.kanzaki.com/docs/ical/
-  const x = ["BEGIN:VCALENDAR"];
-  x.push("VERSION:2.0");
-  x.push("PRODID:-//HOWLER//EVENT//EN");
+  const handleClick = async () => {
+    if (user) {
+      await maybeRequestNotifications(onDenied);
+      userFollowOrUnfollow.mutate({ id: event.creatorId, join: isFollowing ? false : true });
+    } else {
+      dialogDispatch({ type: "show", name: "profilebutton" });
+    }
+  };
 
-  x.push("BEGIN:VEVENT");
-  x.push(`UID:howler-event-${hashid}`);
-  x.push(`SUMMARY:${summary}`);
-  x.push(`DTSTAMP:${dtstamp}Z`);
-  x.push(`DTSTART:${dtstart}Z`);
-  x.push(`DTEND:${dtend}Z`);
-  //x.push(`URL:${eventurl}`);
-  x.push(
-    `DESCRIPTION:${eventurl}\\nHowl by ${event.creatorName}.\\nWhat: ${event.title}\\nWhere: ${
-      event.locationName ?? "anywhere"
-    }`
+  return (
+    <Button onClick={handleClick} variant="icon" disabled={userFollowOrUnfollow.isPending}>
+      <UserImage32x32 image={event.creatorImage ?? ""} alt={event.creatorName} />{" "}
+      <span className="ml-1">{isFollowing ? "Unfollow" : "Follow"}</span>
+    </Button>
   );
-  if (geo) {
-    x.push(`GEO:${geo}`);
-  }
-  if (location) {
-    x.push(`LOCATION:${location}`);
-  }
-
-  x.push("END:VEVENT");
-  x.push("END:VCALENDAR");
-
-  const text = x.join("\n");
-  const file = new File([text], filename, { type: "text/calendar" });
-
-  const url = URL.createObjectURL(file);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-
-  URL.revokeObjectURL(url);
 }
+*/
