@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "#src/ui/for
 import { Button } from "#src/ui/button";
 import { type TokenUser } from "#src/utils/jwt/schema";
 import { dialogDispatch } from "#src/store/slices/dialog";
+import { IconSend } from "#src/icons/Send";
 
 const zFormData = z.object({
   text: z.string().min(3, { message: "at least 3 characters" }).max(280, { message: "at most 280 characters" }),
@@ -82,7 +83,7 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
         />
         <div className="flex justify-end">
           <Button variant="primary" type="submit" disabled={commentCreate.isPending}>
-            Post
+            <IconSend className="mr-1" /> Post
           </Button>
         </div>
       </form>

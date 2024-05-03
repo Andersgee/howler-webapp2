@@ -10,6 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "#src/ui/for
 import { Button } from "#src/ui/button";
 import { type TokenUser } from "#src/utils/jwt/schema";
 import { dialogDispatch } from "#src/store/slices/dialog";
+import { IconClose } from "#src/icons/Close";
+import { IconCheck } from "#src/icons/Check";
 
 const zFormData = z.object({
   text: z.string().min(3, { message: "at least 3 characters" }).max(280, { message: "at most 280 characters" }),
@@ -80,12 +82,12 @@ export function EditCommentForm({ className, onStopEditing, user, comment }: Pro
             </FormItem>
           )}
         />
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <Button variant="outline" onClick={onStopEditing}>
-            Cancel
+            <IconClose className="mr-1" /> Cancel
           </Button>
           <Button variant="primary" type="submit" disabled={commentUpdate.isPending}>
-            Save
+            <IconCheck className="mr-1" /> Save
           </Button>
         </div>
       </form>
