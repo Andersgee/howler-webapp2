@@ -38,22 +38,24 @@ export default async function Page({ params }: Props) {
   const id = idFromHashid(params.hashid);
   if (id === undefined) notFound();
 
-  const { api, user: tokenUser } = await apiRsc();
-  const user = await api.user.infoPublic({ userId: id });
-  if (!user) notFound();
+  const { api, user } = await apiRsc();
+  const profile = await api.user.infoPublic({ userId: id });
+  if (!profile) notFound();
 
-  const isFollowing = tokenUser ? await api.user.meIsFollowing({ id: user.id }) : false;
-  const events = await api.event.latestByUserId({ userId: user.id });
+  const isFollowing = user ? await api.user.meIsFollowing({ id: profile.id }) : false;
+  const events = await api.event.latestByUserId({ userId: profile.id });
 
   return (
     <Shell>
       <section className="flex flex-col items-center">
-        <UserImage96x96 alt={user.name} image={user.image ?? ""} />
-        <h1 className="mt-2">{`${user.name}`}</h1>
-        {tokenUser && tokenUser.id !== user.id ? (
-          <FollowUnfollowButton isFollowing={isFollowing} userId={user.id} />
-        ) : null}
-        <p>Get notified when {user.name} howls</p>
+        <UserImage96x96 alt={profile.name} image={profile.image ?? ""} />
+        <h1 className="mt-2">{`${profile.name}`}</h1>
+        {user && user.id !== profile.id && (
+          <>
+            <FollowUnfollowButton isFollowing={isFollowing} userId={profile.id} />
+            {!isFollowing && <p className="text-sm">Follow to get notified when {profile.name} howls</p>}
+          </>
+        )}
       </section>
       <hr className="py-4" />
       <h2>Events</h2>
