@@ -53,7 +53,7 @@ export default async function Page({ params }: Props) {
         {user && user.id !== profile.id && (
           <>
             <FollowUnfollowButton isFollowing={isFollowing} userId={profile.id} />
-            {!isFollowing && <p className="text-sm">Follow to get notified when {profile.name} howls</p>}
+            {!isFollowing && <p className="text-sm text-color-neutral-600">Get notified when they howl</p>}
           </>
         )}
       </section>
