@@ -55,10 +55,6 @@ export function CommentOptionsPopover({
 
   const [open, setOpen] = useState(false);
 
-  if (comment.userId !== user?.id) {
-    return null;
-  }
-
   return (
     <Popover
       open={open}
@@ -72,7 +68,7 @@ export function CommentOptionsPopover({
         <IconMoreVertical />
       </PopoverTrigger>
       <PopoverContent>
-        {user.id === eventCreatorId ? (
+        {user?.id === eventCreatorId ? (
           <Button
             variant="icon"
             className=""
@@ -100,38 +96,41 @@ export function CommentOptionsPopover({
           className=""
           onClick={() => {
             setOpen(false);
-            onEditClick();
-          }}
-        >
-          <IconEdit /> Edit
-        </Button>
-
-        <Button
-          variant="icon"
-          className=""
-          onClick={() => {
-            setOpen(false);
             onShowRepliesClick();
           }}
         >
           <IconReply /> Reply
         </Button>
-        <ButtonWithConfirmDialog
-          className=""
-          variant="icon"
-          title="Are you sure?"
-          description="Delete this comment. This can not be undone."
-          disabled={commentDelete.isPending}
-          actionLabel="Delete"
-          actionVariant="danger"
-          cancelLabel="Cancel"
-          onActionClick={() => {
-            setOpen(false);
-            commentDelete.mutate({ commentId: comment.id });
-          }}
-        >
-          <IconTrash /> Delete
-        </ButtonWithConfirmDialog>
+        {comment.userId === user?.id ? (
+          <Button
+            variant="icon"
+            className=""
+            onClick={() => {
+              setOpen(false);
+              onEditClick();
+            }}
+          >
+            <IconEdit /> Edit
+          </Button>
+        ) : null}
+        {comment.userId === user?.id ? (
+          <ButtonWithConfirmDialog
+            className=""
+            variant="icon"
+            title="Are you sure?"
+            description="Delete this comment. This can not be undone."
+            disabled={commentDelete.isPending}
+            actionLabel="Delete"
+            actionVariant="danger"
+            cancelLabel="Cancel"
+            onActionClick={() => {
+              setOpen(false);
+              commentDelete.mutate({ commentId: comment.id });
+            }}
+          >
+            <IconTrash /> Delete
+          </ButtonWithConfirmDialog>
+        ) : null}
       </PopoverContent>
     </Popover>
   );
