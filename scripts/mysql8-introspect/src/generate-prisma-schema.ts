@@ -21,10 +21,11 @@ export function generatePrismaSchema({
         s += `  ${index.prismastring}\n`;
       }
     }
-    s += "\n  //any relation fields below here are for prisma syntax only (they dont do anything at db level)\n";
+
     const relations = tableRelations[tableName];
     if (relations) {
-      s += "\n";
+      s += "\n  //foreign key relations (mysql adds an index on them)\n";
+      //s += "\n";
       for (const relation of relations) {
         s += `  ${relation.prismastring}\n`;
       }
@@ -33,6 +34,8 @@ export function generatePrismaSchema({
     const opposingRelations = opposingTableRelations[tableName];
     if (opposingRelations) {
       //s += "\n";
+      s +=
+        "\n  //opposing relation fields for prisma syntax only (they dont do anything at db level, the index is in the other table)\n";
       for (const opposingRelation of opposingRelations) {
         s += `  ${opposingRelation.prismastring}\n`;
       }

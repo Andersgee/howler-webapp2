@@ -76,6 +76,21 @@ export const schema_update_User = z.object({
   facebookdUserId: z.string().nullish(),
 });
 
+export const schema_insert_Reply = z.object({
+  id: z.bigint().optional(),
+  userId: z.bigint(),
+  commentId: z.bigint(),
+  text: z.string(),
+  createdAt: z.date().optional(),
+});
+export const schema_update_Reply = z.object({
+  id: z.bigint().optional(),
+  userId: z.bigint().optional(),
+  commentId: z.bigint().optional(),
+  text: z.string().optional(),
+  createdAt: z.date().optional(),
+});
+
 export const schema_insert_Post = z.object({
   id: z.bigint().optional(),
   text: z.string(),

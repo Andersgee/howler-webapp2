@@ -8,6 +8,7 @@ export type DB = {
   UserNotificationPivot: UserNotificationPivot;
   UserEventPivot: UserEventPivot;
   User: User;
+  Reply: Reply;
   Post: Post;
   Notification: Notification;
   FcmToken: FcmToken;
@@ -101,6 +102,19 @@ export type Post = {
   updatedAt: Generated<Date>;
   /** indexed: (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   userId: bigint;
+};
+
+export type Reply = {
+  /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  id: Generated<bigint>;
+  /** indexed: (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  userId: bigint;
+  /** indexed: (commentId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  commentId: bigint;
+  /** dbtype: 'varchar(280)', eg string with max 280 chars */
+  text: string;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
 };
 
 export type User = {
