@@ -115,7 +115,9 @@ export function RepliesList({
   return (
     <div className={cn("max-w-[384px]", className)}>
       <CreateReplyForm user={user} commentId={commentId} eventId={eventId} />
-      {data?.pages.flatMap((page) => page.items).map((reply) => <Reply key={reply.id} reply={reply} user={user} />)}
+      {data?.pages
+        .flatMap((page) => page.items)
+        .map((reply) => <Reply key={reply.id} eventId={eventId} reply={reply} user={user} />)}
       <div ref={ref} className="min-h-[1px] min-w-[1px]"></div>
       <div className="flex justify-center p-2">
         {hasNextPage ? isFetchingNextPage ? <IconLoadingSpinner /> : <div>more...</div> : null}
@@ -183,10 +185,12 @@ function Comment({
 function Reply({
   user,
   reply,
+  eventId,
   //eventCreatorId,
 }: {
   user: TokenUser | null;
   reply: RouterOutputs["reply"]["infinite"]["items"][number];
+  eventId: bigint;
   //eventCreatorId: bigint;
 }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -201,7 +205,7 @@ function Reply({
             <h3 className="text-sm text-color-neutral-700">{reply.userName}</h3>
             <span className="ml-2 text-sm text-color-neutral-600">{PrettyDate({ date: reply.createdAt })}</span>
           </div>
-          <ReplyOptionsPopover user={user} reply={reply} onEditClick={() => setIsEditing(true)} />
+          <ReplyOptionsPopover eventId={eventId} user={user} reply={reply} onEditClick={() => setIsEditing(true)} />
         </div>
         {isEditing ? (
           <EditReplyForm user={user} reply={reply} onStopEditing={() => setIsEditing(false)} />

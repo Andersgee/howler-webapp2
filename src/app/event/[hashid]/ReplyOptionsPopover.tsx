@@ -13,15 +13,30 @@ import { useState } from "react";
 type Props = {
   user: TokenUser | null;
   reply: RouterOutputs["reply"]["infinite"]["items"][number];
+  eventId: bigint;
   onEditClick: () => void;
 };
 
-export function ReplyOptionsPopover({ user, onEditClick, reply }: Props) {
+export function ReplyOptionsPopover({ user, onEditClick, reply, eventId }: Props) {
   const utils = api.useUtils();
   const replyDelete = api.reply.delete.useMutation({
     onSuccess: async () => {
-      //todo: perhaps optimistically update the comments reply count here
       await utils.reply.infinite.invalidate({ commentId: reply.commentId });
+
+      //update replyCount on comment,
+      utils.comment.infinite.setInfiniteData({ eventId }, (oldData) => {
+        if (!oldData) return oldData;
+
+        const data = structuredClone(oldData);
+        for (const page of data.pages) {
+          for (const item of page.items) {
+            if (item.id === reply.commentId) {
+              item.replyCount -= 1;
+            }
+          }
+        }
+        return data;
+      });
     },
   });
 

@@ -40,8 +40,22 @@ export function CreateReplyForm({ className, user, eventId, commentId }: Props) 
   const replyCreate = api.reply.create.useMutation({
     onSuccess: async () => {
       form.reset();
-      //todo: perhaps optimistically update the comments reply count here
       await utils.reply.infinite.invalidate({ commentId }); //update replies
+
+      //update replyCount on comment,
+      utils.comment.infinite.setInfiniteData({ eventId }, (oldData) => {
+        if (!oldData) return oldData;
+
+        const data = structuredClone(oldData);
+        for (const page of data.pages) {
+          for (const item of page.items) {
+            if (item.id === commentId) {
+              item.replyCount += 1;
+            }
+          }
+        }
+        return data;
+      });
     },
     onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Could not add comment", description: "Try again" });
