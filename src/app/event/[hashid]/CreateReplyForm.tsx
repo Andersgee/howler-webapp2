@@ -24,9 +24,10 @@ type Props = {
   className?: string;
   user: TokenUser | null;
   eventId: bigint;
+  commentId: bigint;
 };
 
-export function CreateCommentForm({ className, user, eventId }: Props) {
+export function CreateReplyForm({ className, user, eventId, commentId }: Props) {
   const form = useForm<FormData>({
     resolver: zodResolver(zFormData),
     defaultValues: {
@@ -36,11 +37,11 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
 
   const { toast } = useToast();
   const utils = api.useUtils();
-  const commentCreate = api.comment.create.useMutation({
+  const replyCreate = api.reply.create.useMutation({
     onSuccess: async () => {
       form.reset();
-      //router.push(`/event/${hashid}`);
-      await utils.comment.infinite.invalidate({ eventId });
+      //todo: perhaps optimistically update the comments reply count here
+      await utils.reply.infinite.invalidate({ commentId }); //update replies
     },
     onError: (_error, _variables, _context) => {
       toast({ variant: "warn", title: "Could not add comment", description: "Try again" });
@@ -49,7 +50,7 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
 
   const onValid = (data: FormData) => {
     if (user) {
-      commentCreate.mutate({ ...data, eventId });
+      replyCreate.mutate({ ...data, commentId });
     } else {
       dialogDispatch({ type: "show", name: "profilebutton" });
     }
@@ -68,7 +69,7 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
                 <TextArea
                   className="resize-y"
                   rows={2}
-                  placeholder="Your comment..."
+                  placeholder="Your reply..."
                   autoCapitalize="none"
                   autoComplete="off"
                   autoCorrect="off"
@@ -82,8 +83,8 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
           )}
         />
         <div className="flex justify-end">
-          <Button variant="primary" type="submit" disabled={commentCreate.isPending}>
-            <IconSend className="mr-1" /> Add comment
+          <Button variant="primary" type="submit" disabled={replyCreate.isPending}>
+            <IconSend className="mr-1" /> Add reply
           </Button>
         </div>
       </form>

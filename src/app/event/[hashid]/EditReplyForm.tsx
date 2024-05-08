@@ -1,6 +1,4 @@
-"use client";
-
-import { api } from "#src/hooks/api";
+import { type RouterOutputs, api } from "#src/hooks/api";
 //import { Input } from "#src/ui/input";
 import { TextArea } from "#src/ui/textarea";
 import { useToast } from "#src/ui/use-toast";
@@ -12,7 +10,8 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from "#src/ui/for
 import { Button } from "#src/ui/button";
 import { type TokenUser } from "#src/utils/jwt/schema";
 import { dialogDispatch } from "#src/store/slices/dialog";
-import { IconSend } from "#src/icons/Send";
+import { IconClose } from "#src/icons/Close";
+import { IconCheck } from "#src/icons/Check";
 
 const zFormData = z.object({
   text: z.string().min(3, { message: "at least 3 characters" }).max(280, { message: "at most 280 characters" }),
@@ -23,33 +22,35 @@ type FormData = z.infer<typeof zFormData>;
 type Props = {
   className?: string;
   user: TokenUser | null;
-  eventId: bigint;
+  reply: RouterOutputs["reply"]["infinite"]["items"][number];
+  onStopEditing: () => void;
 };
 
-export function CreateCommentForm({ className, user, eventId }: Props) {
+export function EditReplyForm({ className, onStopEditing, user, reply }: Props) {
   const form = useForm<FormData>({
     resolver: zodResolver(zFormData),
     defaultValues: {
-      text: "",
+      text: reply.text,
     },
   });
 
   const { toast } = useToast();
   const utils = api.useUtils();
-  const commentCreate = api.comment.create.useMutation({
+  const replyUpdate = api.reply.update.useMutation({
     onSuccess: async () => {
       form.reset();
       //router.push(`/event/${hashid}`);
-      await utils.comment.infinite.invalidate({ eventId });
+      await utils.reply.infinite.invalidate({ commentId: reply.commentId });
+      onStopEditing();
     },
     onError: (_error, _variables, _context) => {
-      toast({ variant: "warn", title: "Could not add comment", description: "Try again" });
+      toast({ variant: "warn", title: "Could not edit reply", description: "Try again" });
     },
   });
 
   const onValid = (data: FormData) => {
     if (user) {
-      commentCreate.mutate({ ...data, eventId });
+      replyUpdate.mutate({ ...data, commentId: reply.id });
     } else {
       dialogDispatch({ type: "show", name: "profilebutton" });
     }
@@ -67,8 +68,8 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
               <FormControl>
                 <TextArea
                   className="resize-y"
-                  rows={2}
-                  placeholder="Your comment..."
+                  rows={initialRows(reply.text)}
+                  //placeholder="Your comment..."
                   autoCapitalize="none"
                   autoComplete="off"
                   autoCorrect="off"
@@ -81,12 +82,21 @@ export function CreateCommentForm({ className, user, eventId }: Props) {
             </FormItem>
           )}
         />
-        <div className="flex justify-end">
-          <Button variant="primary" type="submit" disabled={commentCreate.isPending}>
-            <IconSend className="mr-1" /> Add comment
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={onStopEditing}>
+            <IconClose className="mr-1" /> Cancel
+          </Button>
+          <Button variant="primary" type="submit" disabled={replyUpdate.isPending}>
+            <IconCheck className="mr-1" /> Save
           </Button>
         </div>
       </form>
     </Form>
   );
+}
+
+function initialRows(text: string) {
+  //some default textarea row height
+  const newlines = text.match(/\n/g)?.length ?? 0;
+  return 1 + Math.ceil(text.length / 55) + newlines;
 }

@@ -4,6 +4,7 @@ import { IconEdit } from "#src/icons/Edit";
 import { IconMoreVertical } from "#src/icons/MoreVertical";
 import { IconPin } from "#src/icons/Pin";
 import { IconPinOff } from "#src/icons/PinOff";
+import { IconReply } from "#src/icons/Reply";
 import { IconTrash } from "#src/icons/Trash";
 import { tagsEvent } from "#src/trpc/routers/eventTags";
 import { Button } from "#src/ui/button";
@@ -19,10 +20,18 @@ type Props = {
   comment: RouterOutputs["comment"]["infinite"]["items"][number];
   eventCreatorId: bigint;
   onEditClick: () => void;
+  onShowRepliesClick: () => void;
   isPinned: boolean;
 };
 
-export function CommentOptionsPopover({ user, onEditClick, comment, eventCreatorId, isPinned }: Props) {
+export function CommentOptionsPopover({
+  user,
+  onEditClick,
+  onShowRepliesClick,
+  comment,
+  eventCreatorId,
+  isPinned,
+}: Props) {
   const utils = api.useUtils();
   const commentDelete = api.comment.delete.useMutation({
     onSuccess: async () => {
@@ -95,6 +104,17 @@ export function CommentOptionsPopover({ user, onEditClick, comment, eventCreator
           }}
         >
           <IconEdit /> Edit
+        </Button>
+
+        <Button
+          variant="icon"
+          className=""
+          onClick={() => {
+            setOpen(false);
+            onShowRepliesClick();
+          }}
+        >
+          <IconReply /> Reply
         </Button>
         <ButtonWithConfirmDialog
           className=""

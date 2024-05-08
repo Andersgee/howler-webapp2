@@ -4,7 +4,7 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
 import { hashidFromId } from "#src/utils/hashid";
 
-export const commentRouter = createTRPCRouter({
+export const replyRouter = createTRPCRouter({
   getById: publicProcedure
     .input(
       z.object({
@@ -13,14 +13,11 @@ export const commentRouter = createTRPCRouter({
     )
     .query(async ({ input }) => {
       const comment = await dbfetch()
-        .selectFrom("Comment")
-        .where("Comment.id", "=", input.id)
-        .innerJoin("User", "User.id", "Comment.userId")
-        .leftJoin("Reply", "Reply.commentId", "Comment.id")
-        .selectAll("Comment")
+        .selectFrom("Reply")
+        .where("Reply.id", "=", input.id)
+        .innerJoin("User", "User.id", "Reply.userId")
+        .selectAll("Reply")
         .select(["User.image as userImage", "User.name as userName"])
-        .select((eb) => eb.fn.count<number>("Reply.id").as("replyCount"))
-        .groupBy("Comment.id")
         .executeTakeFirst();
 
       return comment ?? null;
@@ -29,27 +26,27 @@ export const commentRouter = createTRPCRouter({
     .input(
       z.object({
         text: z.string().min(3).max(280),
-        eventId: z.bigint(),
+        commentId: z.bigint(),
       })
     )
     .mutation(async ({ input, ctx }) => {
       const db = dbfetch();
       const insertResult = await db
-        .insertInto("Comment")
+        .insertInto("Reply")
         .values({ ...input, userId: ctx.user.id })
         .executeTakeFirstOrThrow();
 
       try {
-        const event = await db
-          .selectFrom("Event")
-          .select("creatorId")
-          .where("id", "=", input.eventId)
+        const comment = await db
+          .selectFrom("Comment")
+          .select(["userId", "eventId"])
+          .where("id", "=", input.commentId)
           .executeTakeFirstOrThrow();
-        const notifyUserIds = [event.creatorId].filter((id) => id !== ctx.user.id);
+        const notifyUserIds = [comment.userId].filter((id) => id !== ctx.user.id);
         await notify(notifyUserIds, {
-          title: `${ctx.user.name} commented on your howl!`,
+          title: `${ctx.user.name} replied to your comment.`,
           body: input.text.length > 55 ? `${input.text.trim().slice(0, 53)}...` : input.text.trim(),
-          relativeLink: `/event/${hashidFromId(input.eventId)}`,
+          relativeLink: `/event/${hashidFromId(comment.eventId)}`,
           icon: ctx.user.image,
         });
       } catch (err) {
@@ -58,10 +55,10 @@ export const commentRouter = createTRPCRouter({
 
       return insertResult;
     }),
-  delete: protectedProcedure.input(z.object({ commentId: z.bigint() })).mutation(async ({ input, ctx }) => {
+  delete: protectedProcedure.input(z.object({ replyId: z.bigint() })).mutation(async ({ input, ctx }) => {
     const deleteResult = await dbfetch()
-      .deleteFrom("Comment")
-      .where("id", "=", input.commentId)
+      .deleteFrom("Reply")
+      .where("id", "=", input.replyId)
       .where("userId", "=", ctx.user.id)
       .executeTakeFirstOrThrow();
 
@@ -71,7 +68,7 @@ export const commentRouter = createTRPCRouter({
     .input(z.object({ commentId: z.bigint(), text: z.string().min(3).max(280) }))
     .mutation(async ({ input, ctx }) => {
       const updateResult = await dbfetch()
-        .updateTable("Comment")
+        .updateTable("Reply")
         .where("id", "=", input.commentId)
         .where("userId", "=", ctx.user.id)
         .set({ text: input.text })
@@ -82,7 +79,7 @@ export const commentRouter = createTRPCRouter({
   infinite: publicProcedure
     .input(
       z.object({
-        eventId: z.bigint(),
+        commentId: z.bigint(),
         cursor: z.bigint().optional(),
       })
     )
@@ -91,19 +88,16 @@ export const commentRouter = createTRPCRouter({
       const limit = 10;
 
       let query = dbfetch()
-        .selectFrom("Comment")
-        .where("eventId", "=", input.eventId)
-        .innerJoin("User", "User.id", "Comment.userId")
-        .leftJoin("Reply", "Reply.commentId", "Comment.id")
-        .selectAll("Comment")
+        .selectFrom("Reply")
+        .where("commentId", "=", input.commentId)
+        .innerJoin("User", "User.id", "Reply.userId")
+        .selectAll("Reply")
         .select(["User.image as userImage", "User.name as userName"])
-        .select((eb) => eb.fn.count<number>("Reply.id").as("replyCount"))
-        .groupBy("Comment.id")
-        .orderBy("Comment.id desc")
+        .orderBy("Reply.id desc")
         .limit(limit + 1); //one extra to know first item of next page
 
       if (input.cursor !== undefined) {
-        query = query.where("Comment.id", "<=", input.cursor);
+        query = query.where("Reply.id", "<=", input.cursor);
       }
 
       const items = await query.execute();
