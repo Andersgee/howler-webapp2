@@ -39,8 +39,8 @@ export async function createOrUpdateUser(info: Info) {
 
     tokenUser = {
       id: existingUser.id,
-      name: existingUser.name,
-      image: existingUser.image ?? "",
+      name: info.name,
+      image: info.image,
     };
   } else {
     const insertResult = await db
