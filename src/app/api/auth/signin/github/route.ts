@@ -2,6 +2,7 @@ import { type NextRequest } from "next/server";
 import { GITHUB_AUTHORIZATION_URL } from "#src/utils/auth/schema";
 import { createStateToken, getSessionFromRequestCookie } from "#src/utils/jwt";
 import { absUrl, urlWithSearchparams } from "#src/utils/url";
+import { errorMessageFromUnkown } from "#src/utils/errormessage";
 
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    //console.error(errorMessageFromUnkown(error));
+    console.error(errorMessageFromUnkown(error));
     return new Response(null, {
       status: 303,
       headers: {

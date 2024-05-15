@@ -3,6 +3,7 @@ import { DISCORD_TOKEN, DISCORD_TOKEN_URL, DISCORD_USERINFO, DISCORD_USERINFO_UR
 import { getSessionFromRequestCookie, verifyStateToken } from "#src/utils/jwt";
 import { absUrl, encodeParams } from "#src/utils/url";
 import { createOrUpdateUser } from "../authenticate";
+import { errorMessageFromUnkown } from "#src/utils/errormessage";
 
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
@@ -81,7 +82,8 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    //console.error(errorMessageFromUnkown(error));
+    console.error(errorMessageFromUnkown(error));
+
     return new Response(null, {
       status: 303,
       headers: {

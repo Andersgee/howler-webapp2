@@ -3,6 +3,7 @@ import { getSessionFromRequestCookie, verifyStateToken } from "#src/utils/jwt";
 import { absUrl, urlWithSearchparams } from "#src/utils/url";
 import { z } from "zod";
 import { createOrUpdateUser } from "../authenticate";
+import { errorMessageFromUnkown } from "#src/utils/errormessage";
 
 /*
 https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow/
@@ -93,7 +94,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    //console.error(errorMessageFromUnkown(error));
+    console.error(errorMessageFromUnkown(error));
 
     return new Response(null, {
       status: 303,

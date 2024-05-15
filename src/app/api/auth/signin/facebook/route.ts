@@ -1,3 +1,4 @@
+import { errorMessageFromUnkown } from "#src/utils/errormessage";
 import { createStateToken, getSessionFromRequestCookie } from "#src/utils/jwt";
 import { absUrl, urlWithSearchparams } from "#src/utils/url";
 import { type NextRequest } from "next/server";
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    //console.error(errorMessageFromUnkown(error));
+    console.error(errorMessageFromUnkown(error));
     return new Response(null, {
       status: 303,
       headers: {
