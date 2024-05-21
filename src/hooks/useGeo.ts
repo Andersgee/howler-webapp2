@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useStore } from "#src/store";
 import { z } from "zod";
 
 /**
@@ -10,7 +9,6 @@ import { z } from "zod";
 export function useGeo() {
   const [geo, setGeo] = useState<{ lng: number; lat: number } | null | undefined>(undefined);
   const didRun = useRef(false);
-  const userDispatch = useStore.use.userDispatch();
 
   useEffect(() => {
     if (didRun.current) return; //only run once even in development
@@ -18,7 +16,7 @@ export function useGeo() {
     getGeo()
       .then((x) => setGeo(x))
       .catch(() => setGeo(null));
-  }, [userDispatch]);
+  }, []);
   return geo;
 }
 
