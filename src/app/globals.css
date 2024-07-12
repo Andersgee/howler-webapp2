@@ -244,6 +244,10 @@
   padding: 0;
 }
 
+.gm-style-iw-chr {
+  display: none;
+}
+
 .max-h-popper-available-minus-a-bit {
   /*height: calc(var(--radix-popper-available-height) - 61px);*/
   max-height: calc(var(--radix-popper-available-height) - 200px);
