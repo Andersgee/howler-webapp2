@@ -819,7 +819,10 @@ export default {
       8: "8px",
     },
     padding: ({ theme }) => theme("spacing"),
-    placeholderColor: ({ theme }) => theme("colors"),
+    placeholderColor: ({ theme }) => ({
+      ...theme("colors"),
+      DEFAULT: theme("colors.color-neutral.500"),
+    }),
     placeholderOpacity: ({ theme }) => theme("opacity"),
 
     ringOffsetColor: ({ theme }) => theme("colors"),
