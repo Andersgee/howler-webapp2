@@ -44,6 +44,7 @@ export class GoogleMapsClass {
   controls_element_unpick_point!: HTMLDivElement;
   controls_element_footer!: HTMLDivElement;
   controls_element_directions!: HTMLDivElement;
+  controls_element_fullscreen!: HTMLDivElement;
 
   mode: "pick-location" | "view-event" | "explore";
 
@@ -167,11 +168,11 @@ export class GoogleMapsClass {
       this.controls_element_footer = document.createElement("div");
       this.map.controls[google.maps.ControlPosition.BOTTOM_RIGHT]!.push(this.controls_element_footer);
 
-      this.controls_element_footer = document.createElement("div");
-      this.map.controls[google.maps.ControlPosition.BOTTOM_RIGHT]!.push(this.controls_element_footer);
-
       this.controls_element_directions = document.createElement("div");
       this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.controls_element_directions);
+
+      this.controls_element_fullscreen = document.createElement("div");
+      this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.controls_element_fullscreen);
 
       //https://github.com/mapbox/supercluster#readme
       this.markerClusterer = new MarkerClusterer({
