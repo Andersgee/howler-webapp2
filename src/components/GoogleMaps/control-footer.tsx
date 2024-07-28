@@ -18,7 +18,7 @@ function Content() {
       <Link
         href="/privacy"
         prefetch={false}
-        className="bg-color-unthemed-neutral-100/75 px-1.5 decoration-solid hover:underline"
+        className="bg-color-unthemed-neutral-100/70 px-1.5 decoration-solid hover:underline"
       >
         Privacy
       </Link>
@@ -26,7 +26,7 @@ function Content() {
       <Link
         href="/terms"
         prefetch={false}
-        className="bg-color-unthemed-neutral-100/75 bg-opacity-75 px-1.5 decoration-solid hover:underline"
+        className="bg-color-unthemed-neutral-100/70 px-1.5 decoration-solid hover:underline"
       >
         Terms
       </Link>
