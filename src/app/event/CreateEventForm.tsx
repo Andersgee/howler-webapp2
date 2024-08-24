@@ -13,7 +13,7 @@ import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { useStore } from "#src/store";
 import { useEffect, useRef, useState } from "react";
-import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
+
 import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
@@ -21,9 +21,12 @@ import { IconWhere } from "#src/icons/Where";
 import { dialogDispatch } from "#src/store/slices/dialog";
 import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { ControlLocate } from "#src/components/GoogleMaps/control-locate";
-import { getCurrentPosition } from "#src/utils/geolocation";
 import { ControlUnpickPoint } from "#src/components/GoogleMaps/control-unpick-point";
 import { ControlFullscreen } from "#src/components/GoogleMaps/control-fullscreen";
+import { IconChevronDown } from "#src/icons/ChevronDown";
+import { cn } from "#src/utils/cn";
+import { InputAutocompleteGooglePlaces } from "#src/components/InputAutocompleteGooglePlaces";
+import { pointFromlatLngLiteral } from "#src/components/GoogleMaps/google-maps-point-latlng";
 
 const zFormData = z.object({
   title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
@@ -47,42 +50,50 @@ type Props = {
   isSignedIn: boolean;
 };
 
+function usePlaceFromPlaceId(placeId: string | null) {
+  const googleMaps = useStore.use.googleMaps();
+  const { data: place } = api.geocode.fromPlaceId.useQuery({ placeId: placeId! }, { enabled: !!placeId });
+
+  //pan google maps to the point also if its open
+  useEffect(() => {
+    if (place && googleMaps) {
+      googleMaps.map.panTo(place.geometry.location);
+      googleMaps.setPickedPointAndMarker(place.geometry.location);
+    }
+  }, [place, googleMaps]);
+
+  return place;
+}
+
 export function CreateEventForm({ isSignedIn }: Props) {
   const form = useForm<FormData>({
     resolver: zodResolver(zFormData),
     defaultValues: {
       title: "",
-      date: new Date(),
+      date: new Date(Date.now() + 1000 * 60 * 60),
       location: null,
       locationName: "",
     },
   });
   const [showMap, setShowMap] = useState(false);
+
+  //set location whenever this changes
   const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
-  //const googleMapsPickedPoint = useStore((s) => s.googleMapsPickedPoint);
-  const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
-    { point: googleMapsPickedPoint! },
-    {
-      enabled: isSignedIn && Boolean(googleMapsPickedPoint),
-    }
-  );
-
   useEffect(() => {
-    //auto fill locationName if empty when picking a point
-    const ln = form.getValues("locationName");
-    if (!ln && pickedPointNames?.[0]) {
-      form.setValue("locationName", pickedPointNames[0]);
-    }
-  }, [pickedPointNames, form]);
+    form.setValue("location", googleMapsPickedPoint); //always set this (on unpick also)
+  }, [form, googleMapsPickedPoint]);
 
+  //set both location and locationName whenever this changes
+  const [clickedSuggestionPlaceId, setClickedSuggestionPlaceId] = useState<string | null>(null);
+  const selectedPlace = usePlaceFromPlaceId(clickedSuggestionPlaceId);
   useEffect(() => {
-    if (googleMapsPickedPoint) {
-      form.setValue("location", googleMapsPickedPoint);
+    if (selectedPlace) {
+      form.setValue("locationName", selectedPlace.formatted_address);
+      form.setValue("location", pointFromlatLngLiteral(selectedPlace.geometry.location));
     }
-  }, [googleMapsPickedPoint, form]);
+  }, [form, selectedPlace]);
 
   const router = useRouter();
-
   const { toast } = useToast();
 
   const eventCreate = api.event.create.useMutation({
@@ -114,6 +125,7 @@ export function CreateEventForm({ isSignedIn }: Props) {
               <div className="flex items-center gap-2">
                 <IconWhat />
                 <FormLabel className="w-11 shrink-0">What</FormLabel>
+
                 <FormControl>
                   <Input
                     type="text"
@@ -137,31 +149,23 @@ export function CreateEventForm({ isSignedIn }: Props) {
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center gap-2">
-                {/*
                 <IconWhere />
                 <FormLabel className="w-11 shrink-0">Where</FormLabel>
-                */}
-                <Button
-                  type="button"
-                  variant="icon"
-                  className="m-0 py-2 pl-0 pr-2"
-                  onClick={() => setShowMap((prev) => !prev)}
-                >
-                  <IconWhere />
-                  <div className="w-11 shrink-0">Where</div>
+                <InputAutocompleteGooglePlaces
+                  value={field.value}
+                  onChange={(str, placeId) => {
+                    field.onChange(str);
+                    if (placeId) {
+                      setClickedSuggestionPlaceId(placeId);
+                      console.log("selected placeId", placeId);
+                    }
+                  }}
+                />
+                <Button onClick={() => setShowMap((prev) => !prev)} variant="icon">
+                  <IconChevronDown className={cn("transition-transform duration-200", showMap && "rotate-180")} />
                 </Button>
-                {/*<FormDescription>click on map (optional)</FormDescription>*/}
-                <FormControl>
-                  <InputWithAutocomplete
-                    aria-label="Where"
-                    placeholder="Location name..."
-                    suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLowerCase() })) ?? []}
-                    {...field}
-                  />
-                </FormControl>
               </div>
               <FormMessage className="ml-8" />
-              {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
           )}
         />
@@ -214,26 +218,15 @@ export function CreateEventForm({ isSignedIn }: Props) {
 
 function Map({ show }: { show: boolean }) {
   const didRun = useRef(false);
-  const didRun2 = useRef(false);
+  //const didRun2 = useRef(false);
   const googleMaps = useStore.use.googleMaps();
+
   useEffect(() => {
     //initialize mode (once)
     if (!googleMaps || didRun.current) return;
     googleMaps.setMode("pick-location");
     didRun.current = true;
   }, [googleMaps]);
-
-  useEffect(() => {
-    //auto place marker on location (once, and only if granted)
-    if (!googleMaps || !show || didRun2.current) return;
-    getCurrentPosition((res) => {
-      if (res.ok) {
-        googleMaps.map.setOptions({ center: res.latLng, zoom: 15 });
-        googleMaps.setPickedPointAndMarker(res.latLng);
-      }
-    });
-    didRun2.current = true;
-  }, [googleMaps, show]);
 
   return show ? (
     <div className="h-96 w-full">

@@ -47,6 +47,30 @@ const schemaAdressComponentType = z.enum([
 ]);
 export type AdressComponentType = z.infer<typeof schemaAdressComponentType>;
 
+const zGeometry = z.object({
+  location: z.object({
+    lat: z.number(),
+    lng: z.number(),
+  }),
+  location_type: z.string(), //enum?
+  viewport: z.object({
+    northeast: z.object({
+      lat: z.number(),
+      lng: z.number(),
+    }),
+    southwest: z.object({
+      lat: z.number(),
+      lng: z.number(),
+    }),
+  }),
+});
+
+const zAdressComponent = z.object({
+  long_name: z.string(),
+  short_name: z.string(),
+  types: z.array(schemaAdressComponentType.or(z.string())),
+});
+
 export const schemaReverseGeoCodingResponse = z.object({
   status: z.enum(["OK", "ZERO_RESULTS", "OVER_QUERY_LIMIT", "REQUEST_DENIED", "INVALID_REQUEST", "UNKNOWN_ERROR"]),
   plus_code: z.object({
@@ -56,40 +80,31 @@ export const schemaReverseGeoCodingResponse = z.object({
   results: z.array(
     z.object({
       formatted_address: z.string(), //"not just postal addresses, but any way to geographically name a location"
-      address_components: z.array(
-        z.object({
-          long_name: z.string(),
-          short_name: z.string(),
-          types: z.array(schemaAdressComponentType.or(z.string())),
-        })
-      ),
-      geometry: z.object({
-        location: z.object({
-          lat: z.number(),
-          lng: z.number(),
-        }),
-        location_type: z.string(), //enum?
-        viewport: z.object({
-          northeast: z.object({
-            lat: z.number(),
-            lng: z.number(),
-          }),
-          southwest: z.object({
-            lat: z.number(),
-            lng: z.number(),
-          }),
-        }),
-      }),
+      address_components: z.array(zAdressComponent),
+      geometry: zGeometry,
       place_id: z.string(),
+      types: z.array(schemaResultType.or(z.string())),
       plus_code: z
         .object({
           compound_code: z.string(),
           global_code: z.string(),
         })
         .optional(),
-      types: z.array(schemaResultType.or(z.string())),
     })
   ),
 });
 
 export type ReverseGeoCodingResponse = z.infer<typeof schemaReverseGeoCodingResponse>;
+
+export const schemaReverseGeoCodingPlaceIdResponse = z.object({
+  status: z.enum(["OK", "ZERO_RESULTS", "OVER_QUERY_LIMIT", "REQUEST_DENIED", "INVALID_REQUEST", "UNKNOWN_ERROR"]),
+  results: z.array(
+    z.object({
+      formatted_address: z.string(), //"not just postal addresses, but any way to geographically name a location"
+      address_components: z.array(zAdressComponent),
+      geometry: zGeometry,
+      place_id: z.string(),
+      types: z.array(schemaResultType.or(z.string())),
+    })
+  ),
+});

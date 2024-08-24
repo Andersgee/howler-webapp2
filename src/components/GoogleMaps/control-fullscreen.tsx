@@ -1,14 +1,15 @@
 "use client";
 
 import { IconMaximize } from "#src/icons/maximize";
-//import { IconMinimize } from "#src/icons/minimize";
+import { IconMinimize } from "#src/icons/minimize";
 import { useStore } from "#src/store";
+import { closeGoogleMapsFullscreen, requestGoogleMapsFullscreen } from "#src/store/slices/map";
 import { Button } from "#src/ui/button";
-import { exitFullscreen, requestFullscreen, isFullscreen } from "#src/utils/fullscreen";
 import { createPortal } from "react-dom";
 
 export function ControlFullscreen() {
   const googleMaps = useStore.use.googleMaps();
+
   if (!googleMaps?.controls_element_fullscreen) {
     return null;
   }
@@ -17,6 +18,7 @@ export function ControlFullscreen() {
 
 function Content() {
   const element = useStore.use.googleMapsElement();
+  const googleMapIsFullscreen = useStore.use.googleMapIsFullscreen();
 
   if (!element) return null;
 
@@ -25,14 +27,14 @@ function Content() {
       variant="icon"
       aria-label="fullscreen"
       onClick={() => {
-        if (isFullscreen(element)) {
-          exitFullscreen();
+        if (googleMapIsFullscreen) {
+          closeGoogleMapsFullscreen();
         } else {
-          requestFullscreen(element);
+          requestGoogleMapsFullscreen();
         }
       }}
     >
-      <IconMaximize />
+      {googleMapIsFullscreen ? <IconMinimize /> : <IconMaximize />}
     </Button>
   );
 }

@@ -1,4 +1,10 @@
-import { schemaReverseGeoCodingResponse, type ReverseGeoCodingResponse, type AdressComponentType } from "./schema";
+import { pointFromlatLngLiteral } from "#src/components/GoogleMaps/google-maps-point-latlng";
+import {
+  schemaReverseGeoCodingResponse,
+  type ReverseGeoCodingResponse,
+  type AdressComponentType,
+  schemaReverseGeoCodingPlaceIdResponse,
+} from "./schema";
 
 export async function getGoogleReverseGeocoding(p: { lat: number; lng: number }) {
   const key = process.env.GOOGLE_GEOCODING_API_KEY;
@@ -13,6 +19,25 @@ export async function getGoogleReverseGeocoding(p: { lat: number; lng: number })
     //return findSimpleName(data);
     //return data.results[0]?.formatted_address ?? null;
     return nameList(data);
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function getGoogleReverseGeocoding2(p: { lat: number; lng: number }) {
+  const key = process.env.GOOGLE_GEOCODING_API_KEY;
+
+  try {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${p.lat},${p.lng}&key=${key}`;
+    const data = schemaReverseGeoCodingResponse.parse(await fetch(url).then((res) => res.json()));
+    if (data.status !== "OK") {
+      throw new Error(data.status);
+    }
+    return data.results.map((result) => ({
+      formatted_address: result.formatted_address,
+      placeId: result.place_id,
+      point: pointFromlatLngLiteral({ lng: result.geometry.location.lng, lat: result.geometry.location.lat }),
+    }));
   } catch (error) {
     return null;
   }
@@ -35,6 +60,24 @@ function nameList(data: ReverseGeoCodingResponse) {
     }
   }
   return Array.from(s);
+}
+
+//https://developers.google.com/maps/documentation/geocoding/requests-places-geocoding
+export async function getGoogleReverseGeocodingFromPlaceId(placeId: string) {
+  const key = process.env.GOOGLE_GEOCODING_API_KEY;
+
+  try {
+    const url = `https://maps.googleapis.com/maps/api/geocode/json?place_id=${placeId}&key=${key}`;
+    //const data = await fetch(url).then((res) => res.json());
+    const data = schemaReverseGeoCodingPlaceIdResponse.parse(await fetch(url).then((res) => res.json()));
+    if (data.status !== "OK") {
+      throw new Error(data.status);
+    }
+
+    return data.results[0] ?? null;
+  } catch (error) {
+    return null;
+  }
 }
 
 /*

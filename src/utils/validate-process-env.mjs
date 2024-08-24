@@ -32,6 +32,7 @@ export const envSchema = z.object({
   HOWLER_FIREBASE_ADMIN_SERVICE_ACCOUNT_PRIVATE_KEY: z.string(),
   FACEBOOK_CLIENT_ID: z.string(),
   FACEBOOK_CLIENT_SECRET: z.string(),
+  NEXT_PUBLIC_GOOGLE_PLACES_API_KEY: z.string(),
 });
 
 /**

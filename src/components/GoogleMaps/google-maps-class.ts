@@ -1,9 +1,14 @@
 import { type RouterOutputs } from "#src/hooks/api";
-import { setGoogleMapsExploreSelectedEventId, setGoogleMapsPickedPoint } from "#src/store/slices/map";
+import {
+  setGoogleMapIsFullscreen,
+  setGoogleMapsExploreSelectedEventId,
+  setGoogleMapsPickedPoint,
+} from "#src/store/slices/map";
 import { absUrl } from "#src/utils/url";
 import { SuperClusterAlgorithm, MarkerClusterer } from "@googlemaps/markerclusterer";
 import { HOWLER_MAP_DARK, HOWLER_MAP_LIGHT } from "./custom-theme";
 import { latLngLiteralFromPoint, pointFromlatLngLiteral } from "./google-maps-point-latlng";
+import { isFullscreen } from "#src/utils/fullscreen";
 
 //https://console.cloud.google.com/google/maps-apis/studio/maps
 const TEST_MAP_ID = "478ad7a3d9f73ca4";
@@ -32,6 +37,7 @@ const INITIAL_ZOOM = 5;
 //const INITIAL_CENTER = { lat: 59.9124033, lng: 16.3235665 };
 
 export class GoogleMapsClass {
+  element!: HTMLDivElement;
   map!: google.maps.Map;
   primaryPin!: google.maps.marker.PinElement;
   primaryMarker!: google.maps.marker.AdvancedMarkerElement;
@@ -45,6 +51,7 @@ export class GoogleMapsClass {
   controls_element_footer!: HTMLDivElement;
   controls_element_directions!: HTMLDivElement;
   controls_element_fullscreen!: HTMLDivElement;
+  controls_element_where_search!: HTMLDivElement;
 
   mode: "pick-location" | "view-event" | "explore";
 
@@ -63,6 +70,7 @@ export class GoogleMapsClass {
   }
 
   async init(element: HTMLDivElement, initialCenter: { lat: number; lng: number } | null) {
+    this.element = element;
     try {
       //load relevant libs
       //https://developers.google.com/maps/documentation/javascript/libraries#libraries-for-dynamic-library-import
@@ -136,6 +144,15 @@ export class GoogleMapsClass {
         }
       });
 
+      this.element.addEventListener("fullscreenchange", () => {
+        //https://developer.mozilla.org/en-US/docs/Web/API/Element/fullscreenchange_event
+        if (isFullscreen(this.element)) {
+          setGoogleMapIsFullscreen(true);
+        } else {
+          setGoogleMapIsFullscreen(false);
+        }
+      });
+
       this.primaryPin = new google.maps.marker.PinElement({
         //scale: 1.5,
         scale: 1,
@@ -156,6 +173,9 @@ export class GoogleMapsClass {
       });
 
       //https://developers.google.com/maps/documentation/javascript/controls#ControlPositioning
+      this.controls_element_fullscreen = document.createElement("div");
+      this.map.controls[google.maps.ControlPosition.TOP_RIGHT]!.push(this.controls_element_fullscreen);
+
       this.controls_element_search = document.createElement("div");
       this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.controls_element_search);
 
@@ -171,8 +191,8 @@ export class GoogleMapsClass {
       this.controls_element_directions = document.createElement("div");
       this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.controls_element_directions);
 
-      this.controls_element_fullscreen = document.createElement("div");
-      this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.controls_element_fullscreen);
+      this.controls_element_where_search = document.createElement("div");
+      this.map.controls[google.maps.ControlPosition.TOP_LEFT]!.push(this.controls_element_where_search);
 
       //https://github.com/mapbox/supercluster#readme
       this.markerClusterer = new MarkerClusterer({
@@ -189,8 +209,6 @@ export class GoogleMapsClass {
         const latLng = e.latLng;
         if (this.mode === "pick-location") {
           this.setPickedPointAndMarker({ lat: latLng.lat(), lng: latLng.lng() });
-          //this.primaryMarker.position = latLng;
-          //setGoogleMapsPickedPoint(pointFromlatLng(latLng));
         }
         if (this.mode === "explore") {
           setGoogleMapsExploreSelectedEventId(null);
@@ -204,9 +222,12 @@ export class GoogleMapsClass {
     }
   }
 
-  setPickedPointAndMarker(latLng: google.maps.LatLngLiteral | null) {
+  setPickedPointAndMarker(latLng: google.maps.LatLngLiteral | null, setGlobalState = true) {
     this.primaryMarker.position = latLng;
-    setGoogleMapsPickedPoint(latLng ? pointFromlatLngLiteral(latLng) : null);
+    if (setGlobalState) {
+      //sometimes we might not want to do this
+      setGoogleMapsPickedPoint(latLng ? pointFromlatLngLiteral(latLng) : null);
+    }
   }
 
   addEventsAsMarkers(events: RouterOutputs["event"]["explore"]["events"]) {

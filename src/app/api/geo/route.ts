@@ -12,6 +12,6 @@ export function GET(request: NextRequest) {
     return new Response(JSON.stringify(geo), { status: 200 });
   }
 
-  return new Response(JSON.stringify({ lat: 55.49, lng: 13.04 }), { status: 200 });
-  //return new Response(null, { status: 204 });
+  //return new Response(JSON.stringify({ lat: 55.49, lng: 13.04 }), { status: 200 });
+  return new Response(null, { status: 204 });
 }
