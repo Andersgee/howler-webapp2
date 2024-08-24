@@ -27,6 +27,7 @@ import { IconChevronDown } from "#src/icons/ChevronDown";
 import { cn } from "#src/utils/cn";
 import { InputAutocompleteGooglePlaces } from "#src/components/InputAutocompleteGooglePlaces";
 import { pointFromlatLngLiteral } from "#src/components/GoogleMaps/google-maps-point-latlng";
+import { usePlaceFromPlaceId } from "#src/hooks/usePlaceFromPlaceId";
 
 const zFormData = z.object({
   title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
@@ -49,21 +50,6 @@ type FormData = z.infer<typeof zFormData>;
 type Props = {
   isSignedIn: boolean;
 };
-
-function usePlaceFromPlaceId(placeId: string | null) {
-  const googleMaps = useStore.use.googleMaps();
-  const { data: place } = api.geocode.fromPlaceId.useQuery({ placeId: placeId! }, { enabled: !!placeId });
-
-  //pan google maps to the point also if its open
-  useEffect(() => {
-    if (place && googleMaps) {
-      googleMaps.map.panTo(place.geometry.location);
-      googleMaps.setPickedPointAndMarker(place.geometry.location);
-    }
-  }, [place, googleMaps]);
-
-  return place;
-}
 
 export function CreateEventForm({ isSignedIn }: Props) {
   const form = useForm<FormData>({

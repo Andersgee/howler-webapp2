@@ -3,6 +3,7 @@
 import { actionRevalidateTag } from "#src/app/actions";
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { ControlDirections } from "#src/components/GoogleMaps/control-directions";
+import { ControlFullscreen } from "#src/components/GoogleMaps/control-fullscreen";
 import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { ShareButton } from "#src/components/ShareButton";
 import { type GeoJson } from "#src/db/types-geojson";
@@ -103,6 +104,7 @@ function Map({ show, location }: { show: boolean; location: GeoJson["Point"] }) 
       <div className="h-96 w-full">
         <GoogleMaps />
         <ControlDirections location={location} />
+        <ControlFullscreen />
       </div>
     )
   );

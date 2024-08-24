@@ -11,7 +11,6 @@ import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { useStore } from "#src/store";
 import { useEffect, useRef, useState } from "react";
-import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
@@ -22,11 +21,15 @@ import { z } from "zod";
 import { zGeoJsonPoint, type GeoJson } from "#src/db/types-geojson";
 //import { actionOnSuccess } from "./actions";
 import { setGoogleMapsPickedPoint } from "#src/store/slices/map";
-import { latLngLiteralFromPoint } from "#src/components/GoogleMaps/google-maps-point-latlng";
+import { latLngLiteralFromPoint, pointFromlatLngLiteral } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { actionRevalidateTagAndRedirect } from "#src/app/actions";
 import Link from "next/link";
 import { hashidFromId } from "#src/utils/hashid";
 import { ControlLocate } from "#src/components/GoogleMaps/control-locate";
+import { InputAutocompleteGooglePlaces } from "#src/components/InputAutocompleteGooglePlaces";
+import { IconChevronDown } from "#src/icons/ChevronDown";
+import { usePlaceFromPlaceId } from "#src/hooks/usePlaceFromPlaceId";
+import { ControlFullscreen } from "#src/components/GoogleMaps/control-fullscreen";
 
 const zFormData = z.object({
   id: z.bigint(),
@@ -72,14 +75,22 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
       setGoogleMapsPickedPoint(initialEvent.location);
     }
   }, [initialEvent]);
-  const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
 
-  const { data: pickedPointNames } = api.geocode.fromPoint.useQuery(
-    { point: googleMapsPickedPoint! },
-    {
-      enabled: !!googleMapsPickedPoint,
+  //set location whenever this changes
+  const googleMapsPickedPoint = useStore.use.googleMapsPickedPoint();
+  useEffect(() => {
+    form.setValue("location", googleMapsPickedPoint); //always set this (on unpick also)
+  }, [form, googleMapsPickedPoint]);
+
+  //set both location and locationName whenever this changes
+  const [clickedSuggestionPlaceId, setClickedSuggestionPlaceId] = useState<string | null>(null);
+  const selectedPlace = usePlaceFromPlaceId(clickedSuggestionPlaceId);
+  useEffect(() => {
+    if (selectedPlace) {
+      form.setValue("locationName", selectedPlace.formatted_address);
+      form.setValue("location", pointFromlatLngLiteral(selectedPlace.geometry.location));
     }
-  );
+  }, [form, selectedPlace]);
 
   //const router = useRouter();
 
@@ -93,10 +104,6 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
       toast({ variant: "warn", title: "Could not update event", description: "Try again" });
     },
   });
-
-  useEffect(() => {
-    form.setValue("location", googleMapsPickedPoint);
-  }, [googleMapsPickedPoint, form]);
 
   const onValid = (data: FormData) => {
     eventUpdate.mutate(data);
@@ -135,30 +142,23 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
           render={({ field }) => (
             <FormItem>
               <div className="flex items-center gap-2">
-                {/*
                 <IconWhere />
                 <FormLabel className="w-11 shrink-0">Where</FormLabel>
-                */}
-                <Button
-                  type="button"
-                  variant="icon"
-                  className="m-0 py-2 pl-0 pr-2"
-                  onClick={() => setShowMap((prev) => !prev)}
-                >
-                  <IconWhere />
-                  <div className="w-11 shrink-0">Where</div>
+                <InputAutocompleteGooglePlaces
+                  value={field.value}
+                  onChange={(str, placeId) => {
+                    field.onChange(str);
+                    if (placeId) {
+                      setClickedSuggestionPlaceId(placeId);
+                      console.log("selected placeId", placeId);
+                    }
+                  }}
+                />
+                <Button onClick={() => setShowMap((prev) => !prev)} variant="icon">
+                  <IconChevronDown className={cn("transition-transform duration-200", showMap && "rotate-180")} />
                 </Button>
-                <FormControl>
-                  <InputWithAutocomplete
-                    aria-label="Where"
-                    placeholder="Location name..."
-                    suggestions={pickedPointNames?.map((p) => ({ label: p, value: p.toLowerCase() })) ?? []}
-                    {...field}
-                  />
-                </FormControl>
               </div>
               <FormMessage className="ml-8" />
-              {/*<FormDescription>some string.</FormDescription>*/}
             </FormItem>
           )}
         />
@@ -226,6 +226,7 @@ function Map({ show, initialLocation }: { show: boolean; initialLocation: null |
     <>
       <div className="h-96 w-full">
         <GoogleMaps />
+        <ControlFullscreen />
         <ControlUnpickPoint />
         <ControlLocate
           onLocated={(p) => {
