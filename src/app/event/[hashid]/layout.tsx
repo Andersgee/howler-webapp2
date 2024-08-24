@@ -1,17 +1,15 @@
 import { apiRscPublic } from "#src/trpc/api-rsc-public";
 import { idFromHashid } from "#src/utils/hashid";
 import { seo } from "#src/utils/seo";
-import { type ResolvingMetadata } from "next";
 import { notFound } from "next/navigation";
 
 type Props = {
   children: React.ReactNode;
-  searchParams: Record<string, string | string[] | undefined>;
   /** adjust params according dynamic routes, eg if this is under a [slug] folder */
   params: { hashid: string };
 };
 
-export async function generateMetadata({ params }: Props, _parent: ResolvingMetadata) {
+export async function generateMetadata({ params }: Props) {
   const id = idFromHashid(params.hashid);
   if (id === undefined) notFound();
 
@@ -29,5 +27,5 @@ export async function generateMetadata({ params }: Props, _parent: ResolvingMeta
 }
 
 export default function Layout({ children }: Props) {
-  return <>{children}</>;
+  return children;
 }
