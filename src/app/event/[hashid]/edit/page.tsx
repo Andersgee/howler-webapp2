@@ -7,9 +7,7 @@ import { Shell } from "#src/components/Shell";
 import type { Metadata } from "next";
 
 export function generateMetadata(): Metadata {
-  return {
-    title: "Edit",
-  };
+  return { title: "Edit" };
 }
 
 type Props = {
