@@ -6,6 +6,7 @@ export function seo({
   type = "website",
   site_name = "Howler",
   title,
+  titleTemplate,
   url,
   image,
   description,
@@ -19,7 +20,12 @@ export function seo({
     //as of nextjs14 they added metadataBase to avoid doing absUrl() everywhere
     //just put it here to prevent warning for now
     metadataBase: new URL(absUrl()),
-    title: title,
+    title: titleTemplate
+      ? {
+          default: title,
+          template: titleTemplate,
+        }
+      : title,
     description: description,
     applicationName: site_name,
     manifest: absUrl("/manifest.webmanifest"),
@@ -76,6 +82,10 @@ type Options = {
    * The title of your object as it should appear within the graph, e.g., "The Rock".
    */
   title: string;
+  /**
+   * eg "%s | Hello" results in page children metadata title extending this titleTemplate
+   */
+  titleTemplate?: string;
   /**
    * A one to two sentence description of your object.
    */

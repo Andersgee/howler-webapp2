@@ -14,7 +14,7 @@ export default async function Page() {
   const { user } = await apiRsc();
   return (
     <Shell>
-      <h1>create</h1>
+      <div className="py-4"></div>
       <CreateEventForm isSignedIn={!!user} />
     </Shell>
   );

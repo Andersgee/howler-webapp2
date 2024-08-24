@@ -1,5 +1,4 @@
 import { apiRsc } from "#src/trpc/api-rsc";
-import { apiRscPublic } from "#src/trpc/api-rsc-public";
 import { hashidFromId, idFromHashid } from "#src/utils/hashid";
 import { notFound } from "next/navigation";
 import { Eventinfo } from "./Eventinfo";
@@ -7,38 +6,18 @@ import { EventActions } from "./EventActions";
 import Image from "next/image";
 import { imageSizes } from "#src/utils/image-sizes";
 //import { base64 } from "rfc4648";
-import { seo } from "#src/utils/seo";
-import { type ResolvingMetadata } from "next";
 import { RichResults } from "./RichResults";
 import Link from "next/link";
 import { Shell } from "#src/components/Shell";
 import { CreateCommentForm } from "./CreateCommentForm";
 import { CommentsList, PinnedComment } from "./CommentsList";
-import { UserImage32x32 } from "#src/components/user/UserImage";
+//import { UserImage32x32 } from "#src/components/user/UserImage";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
   /** adjust params according dynamic routes, eg if this is under a [slug] folder */
   params: { hashid: string };
 };
-
-export async function generateMetadata({ params }: Props, _parent: ResolvingMetadata) {
-  const id = idFromHashid(params.hashid);
-  if (id === undefined) notFound();
-
-  const { api } = apiRscPublic();
-  const event = await api.event.getById({ id });
-  if (!event) notFound();
-
-  //const previousImages = (await parent).openGraph?.images ?? []
-
-  return seo({
-    title: `${event.title} | Howler`,
-    description: `Howl by ${event.creatorName}`, //"Quickly find/plan stuff to do with friends, or with anyone really.",
-    url: `/event/${params.hashid}`,
-    image: `/event/${params.hashid}/image.png`,
-  });
-}
 
 //function blurDataURLstring(data: Uint8Array) {
 //  return `data:image/png;base64,${base64.stringify(data)}`;

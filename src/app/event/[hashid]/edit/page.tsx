@@ -4,6 +4,13 @@ import { notFound, redirect } from "next/navigation";
 import { UpdateEventForm } from "./UpdateEventForm";
 import { EventImage } from "./EventImage";
 import { Shell } from "#src/components/Shell";
+import type { Metadata } from "next";
+
+export function generateMetadata(): Metadata {
+  return {
+    title: "Edit",
+  };
+}
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -23,7 +30,7 @@ export default async function Page({ params }: Props) {
 
   return (
     <Shell>
-      <h1>Edit Event</h1>
+      <div className="py-4"></div>
       <div className="flex justify-center">
         <EventImage event={event} />
       </div>
