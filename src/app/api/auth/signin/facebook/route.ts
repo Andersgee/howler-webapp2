@@ -3,6 +3,9 @@ import { createStateToken, getSessionFromRequestCookie } from "#src/utils/jwt";
 import { absUrl, urlWithSearchparams } from "#src/utils/url";
 import { type NextRequest } from "next/server";
 
+export const dynamic = "force-dynamic";
+export const runtime = "edge";
+
 /*
 https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow/
 
