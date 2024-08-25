@@ -19,8 +19,8 @@ export function TopnavLink({ href, label }: Props) {
         isActive && "text-color-neutral-900 underline"
       )}
       href={href}
-      prefetch={false} //for testing
-      //prefetch={true} //important to put true or false (leaving it undefined is not the same as true)
+      //prefetch={false} //for testing
+      prefetch={true} //important to put true or false (leaving it undefined is not the same as true)
     >
       {label}
     </Link>
