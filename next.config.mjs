@@ -5,6 +5,9 @@ import { withPlausibleProxy } from "next-plausible";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    ppr: true,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },

@@ -1,5 +1,4 @@
 import { Shell } from "#src/components/Shell";
-import { apiRsc } from "#src/trpc/api-rsc";
 import { seo } from "#src/utils/seo";
 import { CreateEventForm } from "./CreateEventForm";
 
@@ -10,12 +9,11 @@ export const metadata = seo({
   image: "/howler.png",
 });
 
-export default async function Page() {
-  const { user } = await apiRsc();
+export default function Page() {
   return (
     <Shell>
       <div className="py-4"></div>
-      <CreateEventForm isSignedIn={!!user} />
+      <CreateEventForm />
     </Shell>
   );
 }

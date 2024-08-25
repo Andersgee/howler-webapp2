@@ -8,6 +8,9 @@ import { notify } from "#src/lib/cloud-messaging-light/notify";
 import { hashidFromId } from "#src/utils/hashid";
 
 export const userRouter = createTRPCRouter({
+  cookie: publicProcedure.query(({ ctx }) => {
+    return ctx.user;
+  }),
   info: protectedProcedure.input(z.object({ userId: z.bigint() })).query(async ({ input }) => {
     const user = await dbfetch({ next: { tags: [tagsUser.info(input)] } })
       .selectFrom("User")

@@ -13,7 +13,7 @@ export type MapSlice = {
   googleMapIsFullscreen: boolean;
 };
 
-export const createMapSlice: StateCreator<MapSlice, [], [], MapSlice> = (_set, get) => ({
+export const createMapSlice: StateCreator<MapSlice, [], [], MapSlice> = (_set, _get) => ({
   //whereSearchValue: "",
   googleMaps: null,
   googleMapsElement: null,

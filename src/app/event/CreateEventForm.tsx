@@ -28,6 +28,7 @@ import { cn } from "#src/utils/cn";
 import { InputAutocompleteGooglePlaces } from "#src/components/InputAutocompleteGooglePlaces";
 import { pointFromlatLngLiteral } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { usePlaceFromPlaceId } from "#src/hooks/usePlaceFromPlaceId";
+import { useUserCookie } from "#src/hooks/useUserCookie";
 
 const zFormData = z.object({
   title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
@@ -47,11 +48,8 @@ const zFormData = z.object({
 
 type FormData = z.infer<typeof zFormData>;
 
-type Props = {
-  isSignedIn: boolean;
-};
-
-export function CreateEventForm({ isSignedIn }: Props) {
+export function CreateEventForm() {
+  const { isSignedIn } = useUserCookie();
   const form = useForm<FormData>({
     resolver: zodResolver(zFormData),
     defaultValues: {
@@ -184,17 +182,17 @@ export function CreateEventForm({ isSignedIn }: Props) {
         />
 
         <div className="flex gap-2 py-4">
-          {isSignedIn ? (
-            <Button variant="positive" type="submit" disabled={eventCreate.isPending}>
-              Create
-            </Button>
-          ) : (
+          {isSignedIn === false ? (
             <>
               <Button variant="positive" onClick={() => dialogDispatch({ type: "show", name: "profilebutton" })}>
                 Create
               </Button>
-              <p className="text-color-neutral-600">sign in to create events</p>
+              <p className="text-color-neutral-600">sign in before creating events</p>
             </>
+          ) : (
+            <Button variant="positive" type="submit" disabled={eventCreate.isPending}>
+              Create
+            </Button>
           )}
         </div>
       </form>
