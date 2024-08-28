@@ -1,4 +1,4 @@
-import { type RefObject } from "react";
+import { type ComponentPropsWithRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 
 export const buttonVariants = cva(
@@ -27,14 +27,12 @@ export const buttonVariants = cva(
   }
 );
 
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof buttonVariants>;
-
 export function Button({
   className,
   type = "button",
   variant,
   ref,
   ...props
-}: ButtonProps & { ref?: RefObject<HTMLButtonElement> }) {
+}: ComponentPropsWithRef<"button"> & VariantProps<typeof buttonVariants>) {
   return <button type={type} className={buttonVariants({ variant, className })} ref={ref} {...props} />;
 }

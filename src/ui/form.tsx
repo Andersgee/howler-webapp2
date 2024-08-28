@@ -1,5 +1,5 @@
 import * as React from "react";
-import { type RefObject, type ComponentPropsWithRef } from "react";
+import { type ComponentPropsWithRef } from "react";
 import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
 import {
@@ -67,11 +67,7 @@ type FormItemContextValue = {
 
 const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
 
-function FormItem({
-  className,
-  ref,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement> & { ref?: RefObject<HTMLDivElement> }) {
+function FormItem({ className, ref, ...props }: ComponentPropsWithRef<"div">) {
   const id = React.useId();
 
   return (
@@ -115,21 +111,12 @@ function FormControl({ ref, ...props }: ComponentPropsWithRef<typeof Slot>) {
   );
 }
 
-function FormDescription({
-  className,
-  ref,
-  ...props
-}: React.HTMLAttributes<HTMLParagraphElement> & { ref?: RefObject<HTMLParagraphElement> }) {
+function FormDescription({ className, ref, ...props }: ComponentPropsWithRef<"p">) {
   const { formDescriptionId } = useFormField();
   return <p ref={ref} id={formDescriptionId} className={cn("text-sm text-color-neutral-700", className)} {...props} />;
 }
 
-function FormMessage({
-  className,
-  children,
-  ref,
-  ...props
-}: React.HTMLAttributes<HTMLParagraphElement> & { ref?: RefObject<HTMLParagraphElement> }) {
+function FormMessage({ className, children, ref, ...props }: ComponentPropsWithRef<"p">) {
   const { error, formMessageId } = useFormField();
   const body = error ? String(error?.message) : children;
 
