@@ -72,7 +72,9 @@ function CommandList({ className, ref, ...props }: ComponentPropsWithRef<typeof 
 }
 
 function CommandEmpty({ className, ref, ...props }: ComponentPropsWithRef<typeof CommandPrimitive.Empty>) {
-  return <CommandPrimitive.Empty ref={ref} className="select-none py-6 text-center text-sm" {...props} />;
+  return (
+    <CommandPrimitive.Empty ref={ref} className={cn("select-none py-6 text-center text-sm", className)} {...props} />
+  );
 }
 
 function CommandGroup({ className, ref, ...props }: ComponentPropsWithRef<typeof CommandPrimitive.Group>) {
