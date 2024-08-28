@@ -16,22 +16,21 @@ export const metadata = seo({
 });
 
 export default async function Page() {
-  const { api, user: cookieuser } = await apiRsc();
-  //if (!cookieuser) redirect("/");
+  const { api, user } = await apiRsc();
 
-  if (!cookieuser) {
+  if (!user) {
     return <NoUser />;
   }
 
-  const user = await api.user.info({ userId: cookieuser.id });
+  const userinfo = await api.user.info({ userId: user.id });
 
   return (
     <Shell>
       <section className="flex flex-col items-center">
-        <Link href={`/profile/${hashidFromId(user.id)}`}>
-          <UserImage96x96 alt={user.name} image={user.image ?? ""} />
+        <Link href={`/profile/${hashidFromId(userinfo.id)}`}>
+          <UserImage96x96 alt={userinfo.name} image={userinfo.image ?? ""} />
         </Link>
-        <h1 className="mt-2">{`Welcome, ${user.name}`}</h1>
+        <h1 className="mt-2">{`Welcome, ${userinfo.name}`}</h1>
         <p>Manage your info</p>
       </section>
 
@@ -40,26 +39,30 @@ export default async function Page() {
         <h2>Personal info</h2>
         <div className="py-2">
           <div>Name</div>
-          <div>{user.name}</div>
+          <div>{userinfo.name}</div>
         </div>
         <div className="py-2">
           <div>Email</div>
-          <div>{user.email}</div>
+          <div>{userinfo.email}</div>
         </div>
 
         <div className="py-2">
           <div>Profile picture</div>
-          <UserImage32x32 alt={user.name} image={user.image ?? ""} />
+          <UserImage32x32 alt={userinfo.name} image={userinfo.image ?? ""} />
         </div>
 
         <div className="py-2">
           <div>Account created</div>
-          <div>{user.createdAt.toISOString().slice(0, 10)}</div>
+          <div>{userinfo.createdAt.toISOString().slice(0, 10)}</div>
         </div>
 
         <div className="py-2">
           <div>Signed in via</div>
-          <div>{`${[user.discordUserId && "discord", user.googleUserSub && "google", user.githubUserId && "github"]
+          <div>{`${[
+            userinfo.discordUserId && "discord",
+            userinfo.googleUserSub && "google",
+            userinfo.githubUserId && "github",
+          ]
             .filter(Boolean)
             .join(", ")}`}</div>
         </div>
