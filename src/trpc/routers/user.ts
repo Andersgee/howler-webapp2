@@ -6,6 +6,7 @@ import { tagsUser } from "./userTags";
 import { userCookieRemoveString } from "#src/utils/auth/schema";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
 import { hashidFromId } from "#src/utils/hashid";
+import { afterResponseIsFinished } from "#src/utils/after-response-is-finished";
 
 export const userRouter = createTRPCRouter({
   cookie: publicProcedure.query(({ ctx }) => {
@@ -70,17 +71,6 @@ export const userRouter = createTRPCRouter({
             followerId: ctx.user.id,
           })
           .executeTakeFirstOrThrow();
-
-        try {
-          await notify([input.id], {
-            title: `${ctx.user.name} followed you`,
-            body: `see their profile`,
-            relativeLink: `/profile/${hashidFromId(ctx.user.id)}`,
-            icon: ctx.user.image,
-          });
-        } catch (err) {
-          console.log(err);
-        }
       } else {
         await db
           .deleteFrom("UserUserPivot")
@@ -88,6 +78,16 @@ export const userRouter = createTRPCRouter({
           .where("followerId", "=", ctx.user.id)
           .executeTakeFirstOrThrow();
       }
+
+      afterResponseIsFinished(async () => {
+        if (!input.join) return;
+        await notify([input.id], {
+          title: `${ctx.user.name} followed you`,
+          body: `see their profile`,
+          relativeLink: `/profile/${hashidFromId(ctx.user.id)}`,
+          icon: ctx.user.image,
+        });
+      });
 
       revalidateTag(t);
       return t;

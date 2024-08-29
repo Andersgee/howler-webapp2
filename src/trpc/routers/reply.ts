@@ -3,6 +3,7 @@ import { dbfetch } from "#src/db";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
 import { hashidFromId } from "#src/utils/hashid";
+import { afterResponseIsFinished } from "#src/utils/after-response-is-finished";
 
 export const replyRouter = createTRPCRouter({
   getById: publicProcedure
@@ -36,12 +37,13 @@ export const replyRouter = createTRPCRouter({
         .values({ ...input, userId: ctx.user.id })
         .executeTakeFirstOrThrow();
 
-      try {
+      afterResponseIsFinished(async () => {
         const comment = await db
           .selectFrom("Comment")
           .select(["userId", "eventId"])
           .where("id", "=", input.commentId)
           .executeTakeFirstOrThrow();
+
         const notifyUserIds = [comment.userId].filter((id) => id !== ctx.user.id);
         await notify(notifyUserIds, {
           title: `${ctx.user.name} replied to your comment.`,
@@ -49,9 +51,7 @@ export const replyRouter = createTRPCRouter({
           relativeLink: `/event/${hashidFromId(comment.eventId)}`,
           icon: ctx.user.image,
         });
-      } catch (err) {
-        console.log(err);
-      }
+      });
 
       return insertResult;
     }),

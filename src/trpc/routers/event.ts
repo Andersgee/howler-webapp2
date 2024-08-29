@@ -7,8 +7,7 @@ import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { tagsEvent } from "./eventTags";
 import { revalidateTag } from "next/cache";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
-import { unstable_after as afterResponseIsFinished } from "next/server";
-import { sleep } from "#src/utils/sleep";
+import { afterResponseIsFinished } from "#src/utils/after-response-is-finished";
 
 export const eventRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
@@ -82,17 +81,12 @@ export const eventRouter = createTRPCRouter({
         if (process.env.NODE_ENV === "development") {
           notifyUserIds.push(ctx.user.id);
         }
-
-        try {
-          await notify(notifyUserIds, {
-            title: `${ctx.user.name} howled!`,
-            body: input.title,
-            relativeLink: `/event/${hashid}`,
-            icon: ctx.user.image,
-          });
-        } catch (err) {
-          console.log(err);
-        }
+        await notify(notifyUserIds, {
+          title: `${ctx.user.name} howled!`,
+          body: input.title,
+          relativeLink: `/event/${hashid}`,
+          icon: ctx.user.image,
+        });
       });
 
       return { ...insertResult, hashid };
@@ -219,7 +213,7 @@ export const eventRouter = createTRPCRouter({
   joinOrLeave: protectedProcedure
     .input(z.object({ id: z.bigint(), join: z.boolean() }))
     .mutation(async ({ ctx, input }) => {
-      const t = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
+      const tag = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
       const db = dbfetch();
       if (input.join) {
         await db
@@ -230,24 +224,6 @@ export const eventRouter = createTRPCRouter({
             userId: ctx.user.id,
           })
           .executeTakeFirstOrThrow();
-
-        const ev = await db
-          .selectFrom("Event")
-          .select(["id", "creatorId", "title"])
-          .where("id", "=", input.id)
-          .executeTakeFirst();
-        if (ev) {
-          try {
-            await notify([ev.creatorId], {
-              title: `${ctx.user.name} joined your howl!`,
-              body: `${ev.title}`,
-              relativeLink: `/event/${hashidFromId(ev.id)}`,
-              icon: ctx.user.image,
-            });
-          } catch (err) {
-            console.log(err);
-          }
-        }
       } else {
         await db
           .deleteFrom("UserEventPivot")
@@ -256,8 +232,40 @@ export const eventRouter = createTRPCRouter({
           .executeTakeFirstOrThrow();
       }
 
-      revalidateTag(t);
-      return t;
+      afterResponseIsFinished(async () => {
+        if (!input.join) return;
+
+        const event = await db
+          .selectFrom("Event")
+          .select(["id", "creatorId", "title"])
+          .where("id", "=", input.id)
+          .executeTakeFirstOrThrow();
+
+        await notify([event.creatorId], {
+          title: `${ctx.user.name} joined your howl!`,
+          body: `${event.title}`,
+          relativeLink: `/event/${hashidFromId(event.id)}`,
+          icon: ctx.user.image,
+        });
+
+        //lets notify every joined user also now that this doesnt affect response time
+        const joinedUsers = await db
+          .selectFrom("UserEventPivot")
+          .select(["userId"])
+          .where("eventId", "=", input.id)
+          .execute();
+        const joinedUserIds = joinedUsers.map((user) => user.userId);
+
+        await notify(joinedUserIds, {
+          title: `${ctx.user.name} also joined ${event.title}`,
+          body: `${event.title}`,
+          relativeLink: `/event/${hashidFromId(event.id)}`,
+          icon: ctx.user.image,
+        });
+      });
+
+      revalidateTag(tag);
+      return tag;
     }),
 });
 
