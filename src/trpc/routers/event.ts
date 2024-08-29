@@ -7,6 +7,8 @@ import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { tagsEvent } from "./eventTags";
 import { revalidateTag } from "next/cache";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
+import { unstable_after as afterResponseIsFinished } from "next/server";
+import { sleep } from "#src/utils/sleep";
 
 export const eventRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
@@ -68,30 +70,30 @@ export const eventRouter = createTRPCRouter({
 
       const hashid = hashidFromId(insertResult.insertId!);
 
-      const userUserPivots = await db
-        .selectFrom("UserUserPivot")
-        .select("followerId")
-        .where("userId", "=", ctx.user.id)
-        .execute();
-      const notifyUserIds = userUserPivots.map((x) => x.followerId);
+      afterResponseIsFinished(async () => {
+        const userUserPivots = await db
+          .selectFrom("UserUserPivot")
+          .select("followerId")
+          .where("userId", "=", ctx.user.id)
+          .execute();
+        const notifyUserIds = userUserPivots.map((x) => x.followerId);
 
-      //in dev, also notify creator
-      if (process.env.NODE_ENV === "development") {
-        notifyUserIds.push(ctx.user.id);
-      }
+        //in dev, also notify creator
+        if (process.env.NODE_ENV === "development") {
+          notifyUserIds.push(ctx.user.id);
+        }
 
-      //TODO: decide who to notify... for now just send to creator
-      //const notifyUserIds = [ctx.user.id];
-      try {
-        await notify(notifyUserIds, {
-          title: `${ctx.user.name} howled!`,
-          body: input.title,
-          relativeLink: `/event/${hashid}`,
-          icon: ctx.user.image,
-        });
-      } catch (err) {
-        console.log(err);
-      }
+        try {
+          await notify(notifyUserIds, {
+            title: `${ctx.user.name} howled!`,
+            body: input.title,
+            relativeLink: `/event/${hashid}`,
+            icon: ctx.user.image,
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      });
 
       return { ...insertResult, hashid };
     }),

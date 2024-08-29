@@ -7,6 +7,7 @@ import { withPlausibleProxy } from "next-plausible";
 const nextConfig = {
   experimental: {
     ppr: true,
+    after: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
@@ -47,12 +48,6 @@ const nextConfig = {
       fullUrl: true,
     },
   },
-
-  //experimental: {
-  //  logging: {
-  //    level: "verbose",
-  //  },
-  //},
 };
 
 //export default withBundleAnalyzer({ enabled: process.env.ANALYZE === "true" })(nextConfig);
