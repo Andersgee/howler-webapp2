@@ -41,34 +41,38 @@ export const commentRouter = createTRPCRouter({
         .executeTakeFirstOrThrow();
 
       afterResponseIsFinished(async () => {
-        const event = await db
-          .selectFrom("Event")
-          .select(["creatorId", "title"])
-          .where("id", "=", input.eventId)
-          .executeTakeFirstOrThrow();
-        const notifyUserIds = [event.creatorId].filter((id) => id !== ctx.user.id);
-        const body = input.text.length > 55 ? `${input.text.trim().slice(0, 52)} ...` : input.text.trim();
-        await notify(notifyUserIds, {
-          title: `${ctx.user.name} commented on your howl!`,
-          body,
-          relativeLink: `/event/${hashidFromId(input.eventId)}`,
-          icon: ctx.user.image,
-        });
+        try {
+          const event = await db
+            .selectFrom("Event")
+            .select(["creatorId", "title"])
+            .where("id", "=", input.eventId)
+            .executeTakeFirstOrThrow();
+          const notifyUserIds = [event.creatorId].filter((id) => id !== ctx.user.id);
+          const body = input.text.length > 55 ? `${input.text.trim().slice(0, 52)} ...` : input.text.trim();
+          await notify(notifyUserIds, {
+            title: `${ctx.user.name} commented on your howl!`,
+            body,
+            relativeLink: `/event/${hashidFromId(input.eventId)}`,
+            icon: ctx.user.image,
+          });
 
-        //lets notify every joined user also now that this doesnt affect response time
-        const joinedUsers = await db
-          .selectFrom("UserEventPivot")
-          .select(["userId"])
-          .where("eventId", "=", input.eventId)
-          .execute();
-        const joinedUserIds = joinedUsers.map((user) => user.userId);
+          //lets notify every joined user also now that this doesnt affect response time
+          const joinedUsers = await db
+            .selectFrom("UserEventPivot")
+            .select(["userId"])
+            .where("eventId", "=", input.eventId)
+            .execute();
+          const joinedUserIds = joinedUsers.map((user) => user.userId);
 
-        await notify(joinedUserIds, {
-          title: `${ctx.user.name} commented on ${event.title}`,
-          body,
-          relativeLink: `/event/${hashidFromId(input.eventId)}`,
-          icon: ctx.user.image,
-        });
+          await notify(joinedUserIds, {
+            title: `${ctx.user.name} commented on ${event.title}`,
+            body,
+            relativeLink: `/event/${hashidFromId(input.eventId)}`,
+            icon: ctx.user.image,
+          });
+        } catch (error) {
+          console.log(error);
+        }
       });
 
       return insertResult;
