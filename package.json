@@ -8,7 +8,7 @@
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "bs": "next build && next start",
-    "bundlesw": "esbuild src/lib/service-worker/sw.ts --bundle --format=esm --outfile=src/lib/service-worker/sw.js",
+    "bundlesw": "esbuild src/lib/service-worker/sw.ts --bundle --format=esm --outfile=public/sw.js",
     "lint": "next lint && tsc --noEmit",
     "dbpush": "tsx scripts/dbpush.ts",
     "dbpull": "tsx scripts/dbpull.ts"

@@ -1,9 +1,13 @@
 export async function serviceWorkerRegister() {
+  console.log("running serviceWorkerRegister");
   if (!("serviceWorker" in navigator)) return null;
 
   try {
-    const scriptURL = new URL("./sw.js", import.meta.url);
+    //const scriptURL = new URL("./sw.js", import.meta.url);
+    const scriptURL = "/sw.js";
+    console.log("scriptURL:", scriptURL.toString());
     const registration = await navigator.serviceWorker.register(scriptURL, { type: "module", scope: "/" });
+    console.log("serviceWorkerRegister, registration:", registration);
     return registration;
   } catch {
     return null;
