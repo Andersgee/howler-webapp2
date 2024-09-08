@@ -8,6 +8,7 @@
     "analyze": "ANALYZE=true next build",
     "start": "next start",
     "bs": "next build && next start",
+    "bundlesw": "esbuild src/lib/service-worker/sw.ts --bundle --format=esm --outfile=src/lib/service-worker/sw.js",
     "lint": "next lint && tsc --noEmit",
     "dbpush": "tsx scripts/dbpush.ts",
     "dbpull": "tsx scripts/dbpull.ts"
@@ -62,6 +63,7 @@
     "@typescript-eslint/parser": "^6.17.0",
     "autoprefixer": "^10.4.16",
     "dotenv": "^16.3.1",
+    "esbuild": "^0.23.1",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.1.0",
     "firebase-admin": "^12.0.0",
