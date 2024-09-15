@@ -4,9 +4,9 @@ function kek(h) {
 }
 
 // src/lib/service-worker/sw.ts
-async function asynclog(msg) {
+async function asynclog(...data) {
   return await new Promise((resolve) => {
-    console.log(msg, kek(3));
+    console.log(...data, kek(3));
     resolve(void 0);
   });
 }
@@ -24,6 +24,13 @@ self.addEventListener("activate", (event) => {
 });
 self.addEventListener("push", (event) => {
   const a = self.registration.showNotification("Hello, World.");
+  const promise = Promise.all([a]);
+  event.waitUntil(promise);
+});
+self.addEventListener("notificationclick", (event) => {
+  const clickedNotification = event.notification;
+  clickedNotification.close();
+  const a = asynclog("clickedNotification.body:", clickedNotification.body);
   const promise = Promise.all([a]);
   event.waitUntil(promise);
 });

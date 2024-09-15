@@ -1,12 +1,17 @@
+import { uint8ArrayFromBase64url } from "#src/utils/jsone";
+
+export async function serviceWorkerGetRegistration() {
+  const registrations = await navigator.serviceWorker.getRegistrations();
+  console.log("registrations.length:", registrations.length);
+  return registrations.at(0) ?? null;
+}
+
 export async function serviceWorkerRegister() {
   console.log("running serviceWorkerRegister");
   if (!("serviceWorker" in navigator)) return null;
 
   try {
-    //const scriptURL = new URL("./sw.js", import.meta.url);
-    const scriptURL = "/sw.js";
-    console.log("scriptURL:", scriptURL.toString());
-    const registration = await navigator.serviceWorker.register(scriptURL, { type: "module", scope: "/" });
+    const registration = await navigator.serviceWorker.register("/sw.js", { type: "module", scope: "/" });
     console.log("serviceWorkerRegister, registration:", registration);
     return registration;
   } catch {
@@ -28,11 +33,41 @@ export async function serviceWorkerUnregister() {
   }
 }
 
-export async function serviceWorkerGetPushSubscription(registration: ServiceWorkerRegistration) {
+export async function serviceWorkerGetExistingPushSubscription(registration: ServiceWorkerRegistration) {
+  //if ('serviceWorker' in navigator && 'PushManager' in window)
   try {
-    const pushSubscription = await registration.pushManager.getSubscription();
-    return pushSubscription;
+    const existingPushSubscription = await registration.pushManager.getSubscription();
+    return existingPushSubscription;
   } catch {
     return null;
   }
 }
+
+/** returns the existing if any, otherwise a new  */
+export async function serviceWorkerGetPushSubscription(registration: ServiceWorkerRegistration) {
+  //const registration = await navigator.serviceWorker.ready
+
+  //"A new push subscription is created if the current service worker does not have an existing subscription."
+  const pushSubscription = await registration.pushManager.subscribe({
+    userVisibleOnly: true,
+    applicationServerKey: uint8ArrayFromBase64url(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY),
+  });
+  //setSubscription(sub)
+  //await subscribeUser(sub)
+  return pushSubscription;
+}
+
+async function unsubscribeFromPush(pushSubscription: PushSubscription) {
+  const successfullyUnsubscribed = await pushSubscription.unsubscribe();
+  return successfullyUnsubscribed;
+  //setSubscription(null)
+  //await unsubscribeUser()
+}
+
+/*
+{
+  "subject" : "mailto: <andersgee@gmail.com>",
+  "publicKey" : "BEo5TtPhcwM2Abf98BdvY-0U2hUGPsb5A3IJ9ROhfBFZU1wEvFDOI_hGDZUQeEM12jktgRZ6ybZsGq8gkGVjJMo",
+  "privateKey" : "nFLfmWwcnXZSSMs7A1e4lFp1_j3ObhsJCNQZ9j-CEQI"
+  }
+*/

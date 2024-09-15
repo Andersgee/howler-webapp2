@@ -71,7 +71,7 @@ function replace(value: any): any {
  *
  * with node:Buffer, this is the equivalent of `buffer = Buffer.from(str, "base64url")`
  */
-function uint8ArrayFromBase64url(string: string): Uint8Array {
+export function uint8ArrayFromBase64url(string: string): Uint8Array {
   const out = new Uint8Array(((string.length * ENCODING.bits) / 8) | 0);
   let bits = 0;
   let buffer = 0;
@@ -100,7 +100,7 @@ function uint8ArrayFromBase64url(string: string): Uint8Array {
  *
  * with node:Buffer, this is the equivalent of `str = buffer.toString("base64url")`
  */
-function base64urlFromUint8Array(data: Uint8Array): string {
+export function base64urlFromUint8Array(data: Uint8Array): string {
   let out = "";
   let bits = 0;
   let buffer = 0;
