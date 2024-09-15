@@ -15,8 +15,12 @@ export async function webPush(endpoint: string, body: string) {
     .sign(PRIVATE_KEY);
 
   return await fetch(endpoint, {
+    cache: "no-store",
     method: "POST",
-    headers: { Authorization: `vapid t=${jwt},k=${PUBLIC_KEY}` },
+    headers: {
+      Authorization: `vapid t=${jwt},k=${PUBLIC_KEY}`,
+      TTL: "3600", //time in seconds that push service retains message
+    },
     body,
   });
 }
