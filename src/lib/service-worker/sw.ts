@@ -70,7 +70,7 @@ self.addEventListener("notificationclick", (event) => {
   //clickedNotification.tag
 
   const a = asynclog("clickedNotification.body:", clickedNotification.body);
-  const b = self.clients.openWindow("http://localhost:3000/event");
+  const b = self.clients.openWindow("https://howler.andyfx.net/event");
   const promise = Promise.all([a, b]);
   event.waitUntil(promise);
 });

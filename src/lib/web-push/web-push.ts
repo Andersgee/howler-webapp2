@@ -1,9 +1,12 @@
 import { SignJWT } from "jose";
 import { vapidImportPrivateKey } from "#src/lib/vapid-keys";
 
+type Urgency = "very-low" | "low" | "normal" | "high";
+
 // time to live in seconds that push service should retain message
 //const TTL = 2419200; //this is what "web-push" package uses as default
-const TTL = 30;
+const TTL = 60;
+const URGENCY: Urgency = "normal";
 
 export async function webPush(endpoint: string, body: string) {
   const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY_B64URL;
@@ -27,6 +30,7 @@ export async function webPush(endpoint: string, body: string) {
       "Authorization": `vapid t=${jwt},k=${PUBLIC_KEY}`,
       "TTL": `${TTL}`,
       "Content-Encoding": "aes128gcm",
+      "Urgency": `${URGENCY}`,
     },
     body,
   });
