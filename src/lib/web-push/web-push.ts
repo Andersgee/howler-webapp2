@@ -5,8 +5,8 @@ import { SignJWT } from "jose";
 import { vapidImportPrivateKey } from "#src/lib/vapid-keys";
 
 export async function webPush(endpoint: string, body: string) {
-  const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-  const PRIVATE_KEY = await vapidImportPrivateKey(process.env.VAPID_PRIVATE_KEY);
+  const PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY_B64URL;
+  const PRIVATE_KEY = await vapidImportPrivateKey(process.env.VAPID_PRIVATE_KEY_B64URL);
 
   const jwt = await new SignJWT({
     exp: oneHourFromNowSeconds(),
