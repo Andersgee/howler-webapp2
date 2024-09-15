@@ -9,7 +9,11 @@ export async function serviceWorkerRegister() {
   if (!("serviceWorker" in navigator)) return null;
 
   try {
-    const registration = await navigator.serviceWorker.register("/sw.js", { type: "module", scope: "/" });
+    const registration = await navigator.serviceWorker.register("/sw.js", {
+      type: "module",
+      scope: "/",
+      updateViaCache: "none",
+    });
     console.log("serviceWorkerRegister, registration:", registration);
     return registration;
   } catch {
