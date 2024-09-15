@@ -29,8 +29,8 @@ export async function webPush(endpoint: string, body: string) {
     headers: {
       "Authorization": `vapid t=${jwt},k=${PUBLIC_KEY}`,
       "TTL": `${TTL}`,
-      "Content-Encoding": "aes128gcm",
       "Urgency": `${URGENCY}`,
+      "Content-Encoding": "aes128gcm",
     },
     body, //TODO: this should be encryoted... with aes128gcm apparently?
   });

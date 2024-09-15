@@ -5,7 +5,6 @@ export async function serviceWorkerGetRegistration() {
 }
 
 export async function serviceWorkerRegister() {
-  console.log("running serviceWorkerRegister");
   if (!("serviceWorker" in navigator)) return null;
 
   try {
@@ -14,7 +13,6 @@ export async function serviceWorkerRegister() {
       scope: "/",
       updateViaCache: "none",
     });
-    console.log("serviceWorkerRegister, registration:", registration);
     return registration;
   } catch {
     return null;
