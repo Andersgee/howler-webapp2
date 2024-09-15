@@ -23,14 +23,28 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(promise);
 });
 self.addEventListener("push", (event) => {
-  const a = self.registration.showNotification("Hello, World.");
-  const promise = Promise.all([a]);
+  const a = self.registration.showNotification("some title", {
+    //tag: "event-xLen3",
+    body: `event.data?.text(): ${event.data?.text()}`,
+    icon: "/icons/favicon-512.png",
+    badge: "/icons/badge.png",
+    data: event.data?.text()
+  });
+  const b = asynclog("event.data?.text()", event.data?.text());
+  const promise = Promise.all([a, b]);
   event.waitUntil(promise);
 });
 self.addEventListener("notificationclick", (event) => {
   const clickedNotification = event.notification;
   clickedNotification.close();
   const a = asynclog("clickedNotification.body:", clickedNotification.body);
+  const b = self.clients.openWindow("https://howler.andyfx.net/event");
+  const promise = Promise.all([a, b]);
+  event.waitUntil(promise);
+});
+self.addEventListener("pushsubscriptionchange", (ev) => {
+  const event = ev;
+  const a = asynclog("pushsubscriptionchange:");
   const promise = Promise.all([a]);
   event.waitUntil(promise);
 });
