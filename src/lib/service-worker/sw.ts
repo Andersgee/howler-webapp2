@@ -3,7 +3,7 @@
 //import { initializeApp } from "firebase/app";
 //import { getMessaging } from "firebase/messaging/sw";
 //import { onBackgroundMessage } from "firebase/messaging/sw";
-import { JSONE } from "#src/utils/jsone";
+//import { JSONE } from "#src/utils/jsone";
 import { kek } from "./bej";
 
 declare let self: ServiceWorkerGlobalScope;

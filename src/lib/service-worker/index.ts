@@ -1,5 +1,3 @@
-import { uint8ArrayFromBase64url } from "#src/utils/jsone";
-
 export async function serviceWorkerGetRegistration() {
   const registrations = await navigator.serviceWorker.getRegistrations();
   console.log("registrations.length:", registrations.length);
@@ -44,25 +42,25 @@ export async function serviceWorkerGetExistingPushSubscription(registration: Ser
 }
 
 /** returns the existing if any, otherwise a new  */
-export async function serviceWorkerGetPushSubscription(registration: ServiceWorkerRegistration) {
-  //const registration = await navigator.serviceWorker.ready
+//export async function serviceWorkerGetPushSubscription(registration: ServiceWorkerRegistration) {
+//  //const registration = await navigator.serviceWorker.ready
+//
+//  //"A new push subscription is created if the current service worker does not have an existing subscription."
+//  const pushSubscription = await registration.pushManager.subscribe({
+//    userVisibleOnly: true,
+//    applicationServerKey: uint8ArrayFromBase64url(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY),
+//  });
+//  //setSubscription(sub)
+//  //await subscribeUser(sub)
+//  return pushSubscription;
+//}
 
-  //"A new push subscription is created if the current service worker does not have an existing subscription."
-  const pushSubscription = await registration.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: uint8ArrayFromBase64url(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY),
-  });
-  //setSubscription(sub)
-  //await subscribeUser(sub)
-  return pushSubscription;
-}
-
-async function unsubscribeFromPush(pushSubscription: PushSubscription) {
-  const successfullyUnsubscribed = await pushSubscription.unsubscribe();
-  return successfullyUnsubscribed;
-  //setSubscription(null)
-  //await unsubscribeUser()
-}
+//async function unsubscribeFromPush(pushSubscription: PushSubscription) {
+//  const successfullyUnsubscribed = await pushSubscription.unsubscribe();
+//  return successfullyUnsubscribed;
+//  //setSubscription(null)
+//  //await unsubscribeUser()
+//}
 
 /*
 {

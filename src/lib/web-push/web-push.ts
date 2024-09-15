@@ -34,6 +34,7 @@ function oneHourFromNowSeconds() {
 }
 
 //the required "exp" claim MUST NOT be more than 24 hours from the time of the request
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function expSeconds() {
   const TWENTY_THREE_HOURS_IN_SECONDS = 60 * 60 * 23;
   const d = new Date();

@@ -3,7 +3,7 @@
 import { cn } from "#src/utils/cn";
 import { useNotificationSettings } from "#src/hooks/useNotificationSettings";
 import { Button } from "#src/ui/button";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { Input } from "#src/ui/input";
 
 type Props = {
