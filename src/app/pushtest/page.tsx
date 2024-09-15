@@ -1,4 +1,4 @@
-import { Stuff } from "./Stuff";
+import { Stuff } from "./Stuff2";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
