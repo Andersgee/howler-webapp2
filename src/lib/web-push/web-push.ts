@@ -10,9 +10,8 @@ export async function webPush(endpoint: string, body: string) {
 
   const jwt = await new SignJWT({
     exp: oneHourFromNowSeconds(),
-    sub: "mailto:andersgee@gmail.com", //required
-    aud: "http://localhost:3000", //required
-    //body,
+    sub: process.env.VAPID_SUB, //required
+    aud: process.env.NEXT_PUBLIC_ABSURL, //required
   })
     .setProtectedHeader({ alg: "ES256" })
     .sign(PRIVATE_KEY);

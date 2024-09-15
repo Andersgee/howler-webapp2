@@ -33,6 +33,8 @@ export const envSchema = z.object({
   FACEBOOK_CLIENT_ID: z.string(),
   FACEBOOK_CLIENT_SECRET: z.string(),
   NEXT_PUBLIC_GOOGLE_PLACES_API_KEY: z.string(),
+
+  VAPID_SUB: z.string(),
   VAPID_PRIVATE_KEY_B64URL: z.string(),
   NEXT_PUBLIC_VAPID_PUBLIC_KEY_B64URL: z.string(),
 });
