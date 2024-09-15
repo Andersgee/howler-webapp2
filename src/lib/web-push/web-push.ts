@@ -32,7 +32,7 @@ export async function webPush(endpoint: string, body: string) {
       "Content-Encoding": "aes128gcm",
       "Urgency": `${URGENCY}`,
     },
-    body,
+    body, //TODO: this should be encryoted... with aes128gcm apparently?
   });
 }
 

@@ -55,7 +55,6 @@ function NotifyYourselfForm({ endpoint }: { endpoint: string }) {
   const handleSubmit = () => {
     if (!ref.current?.value) return;
 
-    console.log(ref.current.value);
     mutate({
       body: ref.current.value,
       endpoint,
