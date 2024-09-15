@@ -2,7 +2,6 @@
 
 import { serviceWorkerGetExistingPushSubscription, serviceWorkerGetRegistration } from "#src/lib/service-worker";
 import { cn } from "#src/utils/cn";
-import { requestNotificationPermission } from "#src/utils/notification-permission";
 import { useEffect, useState } from "react";
 
 type Props = {
