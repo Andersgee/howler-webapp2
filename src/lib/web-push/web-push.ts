@@ -8,7 +8,8 @@ export async function webPush(endpoint: string, body: string) {
   const jwt = await new SignJWT({
     exp: oneHourFromNowSeconds(),
     sub: process.env.VAPID_SUB, //required
-    aud: process.env.NEXT_PUBLIC_ABSURL, //required
+    //aud: process.env.NEXT_PUBLIC_ABSURL, //required
+    aud: "https://updates.push.services.mozilla.com", //hmm
   })
     .setProtectedHeader({ alg: "ES256" })
     .sign(PRIVATE_KEY);
