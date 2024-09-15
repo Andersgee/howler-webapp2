@@ -1,6 +1,3 @@
-import "dotenv/config";
-import "#src/utils/validate-process-env.mjs";
-
 import { SignJWT } from "jose";
 import { vapidImportPrivateKey } from "#src/lib/vapid-keys";
 

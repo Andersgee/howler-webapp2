@@ -6,6 +6,7 @@ import { geocodeRouter } from "./routers/geocode";
 import { notificationRouter } from "./routers/notification";
 import { commentRouter } from "./routers/comment";
 import { replyRouter } from "./routers/reply";
+import { webpushRouter } from "./routers/webpush";
 
 export const trpcRouter = createTRPCRouter({
   user: userRouter,
@@ -15,6 +16,7 @@ export const trpcRouter = createTRPCRouter({
   notification: notificationRouter,
   comment: commentRouter,
   reply: replyRouter,
+  webpush: webpushRouter,
 });
 
 export type TrpcRouter = typeof trpcRouter;

@@ -5,6 +5,7 @@ import { useNotificationSettings } from "#src/hooks/useNotificationSettings";
 import { Button } from "#src/ui/button";
 import { useRef } from "react";
 import { Input } from "#src/ui/input";
+import { api } from "#src/hooks/api";
 
 type Props = {
   className?: string;
@@ -32,31 +33,41 @@ export function WebPushTestComp({ className }: Props) {
 
       <div className="my-4">
         <div>pushSubscription: {pushSubscription ? "yep" : "nope"}</div>
+        <div>pushSubscription.endpoint: {pushSubscription?.endpoint}</div>
         <Button onClick={() => pushSubscriptionSubscribe()}>pushSubscriptionSubscribe</Button>
         <Button onClick={() => pushSubscriptionUnSubscribe()}>pushSubscriptionUnSubscribe</Button>
       </div>
 
       <div className="my-4">
-        <NotifyYourselfForm />
+        {pushSubscription?.endpoint && <NotifyYourselfForm endpoint={pushSubscription.endpoint} />}
       </div>
     </div>
   );
 }
 
-function NotifyYourselfForm() {
+function NotifyYourselfForm({ endpoint }: { endpoint: string }) {
+  const { mutate } = api.webpush.selftest.useMutation({
+    onSuccess: (resText) => {
+      console.log("resText:", resText);
+    },
+  });
   const ref = useRef<HTMLInputElement>(null);
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (!ref.current?.value) return;
+  const handleSubmit = () => {
+    if (!ref.current?.value) return;
 
-        console.log(ref.current.value);
-        ref.current.value = "";
-      }}
-    >
+    console.log(ref.current.value);
+    mutate({
+      body: ref.current.value,
+      endpoint,
+    });
+    ref.current.value = "";
+  };
+  return (
+    <div>
       <Input type="text" ref={ref} placeholder="your message..." />
-      <Button>send yourself a message</Button>
-    </form>
+      <Button type="button" onClick={handleSubmit}>
+        send yourself a message
+      </Button>
+    </div>
   );
 }
