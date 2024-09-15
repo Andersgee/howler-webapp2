@@ -12,6 +12,7 @@ export const webpushRouter = createTRPCRouter({
     )
     .mutation(async ({ input }) => {
       const res = await webPush(input.endpoint, input.body);
-      return await res.text();
+      const text = await res.text();
+      return { text, status: res.status };
     }),
 });

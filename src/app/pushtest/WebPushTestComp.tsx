@@ -47,8 +47,8 @@ export function WebPushTestComp({ className }: Props) {
 
 function NotifyYourselfForm({ endpoint }: { endpoint: string }) {
   const { mutate } = api.webpush.selftest.useMutation({
-    onSuccess: (resText) => {
-      console.log("resText:", resText);
+    onSuccess: (stuff) => {
+      console.log("stuff:", stuff);
     },
   });
   const ref = useRef<HTMLInputElement>(null);
