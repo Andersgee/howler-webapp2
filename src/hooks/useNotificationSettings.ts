@@ -1,8 +1,8 @@
+import { vapidImportPublicKey } from "#src/lib/vapid-keys";
 import { atomNotificationIsSupported } from "#src/store/jotai/atoms/atom-notification-is-supported";
 import { atomNotificationPermission } from "#src/store/jotai/atoms/atom-notification-permissions";
 import { atomPushSubscription } from "#src/store/jotai/atoms/atom-push-subscription";
 import { atomServiceWorkerRegistration } from "#src/store/jotai/atoms/atom-service-worker-registration";
-import { uint8ArrayFromBase64url } from "#src/utils/jsone";
 import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useEffect } from "react";
 
@@ -55,7 +55,7 @@ export function useNotificationSettings() {
       void serviceWorkerRegistration.pushManager
         .subscribe({
           userVisibleOnly: true,
-          applicationServerKey: uint8ArrayFromBase64url(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY),
+          applicationServerKey: vapidImportPublicKey(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY_B64URL),
         })
         .then((sub) => {
           console.log("pushSubscriptionSubscribe, sub:", sub);
@@ -72,6 +72,7 @@ export function useNotificationSettings() {
 
   return {
     isSupported,
+    serviceWorkerRegistration,
     notificationPermission,
     requestNotificationPermission,
     pushSubscription,

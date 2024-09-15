@@ -1,4 +1,5 @@
-import { Stuff } from "./Stuff2";
+import { JotaiTestComp } from "./JotaiTestComp";
+import { WebPushTestComp } from "./WebPushTestComp";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -10,7 +11,8 @@ export default function Page({ params }: Props) {
   return (
     <div>
       <div>
-        <Stuff />
+        <WebPushTestComp />
+        <JotaiTestComp />
       </div>
     </div>
   );
