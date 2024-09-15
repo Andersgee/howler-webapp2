@@ -4,21 +4,13 @@ import { createSelectors } from "./create-selectors";
 import { createDialogSlice, type DialogSlice } from "./slices/dialog";
 import { createUserSlice, type Userlice } from "./slices/user";
 import { createMapSlice, type MapSlice } from "./slices/map";
-import { createFcmSlice, type Fcmslice } from "./slices/fcm";
-import { type MessagePayload } from "#src/lib/cloud-messaging-light/client";
-//import { type MessagePayload } from "firebase/messaging";
 
-type StoreState = DialogSlice & Userlice & MapSlice & Fcmslice;
+type StoreState = DialogSlice & Userlice & MapSlice;
 
 const useStoreBase = create<StoreState>()((...a) => ({
   ...createDialogSlice(...a),
   ...createUserSlice(...a),
   ...createMapSlice(...a),
-  ...createFcmSlice(...a),
 }));
 
 export const useStore = createSelectors(useStoreBase);
-
-export function payloadDispatch(payload: MessagePayload) {
-  useStore.setState({ fcmMessagePayload: payload });
-}

@@ -1,6 +1,6 @@
 import { dbfetch } from "#src/db";
-import { absUrl } from "#src/utils/url";
-import { sendCloudMessage } from "./send";
+//import { absUrl } from "#src/utils/url";
+//import { sendCloudMessage } from "./send";
 
 export type Message = {
   title: string;
@@ -32,6 +32,7 @@ export async function notify(userIds: bigint[], message: Message) {
     .values(userIds.map((userId) => ({ userId, notificationId })))
     .execute();
 
+  /*
   await sendCloudMessage(userIds, {
     data: {
       id: notificationId.toString(),
@@ -59,4 +60,5 @@ export async function notify(userIds: bigint[], message: Message) {
     //  },
     //},
   });
+  */
 }

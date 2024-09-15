@@ -11,7 +11,7 @@ import { useIntersectionObserverCallback } from "#src/hooks/useIntersectionObser
 import { IconSettings } from "#src/icons/Settings";
 import { buttonVariants } from "#src/ui/button";
 import { IconLoadingSpinner } from "#src/icons/special";
-import { useToast } from "#src/ui/use-toast";
+//import { useToast } from "#src/ui/use-toast";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { IconBellWithNumber } from "#src/icons/BellWithNumber";
@@ -32,11 +32,12 @@ const TEST_NOTIFICATIONS: {
 */
 
 export function NotificationsButton({ user: _user }: { user: TokenUser }) {
-  const { toast } = useToast();
+  //const { toast } = useToast();
   //const user = useStore.use.user();
   const dialogValue = useStore.use.dialogValue();
-  const fcmMessagePayload = useStore.use.fcmMessagePayload();
-  const maybeRequestNotifications = useStore.use.maybeRequestNotifications();
+  //const fcmMessagePayload = useStore.use.fcmMessagePayload();
+  const fcmMessagePayload = null;
+  //const maybeRequestNotifications = useStore.use.maybeRequestNotifications();
   const utils = api.useUtils();
   const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = api.notification.infinite.useInfiniteQuery(
     {},
@@ -111,16 +112,16 @@ export function NotificationsButton({ user: _user }: { user: TokenUser }) {
       void fetchNextPage();
     }
   };
-  const onDenied = () =>
-    toast({
-      variant: "default",
-      title: "You have blocked notifications",
-      description:
-        "Open your browser preferences or click the lock near the address bar to change your notification preferences.",
-    });
+  //const onDenied = () =>
+  //  toast({
+  //    variant: "default",
+  //    title: "You have blocked notifications",
+  //    description:
+  //      "Open your browser preferences or click the lock near the address bar to change your notification preferences.",
+  //  });
   const onTriggerClick = () => {
     setUnreadNumber(0);
-    void maybeRequestNotifications(onDenied);
+    //void maybeRequestNotifications(onDenied);
   };
 
   return (
