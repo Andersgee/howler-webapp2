@@ -13,6 +13,12 @@ export const webpushRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       const res = await webPush(input.endpoint, input.body);
       const text = await res.text();
-      return { text, status: res.status };
+
+      return {
+        text,
+        status: res.status,
+        resHeaders: JSON.stringify(res.headers),
+        resHeaderLocation: res.headers.get("Location"), //spec said info should be here where it plants to deliver to
+      };
     }),
 });

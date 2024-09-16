@@ -2,6 +2,7 @@ import { base64urlFromUint8Array, uint8ArrayFromBase64url } from "#src/utils/jso
 
 //https://autopush.readthedocs.io/en/latest/http.html#error-codes
 //spec: https://datatracker.ietf.org/doc/rfc8292/
+//payload encryption: https://www.rfc-editor.org/rfc/rfc8291.txt
 
 // notes to self: "ECDSA on the NIST P-256 curve" is also called "ES256"
 // this what the webpush spec expects

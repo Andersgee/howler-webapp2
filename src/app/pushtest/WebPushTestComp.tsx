@@ -3,9 +3,10 @@
 import { cn } from "#src/utils/cn";
 import { useNotificationSettings } from "#src/hooks/useNotificationSettings";
 import { Button } from "#src/ui/button";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Input } from "#src/ui/input";
 import { api } from "#src/hooks/api";
+import { base64urlFromUint8Array } from "#src/utils/jsone";
 
 type Props = {
   className?: string;
@@ -41,6 +42,34 @@ export function WebPushTestComp({ className }: Props) {
       <div className="my-4">
         {pushSubscription?.endpoint && <NotifyYourselfForm endpoint={pushSubscription.endpoint} />}
       </div>
+
+      <DebugShowKey />
+    </div>
+  );
+}
+
+function DebugShowKey() {
+  const { pushSubscription } = useNotificationSettings();
+
+  const p256dh_b64url = useMemo(() => {
+    const p256dh = pushSubscription?.getKey("p256dh");
+    if (!p256dh) return null;
+
+    return base64urlFromUint8Array(new Uint8Array(p256dh));
+  }, [pushSubscription]);
+
+  const auth_b64url = useMemo(() => {
+    const auth = pushSubscription?.getKey("auth");
+    if (!auth) return null;
+    return base64urlFromUint8Array(new Uint8Array(auth));
+  }, [pushSubscription]);
+
+  return (
+    <div>
+      <div>DebugShowKey</div>
+      <div>is one of these the same as the applicationServerKey aka the public vertify jwt key?</div>
+      <div>p256dh_b64url: {p256dh_b64url ?? "null"}</div>
+      <div>auth_b64url: {auth_b64url ?? "null"}</div>
     </div>
   );
 }

@@ -1,6 +1,12 @@
 import { SignJWT } from "jose";
 import { vapidImportPrivateKey } from "#src/lib/vapid-keys";
 
+//spec: https://datatracker.ietf.org/doc/rfc8292/
+//payload encryption: https://www.rfc-editor.org/rfc/rfc8291.txt
+//the encryption thing was interesting but prob just use "npm install http_ece"
+
+//also good info here: https://www.rfc-editor.org/rfc/rfc8030
+
 type Urgency = "very-low" | "low" | "normal" | "high";
 
 // time to live in seconds that push service should retain message
