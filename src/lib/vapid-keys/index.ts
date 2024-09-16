@@ -4,6 +4,16 @@ import { base64urlFromUint8Array, uint8ArrayFromBase64url } from "#src/utils/jso
 //spec: https://datatracker.ietf.org/doc/rfc8292/
 //payload encryption: https://www.rfc-editor.org/rfc/rfc8291.txt
 
+//general "requests the delivery of a push message" spec:
+//https://datatracker.ietf.org/doc/html/rfc8030#page-10
+//some info found there:
+//push service must return a res.headers.Location
+//requester can specify "TTL", "Urgency" and "Topic" headers
+//and its possible to replace push-messages before they are delivered to client
+//but only if it originally had a Topic
+//btw a Topic must use the url-safe alphabet (aka base64url) and no more than 32 chars
+//etc...
+
 // notes to self: "ECDSA on the NIST P-256 curve" is also called "ES256"
 // this what the webpush spec expects
 //
@@ -17,14 +27,14 @@ import { base64urlFromUint8Array, uint8ArrayFromBase64url } from "#src/utils/jso
 // const rePublic = vapidImportPublicKey(publicKeyString);
 // const rePrivate = await vapidImportPrivateKey(privateKeyString);
 
-export function vapidImportPublicKey(publicKeyString: string) {
+export function vapidImportPublicKey(publicKey_b64url: string) {
   //when asking for pushmanager it wants it in uint8array
   //but when posting from backend to service it wants the regular b64url
-  return uint8ArrayFromBase64url(publicKeyString);
+  return uint8ArrayFromBase64url(publicKey_b64url);
 }
 
-export async function vapidImportPrivateKey(privateKeyString: string) {
-  const data = uint8ArrayFromBase64url(privateKeyString);
+export async function vapidImportPrivateKey(privateKey_b64url: string) {
+  const data = uint8ArrayFromBase64url(privateKey_b64url);
   const cryptoKey = await crypto.subtle.importKey(
     "pkcs8",
     data,
@@ -52,12 +62,12 @@ export async function vapidGenerateKeyPair() {
 
 export async function vapidExportPublicKey(pairPublicKey: CryptoKey) {
   const publicKeyBuffer = await crypto.subtle.exportKey("raw", pairPublicKey);
-  const publicKeyString = base64urlFromUint8Array(new Uint8Array(publicKeyBuffer));
-  return publicKeyString;
+  const publicKey_b64url = base64urlFromUint8Array(new Uint8Array(publicKeyBuffer));
+  return publicKey_b64url;
 }
 
 export async function vapidExportPrivateKey(pairPrivateKey: CryptoKey) {
   const data = await crypto.subtle.exportKey("pkcs8", pairPrivateKey);
-  const privateKeyString = base64urlFromUint8Array(new Uint8Array(data));
-  return privateKeyString;
+  const privateKey_b64url = base64urlFromUint8Array(new Uint8Array(data));
+  return privateKey_b64url;
 }
