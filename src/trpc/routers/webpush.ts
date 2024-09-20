@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { webPush } from "#src/lib/web-push/web-push";
+//import { webPush } from "#src/lib/web-push/web-push";
 
 export const webpushRouter = createTRPCRouter({
   selftest: protectedProcedure
@@ -10,7 +10,9 @@ export const webpushRouter = createTRPCRouter({
         body: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(({ input }) => {
+      return { hello: "world" };
+      /*
       const res = await webPush(input.endpoint, input.body);
       const text = await res.text();
 
@@ -20,5 +22,6 @@ export const webpushRouter = createTRPCRouter({
         resHeaders: JSON.stringify(res.headers),
         resHeaderLocation: res.headers.get("Location"), //spec said info should be here where it plants to deliver to
       };
+      */
     }),
 });
