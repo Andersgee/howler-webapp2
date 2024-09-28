@@ -1,50 +1,46 @@
-// src/lib/service-worker/bej.ts
-function kek(h) {
-  return h * 2;
-}
-
 // src/lib/service-worker/sw.ts
 async function asynclog(...data) {
   return await new Promise((resolve) => {
-    console.log(...data, kek(3));
+    console.log(...data);
     resolve(void 0);
   });
 }
 self.addEventListener("install", (event) => {
-  const a = self.skipWaiting();
-  const b = asynclog("SW: installed");
-  const promise = Promise.all([a, b]);
+  void self.skipWaiting();
+  const a = asynclog("SW: install");
+  const promise = Promise.all([a]);
   event.waitUntil(promise);
 });
 self.addEventListener("activate", (event) => {
   const a = self.clients.claim();
-  const b = asynclog("SW: activated");
+  const b = asynclog("SW: activate");
   const promise = Promise.all([a, b]);
   event.waitUntil(promise);
 });
 self.addEventListener("push", (event) => {
-  const a = self.registration.showNotification("some title", {
-    //tag: "event-xLen3",
-    body: `event.data?.text(): ${event.data?.text()}`,
-    icon: "/icons/favicon-512.png",
+  const message = JSON.parse(event.data.text());
+  const a = self.registration.showNotification(message.title, {
+    body: message.body,
+    icon: message.icon ?? "/icons/favicon-48.png",
     badge: "/icons/badge.png",
-    data: event.data?.text()
+    image: message.image,
+    data: message
+    //tag: "event-xLen3",
+    //actions
   });
-  const b = asynclog("event.data?.text()", event.data?.text());
-  const promise = Promise.all([a, b]);
+  const promise = Promise.all([a]);
   event.waitUntil(promise);
 });
 self.addEventListener("notificationclick", (event) => {
   const clickedNotification = event.notification;
   clickedNotification.close();
-  const a = asynclog("clickedNotification.body:", clickedNotification.body);
-  const b = self.clients.openWindow("https://howler.andyfx.net/event");
-  const promise = Promise.all([a, b]);
+  const message = clickedNotification.data;
+  const url = absUrl(message.relativeLink);
+  const c = self.clients.openWindow(url);
+  const promise = Promise.all([c]);
   event.waitUntil(promise);
 });
-self.addEventListener("pushsubscriptionchange", (ev) => {
-  const event = ev;
-  const a = asynclog("pushsubscriptionchange:");
-  const promise = Promise.all([a]);
-  event.waitUntil(promise);
-});
+function absUrl(relativeLink) {
+  const url = new URL(relativeLink, self.location.href).href;
+  return url;
+}

@@ -1,40 +1,22 @@
-import { UserImage32x32, UserImage96x96 } from "#src/components/user/UserImage";
+import { UserImage32x32 } from "#src/components/user/UserImage";
 import { apiRsc } from "#src/trpc/api-rsc";
 import Link from "next/link";
-//import { redirect } from "next/navigation";
 import { DeleteAccountButton } from "./DeleteAccountButton";
 import { seo } from "#src/utils/seo";
-import { NoUser } from "./NoUser";
-import { hashidFromId } from "#src/utils/hashid";
-import { Shell } from "#src/components/Shell";
 
 export const metadata = seo({
-  title: "Profile | Howler",
-  description: "Manage your profile.",
-  url: "/profile",
-  image: "/howler.png",
+  title: "Profile | Settings | Howler",
+  description: "Manage your settings.",
+  url: "/settings/profile",
 });
 
 export default async function Page() {
   const { api, user } = await apiRsc();
-
-  if (!user) {
-    return <NoUser />;
-  }
-
+  if (!user) return null;
   const userinfo = await api.user.info({ userId: user.id });
 
   return (
-    <Shell>
-      <section className="flex flex-col items-center">
-        <Link href={`/profile/${hashidFromId(userinfo.id)}`}>
-          <UserImage96x96 alt={userinfo.name} image={userinfo.image ?? ""} />
-        </Link>
-        <h1 className="mt-2">{`Welcome, ${userinfo.name}`}</h1>
-        <p>Manage your info</p>
-      </section>
-
-      <hr className="py-2" />
+    <>
       <section>
         <h2>Personal info</h2>
         <div className="py-2">
@@ -81,7 +63,6 @@ export default async function Page() {
         <h2>Danger zone</h2>
         <DeleteAccountButton />
       </section>
-      <div className="py-2">.</div>
-    </Shell>
+    </>
   );
 }

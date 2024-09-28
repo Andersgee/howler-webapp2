@@ -1,59 +1,49 @@
-//create sw.js from this file with "pnpm bundlesw"
+import { type Message } from "../cloud-messaging-light/notify";
+//import { kek } from "./bej";
 
-//import { initializeApp } from "firebase/app";
-//import { getMessaging } from "firebase/messaging/sw";
-//import { onBackgroundMessage } from "firebase/messaging/sw";
-//import { JSONE } from "#src/utils/jsone";
-import { kek } from "./bej";
+//create sw.js from this file with "pnpm bundlesw"
 
 declare const self: ServiceWorkerGlobalScope;
 
-//ok, console logs show up in chrome but not in firefox
-//console.log("SW: 99 * kek(9):", 99 * kek(9));
-
 async function asynclog(...data: unknown[]) {
   return await new Promise((resolve) => {
-    console.log(...data, kek(3));
+    console.log(...data);
     resolve(undefined);
   });
 }
 
 self.addEventListener("install", (event) => {
-  const a = self.skipWaiting();
-  const b = asynclog("SW: installed");
+  void self.skipWaiting(); //makes a new worker activate directly after ready instead of waiting for app close
+  const a = asynclog("SW: install");
 
-  const promise = Promise.all([a, b]);
+  const promise = Promise.all([a]);
   event.waitUntil(promise);
 });
 
 self.addEventListener("activate", (event) => {
   const a = self.clients.claim();
-  const b = asynclog("SW: activated");
+  const b = asynclog("SW: activate");
 
   const promise = Promise.all([a, b]);
   event.waitUntil(promise);
 });
 
 self.addEventListener("push", (event) => {
-  //todo: validate with zod here, no reason the service worker should not be typesafe
-  //const data = JSONE.parse(event.data!.text()) as {
-  //  title: string;
-  //  body: string;
-  //  relativeLink: string;
-  //  //createdAt: Date;
-  //};
+  const message = JSON.parse(event.data!.text()) as Message;
 
-  const a = self.registration.showNotification("some title", {
-    //tag: "event-xLen3",
-    body: `event.data?.text(): ${event.data?.text()}`,
-    icon: "/icons/favicon-512.png",
+  const a = self.registration.showNotification(message.title, {
+    body: message.body,
+    icon: message.icon ?? "/icons/favicon-48.png",
     badge: "/icons/badge.png",
-    data: event.data?.text(),
+    image: message.image,
+    data: message,
+    //tag: "event-xLen3",
+    //actions
   });
 
-  const b = asynclog("event.data?.text()", event.data?.text());
+  //const b = debuglog("onpush: ", message.relativeLink);
 
-  const promise = Promise.all([a, b]);
+  const promise = Promise.all([a]);
   event.waitUntil(promise);
 });
 
@@ -68,13 +58,66 @@ self.addEventListener("notificationclick", (event) => {
   //clickedNotification.body
   //clickedNotification.data
   //clickedNotification.tag
+  const message = clickedNotification.data as Message;
 
-  const a = asynclog("clickedNotification.body:", clickedNotification.body);
-  const b = self.clients.openWindow("https://howler.andyfx.net/event");
-  const promise = Promise.all([a, b]);
+  const url = absUrl(message.relativeLink);
+  //const b = debuglog("onclick:", message.relativeLink);
+
+  //TODO: focus the tab insead if its already open?
+  //https://developer.mozilla.org/en-US/docs/Web/API/Clients/openWindow
+  const c = self.clients.openWindow(url);
+
+  const promise = Promise.all([c]);
   event.waitUntil(promise);
 });
 
+function absUrl(relativeLink: string) {
+  const url = new URL(relativeLink, self.location.href).href;
+  return url;
+}
+
+/*
+async function debuglog(prelude: string, url: string) {
+  const hasFocus = await appHasFocus();
+  const hasUrlFocus = await appHasUrlFocus(url);
+  console.log(prelude, JSON.stringify({ url, hasFocus, hasUrlFocus }));
+}
+
+async function appHasUrlFocus(url: string) {
+  try {
+    const clients = await getClients();
+    return clients.some((client) => client.url === url);
+  } catch {
+    return false;
+  }
+}
+
+async function appHasFocus() {
+  try {
+    const clients = await getClients();
+    return clients.some((client) => "focus" in client);
+  } catch {
+    return false;
+  }
+}
+
+function hasVisibleClients(clients: WindowClient[]) {
+  return clients.some(
+    (client) =>
+      client.visibilityState === "visible" &&
+      // Ignore chrome-extension clients as that matches the background pages
+      // of extensions, which are always considered visible for some reason.
+      !client.url.startsWith("chrome-extension://")
+  );
+}
+
+async function getClients() {
+  //return await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+  return await self.clients.matchAll({ type: "window" });
+}
+*/
+
+/*
 type PushSubscriptionChangeEvent = ExtendableEvent & {
   readonly newSubscription: PushSubscription | null;
   readonly oldSubscription: PushSubscription | null;
@@ -88,3 +131,4 @@ self.addEventListener("pushsubscriptionchange", (ev) => {
   const promise = Promise.all([a]);
   event.waitUntil(promise);
 });
+*/

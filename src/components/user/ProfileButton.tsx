@@ -31,7 +31,7 @@ export function ProfileButton({ user }: { user: TokenUser | null }) {
                 <div className="mb-2">{user.name}</div>
                 <Link
                   onClick={() => dialogDispatch({ type: "hide", name: "profilebutton" })}
-                  href="/profile"
+                  href="/settings/profile"
                   className={buttonVariants({ variant: "icon", className: "ml-2" })}
                 >
                   <IconSettings />

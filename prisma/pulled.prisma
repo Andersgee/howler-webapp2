@@ -104,6 +104,19 @@ model Post {
   Post_userId_fkey User @relation("Post_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
+model PushSubscription {
+  userId BigInt @db.UnsignedBigInt
+  auth_base64url String @db.Char(22)
+  p256dh_base64url String @db.Char(87)
+  endpoint String @db.VarChar(382)
+
+  @@id([endpoint])
+  @@index([userId])
+
+  //foreign key relations (mysql adds an index on them)
+  PushSubscription_userId_fkey User @relation("PushSubscription_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+}
+
 model Reply {
   id BigInt @db.UnsignedBigInt @default(autoincrement())
   userId BigInt @db.UnsignedBigInt
@@ -145,6 +158,7 @@ model User {
   Event_creatorId_fkey Event[] @relation("Event_creatorId_fkey")
   FcmToken_userId_fkey FcmToken[] @relation("FcmToken_userId_fkey")
   Post_userId_fkey Post[] @relation("Post_userId_fkey")
+  PushSubscription_userId_fkey PushSubscription[] @relation("PushSubscription_userId_fkey")
   Reply_userId_fkey Reply[] @relation("Reply_userId_fkey")
   UserEventPivot_userId_fkey UserEventPivot[] @relation("UserEventPivot_userId_fkey")
   UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")

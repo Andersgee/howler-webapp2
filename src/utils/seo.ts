@@ -8,7 +8,7 @@ export function seo({
   title,
   titleTemplate,
   url,
-  image,
+  image = "/howler.png",
   description,
   audio,
   video,
@@ -95,7 +95,7 @@ type Options = {
    *
    * size should be 1200x630 to be safe
    */
-  image: string;
+  image?: string;
   /**
    * The canonical URL of your object that will be used as its permanent ID in the graph, e.g., "https://www.imdb.com/title/tt0117500".
    */

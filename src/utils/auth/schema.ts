@@ -1,6 +1,14 @@
 import { z } from "zod";
-export const SESSION_COOKIE_NAME = "__Host-session";
-export const USER_COOKIE_NAME = "__Host-user";
+
+//notes to self:
+//using prefixes such as "__Host-"" makes browser assert things about the cookie to even accept it
+//"__Host-" is the strongest: secure and only for this domain
+//see list of the exact assertions here: //https://datatracker.ietf.org/doc/html/draft-west-cookie-prefixes-05#section-3.2
+//anyway, there used to be an exception for localhost but not in recent versions of google chrome
+//so only use the prefixes in prod
+
+export const SESSION_COOKIE_NAME = process.env.NODE_ENV === "production" ? "__Host-session" : "session";
+export const USER_COOKIE_NAME = process.env.NODE_ENV === "production" ? "__Host-user" : "user";
 export const USER_COOKIE_MAXAGE = 2592000; //in seconds. 2592000 is 30 days, prob avoid anything longer than that
 
 export function userCookieString(token: string, maxAge: number) {

@@ -5,10 +5,12 @@ type Name = "profilebutton" | "notifications" | "warning";
 
 export type DialogSlice = {
   dialogValue: Name | "none";
+  setDialogValue: (x: Name | "none") => void;
 };
 
-export const createDialogSlice: StateCreator<DialogSlice, [], [], DialogSlice> = (_set, _get) => ({
+export const createDialogSlice: StateCreator<DialogSlice, [], [], DialogSlice> = (set, _get) => ({
   dialogValue: "none",
+  setDialogValue: (dialogValue) => set({ dialogValue }),
 });
 
 type Action = { type: "show" | "hide" | "toggle"; name: Name };

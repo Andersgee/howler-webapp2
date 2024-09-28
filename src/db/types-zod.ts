@@ -91,6 +91,19 @@ export const schema_update_Reply = z.object({
   createdAt: z.date().optional(),
 });
 
+export const schema_insert_PushSubscription = z.object({
+  userId: z.bigint(),
+  auth_base64url: z.string(),
+  p256dh_base64url: z.string(),
+  endpoint: z.string(),
+});
+export const schema_update_PushSubscription = z.object({
+  userId: z.bigint().optional(),
+  auth_base64url: z.string().optional(),
+  p256dh_base64url: z.string().optional(),
+  endpoint: z.string().optional(),
+});
+
 export const schema_insert_Post = z.object({
   id: z.bigint().optional(),
   text: z.string(),

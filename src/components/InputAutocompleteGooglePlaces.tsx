@@ -1,7 +1,7 @@
 "use client";
 
 import { useStore } from "#src/store";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { IconClose } from "#src/icons/Close";
 import { Button } from "#src/ui/button";
@@ -34,10 +34,6 @@ export function InputAutocompleteGooglePlaces(props: Props) {
 function Content({ className, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
   const suggestions = useGooglePlacesSuggestions(value.trim());
-
-  useEffect(() => {
-    console.log("mounting InputAutocompleteGooglePlaces Content");
-  }, []);
 
   return (
     <Command

@@ -1,5 +1,5 @@
 import { SignJWT } from "jose";
-import { cryptokey_from_Base64url_pkcs8 } from "./keys";
+import { keyimport_ES256_pkcs8 } from "./keys/es256";
 
 /*
 # TLDR;
@@ -20,14 +20,24 @@ identity for the application server that is consistent across
 multiple messages.
 */
 
-export async function vapidSchemeAuthHeader(endpoint: string) {
-  const PRIVATE_KEY = await cryptokey_from_Base64url_pkcs8(process.env.WEBPUSH_AUTHHEADER_PRIVATE_BASE64URL_PKCS8);
-  const PUBLIC_KEY = process.env.WEBPUSH_AUTHHEADER_PUBLIC_BASE64URL_RAW;
+type Params = {
+  pushSubscription: {
+    endpoint: string;
+  };
+  appserver: {
+    private_base64url_pkcs8: string;
+    public_base64url: string;
+  };
+};
+
+export async function vapidSchemeAuthHeader({ pushSubscription, appserver }: Params) {
+  const PRIVATE_KEY = await keyimport_ES256_pkcs8(appserver.private_base64url_pkcs8);
+  const PUBLIC_KEY = appserver.public_base64url;
 
   const jwt = await new SignJWT({
     exp: oneHourFromNowSeconds(),
     sub: process.env.VAPID_SUB,
-    aud: new URL(endpoint).origin,
+    aud: new URL(pushSubscription.endpoint).origin,
   })
     .setProtectedHeader({ alg: "ES256", typ: "JWT" })
     .sign(PRIVATE_KEY);
@@ -46,8 +56,6 @@ function oneHourFromNowSeconds() {
 //the required "exp" claim MUST NOT be more than 24 hours from the time of the request
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function expSeconds() {
-  new Date().getTime() / 1000 + 60 * 60 * 23;
-
   const TWENTY_THREE_HOURS_IN_SECONDS = 60 * 60 * 23;
   const d = new Date();
   const exp = Math.floor(d.getTime() / 1000);

@@ -1,6 +1,18 @@
 import { dbfetch } from "#src/db";
 //import { absUrl } from "#src/utils/url";
 //import { sendCloudMessage } from "./send";
+import { webPush } from "#src/lib/web-push";
+
+//import { JSONE } from "#src/utils/jsone";
+//import { z } from "zod";
+//export const zMessage = z.object({
+//  title: z.string(),
+//  body: z.string(),
+//  relativeLink: z.string(),
+//  icon: z.string().optional(),
+//  image: z.string().optional(),
+//});
+//export type Message = z.infer<typeof zMessage>;
 
 export type Message = {
   title: string;
@@ -31,6 +43,26 @@ export async function notify(userIds: bigint[], message: Message) {
     .insertInto("UserNotificationPivot")
     .values(userIds.map((userId) => ({ userId, notificationId })))
     .execute();
+
+  const pushSubscriptions = await db
+    .selectFrom("PushSubscription")
+    .where("userId", "in", userIds)
+    .select(["auth_base64url", "p256dh_base64url", "endpoint"])
+    .execute();
+
+  for (const pushSubscription of pushSubscriptions) {
+    const res = await webPush({ payload: JSON.stringify(message), pushSubscription });
+    //TODO: deal with bad responses
+    //https://datatracker.ietf.org/doc/html/rfc8030#section-4.1
+    //A push service MUST return a 400 (Bad Request) status code for requests that contain an invalid subscription set.
+    //actually they return 400 for other things like bad requests in general so this is not correct
+    //if (res.status === 400) {
+    //  await db.deleteFrom("PushSubscription").where("endpoint", "=", pushSubscription.endpoint).execute();
+    //}
+    if (!res.ok) {
+      console.error(await res.text());
+    }
+  }
 
   /*
   await sendCloudMessage(userIds, {

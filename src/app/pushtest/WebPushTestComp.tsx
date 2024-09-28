@@ -39,9 +39,7 @@ export function WebPushTestComp({ className }: Props) {
         <Button onClick={() => pushSubscriptionUnSubscribe()}>pushSubscriptionUnSubscribe</Button>
       </div>
 
-      <div className="my-4">
-        {pushSubscription?.endpoint && <NotifyYourselfForm endpoint={pushSubscription.endpoint} />}
-      </div>
+      <div className="my-4">{pushSubscription && <FormNotifyYourself pushSubscription={pushSubscription} />}</div>
 
       <DebugShowKey />
     </div>
@@ -74,7 +72,7 @@ function DebugShowKey() {
   );
 }
 
-function NotifyYourselfForm({ endpoint }: { endpoint: string }) {
+function FormNotifyYourself({ pushSubscription }: { pushSubscription: PushSubscription }) {
   const { mutate } = api.webpush.selftest.useMutation({
     onSuccess: (stuff) => {
       console.log("stuff:", stuff);
@@ -84,9 +82,17 @@ function NotifyYourselfForm({ endpoint }: { endpoint: string }) {
   const handleSubmit = () => {
     if (!ref.current?.value) return;
 
+    const auth = pushSubscription.getKey("auth");
+    const p256dh = pushSubscription.getKey("p256dh");
+    if (!auth || !p256dh) return;
+
     mutate({
-      body: ref.current.value,
-      endpoint,
+      payload: ref.current.value,
+      pushSubscription: {
+        endpoint: pushSubscription.endpoint,
+        auth_base64url: base64urlFromUint8Array(new Uint8Array(auth)),
+        p256dh_base64url: base64urlFromUint8Array(new Uint8Array(p256dh)),
+      },
     });
     ref.current.value = "";
   };

@@ -103,6 +103,7 @@ model User {
     UserEventPivot_userId_fkey        UserEventPivot[]        @relation("UserEventPivot_userId_fkey")
     Comment_userId_fkey               Comment[]               @relation("Comment_userId_fkey")
     Reply_userId_fkey                 Reply[]                 @relation("Reply_userId_fkey")
+    PushSubscription_userId_fkey      PushSubscription[]      @relation("PushSubscription_userId_fkey")
 
     @@id([id])
     @@unique([email])
@@ -110,6 +111,18 @@ model User {
     @@unique([discordUserId])
     @@unique([githubUserId])
     @@unique([facebookdUserId])
+}
+
+model PushSubscription {
+    userId           BigInt @db.UnsignedBigInt
+    auth_base64url   String @db.Char(22) //16 bytes as base64url (this is the user agents salt)
+    p256dh_base64url String @db.Char(87) //65 bytes as base64url (this is the user agents public ECDH key)
+    endpoint         String @db.VarChar(382) //fcm is 188, mozilla is 234... lets go with 191*2 this is conceptually the device id
+
+    PushSubscription_userId_fkey User @relation("PushSubscription_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+    @@id([endpoint])
+    @@index([userId])
 }
 
 model UserEventPivot {

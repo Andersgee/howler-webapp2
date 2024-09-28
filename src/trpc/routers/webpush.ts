@@ -1,19 +1,35 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-//import { webPush } from "#src/lib/web-push/web-push";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { webPush } from "#src/lib/web-push";
+import { dbfetch } from "#src/db";
 
 export const webpushRouter = createTRPCRouter({
-  selftest: protectedProcedure
+  myPushSubscriptions: protectedProcedure.query(async ({ ctx }) => {
+    return await dbfetch()
+      .selectFrom("PushSubscription")
+      .select(["endpoint"])
+      .where("userId", "=", ctx.user.id)
+      .execute();
+  }),
+
+  selftest: publicProcedure
     .input(
       z.object({
-        endpoint: z.string(),
-        body: z.string(),
+        payload: z.string(),
+        pushSubscription: z.object({
+          endpoint: z.string(),
+          auth_base64url: z.string(),
+          p256dh_base64url: z.string(),
+        }),
       })
     )
-    .mutation(({ input }) => {
-      return { hello: "world" };
-      /*
-      const res = await webPush(input.endpoint, input.body);
+    .mutation(async ({ input }) => {
+      //return { hello: "world" };
+
+      const res = await webPush({
+        payload: input.payload,
+        pushSubscription: input.pushSubscription,
+      });
       const text = await res.text();
 
       return {
@@ -22,6 +38,26 @@ export const webpushRouter = createTRPCRouter({
         resHeaders: JSON.stringify(res.headers),
         resHeaderLocation: res.headers.get("Location"), //spec said info should be here where it plants to deliver to
       };
-      */
     }),
+
+  subscribe: protectedProcedure
+    .input(z.object({ auth_base64url: z.string(), p256dh_base64url: z.string(), endpoint: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      await dbfetch()
+        .insertInto("PushSubscription")
+        .values({ ...input, userId: ctx.user.id })
+        .execute();
+
+      return true;
+    }),
+
+  unsubscribe: protectedProcedure.input(z.object({ endpoint: z.string() })).mutation(async ({ ctx, input }) => {
+    await dbfetch()
+      .deleteFrom("PushSubscription")
+      .where("userId", "=", ctx.user.id)
+      .where("endpoint", "=", input.endpoint)
+      .execute();
+
+    return true;
+  }),
 });

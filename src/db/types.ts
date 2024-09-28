@@ -9,6 +9,7 @@ export type DB = {
   UserEventPivot: UserEventPivot;
   User: User;
   Reply: Reply;
+  PushSubscription: PushSubscription;
   Post: Post;
   Notification: Notification;
   FcmToken: FcmToken;
@@ -102,6 +103,17 @@ export type Post = {
   updatedAt: Generated<Date>;
   /** indexed: (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   userId: bigint;
+};
+
+export type PushSubscription = {
+  /** indexed: (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  userId: bigint;
+  /** dbtype: 'char(22)', eg string with max 22 chars */
+  auth_base64url: string;
+  /** dbtype: 'char(87)', eg string with max 87 chars */
+  p256dh_base64url: string;
+  /** indexed: (endpoint), dbtype: 'varchar(382)', eg string with max 382 chars */
+  endpoint: string;
 };
 
 export type Reply = {
