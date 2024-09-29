@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IconGoogle, IconDiscord } from "#src/icons/special";
-//import { IconGithub } from "#src/icons/special";
-import { IconFacebook } from "#src/icons/special";
+import { IconGithub } from "#src/icons/special";
+//import { IconFacebook } from "#src/icons/special";
 import { useUserAgent } from "#src/hooks/useUserAgent";
 
 const linkStyles =
@@ -35,28 +35,27 @@ export function SigninButtons() {
           <span>Sign in with Google</span>
         </a>
       </div>
-
+      {/* 
       <div>
         <a href={`/api/auth/signin/facebook?route=${pathname}`} className={linkStyles}>
           <IconFacebook />
           <span>Sign in with Facebook</span>
         </a>
       </div>
-
+      */}
       <div>
         <a href={`/api/auth/signin/discord?route=${pathname}`} className={linkStyles}>
           <IconDiscord />
           <span>Sign in with Discord</span>
         </a>
       </div>
-      {/*
+
       <div>
         <a href={`/api/auth/signin/github?route=${pathname}`} className={linkStyles}>
           <IconGithub />
           <span>Sign in with Github</span>
         </a>
       </div>
-      */}
 
       <p className="mt-3 w-64 text-center font-serif text-sm text-color-unthemed-neutral-600">
         By signing in, you agree to our <br />
