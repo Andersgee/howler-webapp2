@@ -33,7 +33,7 @@ self.addEventListener("push", (event) => {
 
   const a = self.registration.showNotification(message.title, {
     body: message.body,
-    icon: message.icon ?? "/icons/favicon-48.png",
+    icon: message.icon ?? "/icons/favicon-96.png",
     badge: "/icons/badge.png",
     image: message.image,
     data: message,
