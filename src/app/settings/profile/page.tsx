@@ -44,6 +44,7 @@ export default async function Page() {
             userinfo.discordUserId && "discord",
             userinfo.googleUserSub && "google",
             userinfo.githubUserId && "github",
+            userinfo.facebookdUserId && "facebook",
           ]
             .filter(Boolean)
             .join(", ")}`}</div>

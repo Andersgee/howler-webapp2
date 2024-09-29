@@ -150,7 +150,7 @@ export function UpdateEventForm({ className, initialEvent }: Props) {
                     field.onChange(str);
                     if (placeId) {
                       setClickedSuggestionPlaceId(placeId);
-                      console.log("selected placeId", placeId);
+                      //console.log("selected placeId", placeId);
                     }
                   }}
                 />

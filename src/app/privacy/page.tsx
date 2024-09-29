@@ -48,7 +48,7 @@ export default function Page() {
       <p>We also store the content you create, upload, or receive from others when using the app.</p>
       <h2>Deleting your information</h2>
       <p>
-        You can delete your account at <Link href="/profile">your profile</Link>
+        You can delete your account at <Link href="/settings/profile">your profile</Link>
       </p>
     </Shell>
   );

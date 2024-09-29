@@ -11,6 +11,9 @@ https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow/
 
 https://developers.facebook.com/docs/graph-api/reference/user/#fields
 
+//https://developers.facebook.com/docs/permissions
+App Review is required for all permissions except for email and public_profile
+
 1. Create an anti-forgery state token
 2. Send an authentication request to Google
 3. Confirm the anti-forgery state token
@@ -32,10 +35,10 @@ export async function GET(request: NextRequest) {
 
     const authRequestUrl = urlWithSearchparams(authorization_endpoint, {
       client_id: process.env.FACEBOOK_CLIENT_ID,
-      response_type: "code",
-      scope: "email", // "public_profile,email" ?
       redirect_uri: absUrl("/api/auth/callback/facebook"),
       state: stateToken,
+      response_type: "code",
+      scope: "public_profile,email",
     });
 
     return new Response(null, {
