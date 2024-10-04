@@ -59,8 +59,22 @@ export async function notify(userIds: bigint[], message: Message) {
     //if (res.status === 400) {
     //  await db.deleteFrom("PushSubscription").where("endpoint", "=", pushSubscription.endpoint).execute();
     //}
+
     if (!res.ok) {
-      console.error(await res.text());
+      if (res.status === 404) {
+        await db.deleteFrom("PushSubscription").where("endpoint", "=", pushSubscription.endpoint).execute();
+      } else {
+        //log this and look here for error logs: https://vercel.com/andyfx/howler-webapp/logs
+        const text = await res.text();
+        const msg = {
+          status: res.status,
+          statusText: res.statusText,
+          text,
+        };
+
+        console.error(JSON.stringify(msg));
+        //push subscription has unsubscribed or expired.
+      }
     }
   }
 
