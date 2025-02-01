@@ -96,7 +96,7 @@ export const GITHUB_EMAILINFO = z
       email: z.string(),
       primary: z.boolean(),
       verified: z.boolean(),
-      visibility: z.enum(["public", "private"]),
+      //visibility: z.enum(["public", "private"]),
     })
   )
   .min(1);
