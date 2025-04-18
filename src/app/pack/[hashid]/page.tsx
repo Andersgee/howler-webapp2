@@ -14,6 +14,7 @@ import { ButtonRemoveUserFromPack } from "./button-remove-user-from-pack";
 import { PrettyDate, PrettyDateLong } from "#src/components/PrettyDate";
 import { Fragment } from "react";
 import { PackInfo } from "./pack-info";
+import { PackAddMembers } from "./pack-add-members";
 //import { CreateCommentForm } from "./CreateCommentForm";
 //import { CommentsList, PinnedComment } from "./CommentsList";
 //import { UserImage32x32 } from "#src/components/user/UserImage";
@@ -59,6 +60,10 @@ export default async function Page({ params }: Props) {
         <div className="py-4"></div>
       )}
       <PackInfo pack={pack} />
+
+      <div className="py-4">
+        <PackAddMembers packId={pack.id} />
+      </div>
 
       <div className="py-8">
         <h2>Members</h2>

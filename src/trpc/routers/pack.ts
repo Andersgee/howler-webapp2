@@ -131,49 +131,57 @@ export const packRouter = createTRPCRouter({
     return packs;
   }),
 
-  addUser: protectedProcedure.input(schema_insert_UserPackPivot).mutation(async ({ ctx, input }) => {
-    const db = dbfetch();
-
-    const pack = await db
-      .selectFrom("UserPackPivot")
-      .where("packId", "=", input.packId)
-      .where("userId", "=", ctx.user.id)
-      //comment out. allow any member (regardless of role) to add users
-      //.where((eb) => eb.or([eb("role", "=", "CREATOR"), eb("role", "=", "ADMIN"), eb("role", "=", "MEMBER")]))
-      .innerJoin("Pack", "Pack.id", "UserPackPivot.packId")
-      .selectAll()
-      .executeTakeFirstOrThrow();
-
-    //only allow adding people up to (including) your role
-    let cappedRole = input.role;
-    if (pack.role === "ADMIN" && input.role === "CREATOR") {
-      cappedRole = "ADMIN";
-    } else if (pack.role === "MEMBER") {
-      cappedRole = "MEMBER";
-    }
-
-    const insertResult = await db
-      .insertInto("UserPackPivot")
-      .ignore()
-      .values({
-        ...input,
-        role: cappedRole,
+  addUser: protectedProcedure
+    .input(
+      z.object({
+        userId: z.bigint(),
+        packId: z.bigint(),
+        role: z.enum(["ADMIN", "CREATOR", "MEMBER"]).optional(),
       })
-      .executeTakeFirstOrThrow();
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = dbfetch();
 
-    afterResponseIsFinished(async () => {
-      await notify([input.userId], {
-        title: `${ctx.user.name} added you to pack ${pack.title}`,
-        body: `see your packs`,
-        relativeLink: `/profile/${hashidFromId(ctx.user.id)}`,
-        icon: pack.image ?? ctx.user.image,
+      const pack = await db
+        .selectFrom("UserPackPivot")
+        .where("packId", "=", input.packId)
+        .where("userId", "=", ctx.user.id)
+        //comment out. allow any member (regardless of role) to add users
+        //.where((eb) => eb.or([eb("role", "=", "CREATOR"), eb("role", "=", "ADMIN"), eb("role", "=", "MEMBER")]))
+        .innerJoin("Pack", "Pack.id", "UserPackPivot.packId")
+        .selectAll()
+        .executeTakeFirstOrThrow();
+
+      //only allow adding people up to (including) your role
+      let cappedRole = input.role;
+      if (pack.role === "ADMIN" && input.role === "CREATOR") {
+        cappedRole = "ADMIN";
+      } else if (pack.role === "MEMBER") {
+        cappedRole = "MEMBER";
+      }
+
+      const insertResult = await db
+        .insertInto("UserPackPivot")
+        .ignore()
+        .values({
+          ...input,
+          role: cappedRole,
+        })
+        .executeTakeFirstOrThrow();
+
+      afterResponseIsFinished(async () => {
+        await notify([input.userId], {
+          title: `${ctx.user.name} added you to pack ${pack.title}`,
+          body: `see your packs`,
+          relativeLink: `/profile/${hashidFromId(ctx.user.id)}`,
+          icon: pack.image ?? ctx.user.image,
+        });
       });
-    });
 
-    revalidateTag(tagsPack.info(input.packId));
+      revalidateTag(tagsPack.info(input.packId));
 
-    return insertResult;
-  }),
+      return insertResult;
+    }),
 
   removeUser: protectedProcedure
     .input(z.object({ packId: z.bigint(), userId: z.bigint() }))

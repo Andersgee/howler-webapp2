@@ -36,7 +36,7 @@ export function UserImage32x32({ image, alt }: { image?: string | null; alt: str
   );
 }
 
-export function UserImage96x96({ image, alt }: { image?: string; alt: string }) {
+export function UserImage96x96({ image, alt }: { image?: string | null; alt: string }) {
   return (
     <div className="relative h-24 w-24 shrink-0">
       {image && (
