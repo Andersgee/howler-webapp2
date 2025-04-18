@@ -8,6 +8,7 @@ import { schema_insert_UserPackPivot } from "#src/db/types-zod";
 import { TRPCError } from "@trpc/server";
 import { tagsPack } from "./packTags";
 import { revalidateTag } from "next/cache";
+import { sql } from "kysely";
 
 export const packRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
@@ -28,24 +29,27 @@ export const packRouter = createTRPCRouter({
     return pack;
   }),
 
-  users: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
+  members: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ ctx, input }) => {
     const db = dbfetch({ next: { tags: [tagsPack.info(input.id)] } });
 
-    const packUsers = await db
+    const members = await db
       .selectFrom("UserPackPivot")
       .where("packId", "=", input.id)
       .innerJoin("User", "User.id", "UserPackPivot.userId")
       .select([
         "UserPackPivot.role as packRole",
+        "UserPackPivot.packId",
         "User.id as userId",
         "User.name as userName",
         "User.image as userImage",
-        //"User.role as userRole",
         "UserPackPivot.createdAt as addedToPackAt",
       ])
+      .orderBy("UserPackPivot.createdAt asc")
       .execute();
 
-    return packUsers;
+    const myMemberShip = members.find((x) => x.userId === ctx.user?.id);
+
+    return { members, myMemberShip };
   }),
 
   create: protectedProcedure
@@ -89,7 +93,19 @@ export const packRouter = createTRPCRouter({
 
   list: publicProcedure.query(async ({ ctx }) => {
     const db = dbfetch();
-    const packs = await db.selectFrom("Pack").selectAll().execute();
+    const packs = await db
+      .selectFrom("UserPackPivot")
+      //.where("userId", "=", ctx.user.id)
+      .innerJoin("Pack", "Pack.id", "UserPackPivot.packId")
+      .selectAll()
+      .select(({ eb }) => [
+        eb
+          .selectFrom("UserPackPivot")
+          .whereRef("Pack.id", "=", "UserPackPivot.packId")
+          .select(sql<number>`COUNT(*)`.as("count"))
+          .as("memberCount"),
+      ])
+      .execute();
 
     return packs;
   }),
@@ -101,6 +117,13 @@ export const packRouter = createTRPCRouter({
       .where("userId", "=", ctx.user.id)
       .innerJoin("Pack", "Pack.id", "UserPackPivot.packId")
       .selectAll()
+      .select(({ eb }) => [
+        eb
+          .selectFrom("UserPackPivot")
+          .whereRef("Pack.id", "=", "UserPackPivot.packId")
+          .select(sql<number>`COUNT(*)`.as("count"))
+          .as("memberCount"),
+      ])
       .execute();
 
     return packs;

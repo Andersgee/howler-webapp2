@@ -12,11 +12,11 @@ type Props = {
 export function MyPacksList({ className }: Props) {
   const { data: packs } = api.pack.listMy.useQuery();
   return (
-    <div className={cn("", className)}>
-      <div>PackList</div>
+    <div className={cn("space-y-2", className)}>
+      <h2>My packs</h2>
       {packs?.map((pack) => (
-        <Link href={`/pack/${hashidFromId(pack.id)}`} key={pack.id} className="block">
-          <h3>{pack.title}</h3>
+        <Link href={`/pack/${hashidFromId(pack.id)}`} key={pack.id} className="block bg-color-neutral-0 p-2">
+          {`${pack.title} (${pack.memberCount} members)`}
         </Link>
       ))}
     </div>
