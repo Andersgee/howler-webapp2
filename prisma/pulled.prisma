@@ -22,9 +22,9 @@ model Comment {
   text String @db.VarChar(280)
   createdAt DateTime @db.DateTime(3) @default(now())
 
-  @@id([id])
-  @@index([userId])
   @@index([eventId])
+  @@index([userId])
+  @@id([id])
 
   //foreign key relations (mysql adds an index on them)
   Comment_userId_fkey User @relation("Comment_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -54,9 +54,9 @@ model Event {
   imageAspect Float @db.Float @default(1)
   pinnedCommentId BigInt? @db.UnsignedBigInt
 
-  @@id([id])
   @@index([creatorId])
   @@fulltext([title, locationName])
+  @@id([id])
 
   //foreign key relations (mysql adds an index on them)
   Event_creatorId_fkey User @relation("Event_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -70,8 +70,8 @@ model FcmToken {
   token String @db.VarChar(200)
   userId BigInt @db.UnsignedBigInt
 
-  @@id([token])
   @@index([userId])
+  @@id([token])
 
   //foreign key relations (mysql adds an index on them)
   FcmToken_userId_fkey User @relation("FcmToken_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -90,6 +90,22 @@ model Notification {
   UserNotificationPivot_notificationId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_notificationId_fkey")
 }
 
+model Pack {
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  title String @db.VarChar(55)
+  image String? @db.VarChar(100)
+  creatorId BigInt @db.UnsignedBigInt
+
+  @@index([creatorId])
+  @@id([id])
+
+  //foreign key relations (mysql adds an index on them)
+  Pack_creatorId_fkey User @relation("Pack_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+  //opposing relation fields for prisma syntax only (they dont do anything at db level, the index is in the other table)
+  UserPackPivot_packId_fkey UserPackPivot[] @relation("UserPackPivot_packId_fkey")
+}
+
 model Post {
   id BigInt @db.UnsignedBigInt @default(autoincrement())
   text String
@@ -97,8 +113,8 @@ model Post {
   updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
   userId BigInt @db.UnsignedBigInt
 
-  @@id([id])
   @@index([userId])
+  @@id([id])
 
   //foreign key relations (mysql adds an index on them)
   Post_userId_fkey User @relation("Post_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -147,21 +163,23 @@ model User {
   facebookdUserId String?
 
   @@id([id])
-  @@unique([email])
-  @@unique([googleUserSub])
   @@unique([discordUserId])
-  @@unique([githubUserId])
+  @@unique([email])
   @@unique([facebookdUserId])
+  @@unique([githubUserId])
+  @@unique([googleUserSub])
 
   //opposing relation fields for prisma syntax only (they dont do anything at db level, the index is in the other table)
   Comment_userId_fkey Comment[] @relation("Comment_userId_fkey")
   Event_creatorId_fkey Event[] @relation("Event_creatorId_fkey")
   FcmToken_userId_fkey FcmToken[] @relation("FcmToken_userId_fkey")
+  Pack_creatorId_fkey Pack[] @relation("Pack_creatorId_fkey")
   Post_userId_fkey Post[] @relation("Post_userId_fkey")
   PushSubscription_userId_fkey PushSubscription[] @relation("PushSubscription_userId_fkey")
   Reply_userId_fkey Reply[] @relation("Reply_userId_fkey")
   UserEventPivot_userId_fkey UserEventPivot[] @relation("UserEventPivot_userId_fkey")
   UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")
+  UserPackPivot_userId_fkey UserPackPivot[] @relation("UserPackPivot_userId_fkey")
   UserUserPivot_userId_fkey UserUserPivot[] @relation("UserUserPivot_userId_fkey")
   UserUserPivot_followerId_fkey UserUserPivot[] @relation("UserUserPivot_followerId_fkey")
 }
@@ -191,6 +209,20 @@ model UserNotificationPivot {
   UserNotificationPivot_userId_fkey User @relation("UserNotificationPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
+model UserPackPivot {
+  userId BigInt @db.UnsignedBigInt
+  packId BigInt @db.UnsignedBigInt
+  createdAt DateTime @db.DateTime(3) @default(now())
+  packRole UserPackPivot_packRole_enum @default(MEMBER)
+
+  @@id([packId, userId])
+  @@index([userId])
+
+  //foreign key relations (mysql adds an index on them)
+  UserPackPivot_packId_fkey Pack @relation("UserPackPivot_packId_fkey", fields: [packId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+  UserPackPivot_userId_fkey User @relation("UserPackPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+}
+
 model UserUserPivot {
   userId BigInt @db.UnsignedBigInt
   followerId BigInt @db.UnsignedBigInt
@@ -202,6 +234,12 @@ model UserUserPivot {
   //foreign key relations (mysql adds an index on them)
   UserUserPivot_userId_fkey User @relation("UserUserPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   UserUserPivot_followerId_fkey User @relation("UserUserPivot_followerId_fkey", fields: [followerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+}
+
+enum UserPackPivot_packRole_enum {
+  CREATOR
+  ADMIN
+  MEMBER
 }
 
 enum User_role_enum {

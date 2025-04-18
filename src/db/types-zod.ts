@@ -29,6 +29,19 @@ export const schema_update_UserUserPivot = z.object({
   createdAt: z.date().optional(),
 });
 
+export const schema_insert_UserPackPivot = z.object({
+  userId: z.bigint(),
+  packId: z.bigint(),
+  createdAt: z.date().optional(),
+  role: z.enum(["CREATOR","ADMIN","MEMBER"]).optional(),
+});
+export const schema_update_UserPackPivot = z.object({
+  userId: z.bigint().optional(),
+  packId: z.bigint().optional(),
+  createdAt: z.date().optional(),
+  role: z.enum(["CREATOR","ADMIN","MEMBER"]).optional(),
+});
+
 export const schema_insert_UserNotificationPivot = z.object({
   userId: z.bigint(),
   notificationId: z.bigint(),
@@ -119,6 +132,19 @@ export const schema_update_Post = z.object({
   userId: z.bigint().optional(),
 });
 
+export const schema_insert_Pack = z.object({
+  id: z.bigint().optional(),
+  title: z.string(),
+  image: z.string().nullish(),
+  creatorId: z.bigint(),
+});
+export const schema_update_Pack = z.object({
+  id: z.bigint().optional(),
+  title: z.string().optional(),
+  image: z.string().nullish(),
+  creatorId: z.bigint().optional(),
+});
+
 export const schema_insert_Notification = z.object({
   id: z.bigint().optional(),
   title: z.string(),
@@ -172,6 +198,13 @@ export const schema_update_Event = z.object({
   pinnedCommentId: z.bigint().nullish(),
 });
 
+export const schema_insert_DeletedEventImages = z.object({
+  image: z.string(),
+});
+export const schema_update_DeletedEventImages = z.object({
+  image: z.string().optional(),
+});
+
 export const schema_insert_Comment = z.object({
   id: z.bigint().optional(),
   userId: z.bigint(),
@@ -185,12 +218,5 @@ export const schema_update_Comment = z.object({
   eventId: z.bigint().optional(),
   text: z.string().optional(),
   createdAt: z.date().optional(),
-});
-
-export const schema_insert_DeletedEventImages = z.object({
-  image: z.string(),
-});
-export const schema_update_DeletedEventImages = z.object({
-  image: z.string().optional(),
 });
 

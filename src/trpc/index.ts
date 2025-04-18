@@ -7,9 +7,11 @@ import { notificationRouter } from "./routers/notification";
 import { commentRouter } from "./routers/comment";
 import { replyRouter } from "./routers/reply";
 import { webpushRouter } from "./routers/webpush";
+import { packRouter } from "./routers/pack";
 
 export const trpcRouter = createTRPCRouter({
   user: userRouter,
+  pack: packRouter,
   post: postRouter,
   event: eventRouter,
   geocode: geocodeRouter,

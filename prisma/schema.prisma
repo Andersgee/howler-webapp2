@@ -97,6 +97,7 @@ model User {
     FcmToken_userId_fkey              FcmToken[]              @relation("FcmToken_userId_fkey")
     Post_userId_fkey                  Post[]                  @relation("Post_userId_fkey")
     Event_creatorId_fkey              Event[]                 @relation("Event_creatorId_fkey")
+    Pack_creatorId_fkey               Pack[]                  @relation("Pack_creatorId_fkey")
     UserUserPivot_userId_fkey         UserUserPivot[]         @relation("UserUserPivot_userId_fkey")
     UserUserPivot_followerId_fkey     UserUserPivot[]         @relation("UserUserPivot_followerId_fkey")
     UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")
@@ -104,6 +105,8 @@ model User {
     Comment_userId_fkey               Comment[]               @relation("Comment_userId_fkey")
     Reply_userId_fkey                 Reply[]                 @relation("Reply_userId_fkey")
     PushSubscription_userId_fkey      PushSubscription[]      @relation("PushSubscription_userId_fkey")
+
+    packs UserPackPivot[]
 
     @@id([id])
     @@unique([email])
@@ -204,6 +207,37 @@ model Reply {
 
     Reply_commentId_fkey Comment @relation("Reply_commentId_fkey", fields: [commentId], references: [id], onUpdate: Cascade, onDelete: Cascade)
     Reply_userId_fkey    User    @relation("Reply_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+
+    @@id([id])
+}
+
+enum Pack_role_enum {
+    CREATOR
+    ADMIN
+    MEMBER
+}
+
+model UserPackPivot {
+    userId    BigInt         @db.UnsignedBigInt
+    packId    BigInt         @db.UnsignedBigInt
+    createdAt DateTime       @default(now()) @db.DateTime(3)
+    role      Pack_role_enum @default(MEMBER)
+
+    UserPackPivot_userId_fkey User @relation(fields: [userId], references: [id])
+    UserPackPivot_packId_fkey Pack @relation(fields: [packId], references: [id])
+
+    @@id([packId, userId])
+}
+
+model Pack {
+    id        BigInt  @default(autoincrement()) @db.UnsignedBigInt
+    title     String  @db.VarChar(55)
+    image     String? @db.VarChar(100)
+    creatorId BigInt  @db.UnsignedBigInt
+
+    users UserPackPivot[]
+
+    Pack_creatorId_fkey User @relation("Pack_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
     @@id([id])
 }

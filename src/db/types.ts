@@ -5,17 +5,19 @@ import type { GeoJson } from "./types-geojson";
 export type DB = {
   CloudMessageAccessToken: CloudMessageAccessToken;
   UserUserPivot: UserUserPivot;
+  UserPackPivot: UserPackPivot;
   UserNotificationPivot: UserNotificationPivot;
   UserEventPivot: UserEventPivot;
   User: User;
   Reply: Reply;
   PushSubscription: PushSubscription;
   Post: Post;
+  Pack: Pack;
   Notification: Notification;
   FcmToken: FcmToken;
   Event: Event;
-  Comment: Comment;
   DeletedEventImages: DeletedEventImages;
+  Comment: Comment;
 };
 
 export type CloudMessageAccessToken = {
@@ -90,6 +92,17 @@ export type Notification = {
   relativeLink: string;
   /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   createdAt: Generated<Date>;
+};
+
+export type Pack = {
+  /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  id: Generated<bigint>;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  title: string;
+  /** dbtype: 'varchar(100)', eg string with max 100 chars */
+  image: string | null;
+  /** indexed: (creatorId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  creatorId: bigint;
 };
 
 export type Post = {
@@ -168,6 +181,17 @@ export type UserNotificationPivot = {
   userId: bigint;
   /** indexed: (userId, notificationId) and (notificationId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   notificationId: bigint;
+};
+
+export type UserPackPivot = {
+  /** indexed: (packId, userId) and (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  userId: bigint;
+  /** indexed: (packId, userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  packId: bigint;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
+  /** default: MEMBER, dbtype: 'enum('CREATOR','ADMIN','MEMBER')' */
+  role: Generated<"CREATOR" | "ADMIN" | "MEMBER">;
 };
 
 export type UserUserPivot = {

@@ -12,6 +12,7 @@ export function Topnav() {
         <div className="flex">
           <TopnavLink label="Explore" href="/" />
           <TopnavLink label="Create" href="/event" />
+          <TopnavLink label="Packs" href="/pack" />
           {/*<TopnavLink label="ui" href="/ui-showcase" />*/}
         </div>
       </div>
