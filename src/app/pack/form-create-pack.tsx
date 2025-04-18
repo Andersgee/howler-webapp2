@@ -14,6 +14,8 @@ import { IconClose } from "#src/icons/Close";
 import { IconCheck } from "#src/icons/Check";
 import { Input } from "#src/ui/input";
 import { IconWhat } from "#src/icons/What";
+import { useUserCookie } from "#src/hooks/useUserCookie";
+import { useRouter } from "next/navigation";
 
 const zFormData = z.object({
   //id: z.bigint().optional(),
@@ -33,6 +35,7 @@ type Props = {
 };
 
 export function FormCreatePack({ className }: Props) {
+  const { isSignedIn } = useUserCookie();
   const form = useForm<FormData>({
     resolver: zodResolver(zFormData),
     defaultValues: {
@@ -41,32 +44,29 @@ export function FormCreatePack({ className }: Props) {
     },
   });
 
+  const router = useRouter();
   const { toast } = useToast();
   const utils = api.useUtils();
   const { mutate, isPending } = api.pack.create.useMutation({
-    onSuccess: () => {
+    onSuccess: ({ hashid }) => {
       void utils.pack.invalidate();
-      form.reset();
-      //router.push(`/event/${hashid}`);
-      //await utils.reply.infinite.invalidate({ commentId: reply.commentId });
+      router.push(`/pack/${hashid}`);
     },
     onError: (_error, _variables, _context) => {
-      toast({ variant: "warn", title: "Could not edit reply", description: "Try again" });
+      toast({ variant: "warn", title: "Could not create pack", description: "Try again" });
     },
   });
 
   const onValid = (data: FormData) => {
-    //console.log(data)
-    mutate(data);
-    //if (user) {
-    //  replyUpdate.mutate({ ...data, commentId: reply.id });
-    //} else {
-    //  dialogDispatch({ type: "show", name: "profilebutton" });
-    //}
+    if (isSignedIn) {
+      mutate(data);
+    } else {
+      dialogDispatch({ type: "show", name: "profilebutton" });
+    }
   };
 
-  const onInvalid = (x: FieldErrors<FormData>) => {
-    console.log("onInvalid", x);
+  const onInvalid = (_fieldErrors: FieldErrors<FormData>) => {
+    //console.log("onInvalid", fieldErrors);
   };
 
   return (

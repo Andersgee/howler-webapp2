@@ -7,15 +7,19 @@ const zTypedArray = z.custom<Uint8Array>((value) => value instanceof Uint8Array)
 // this file here mostly generated as a copy-paste starting point reference for when specifying api inputs
 // anyway, this is how values of "INSERT" and "UPDATE" looks from a zod perspective
 
-export const schema_insert_CloudMessageAccessToken = z.object({
-  id: z.bigint(),
-  token: z.string(),
-  expires: z.date(),
-});
-export const schema_update_CloudMessageAccessToken = z.object({
+export const schema_insert_Post = z.object({
   id: z.bigint().optional(),
-  token: z.string().optional(),
-  expires: z.date().optional(),
+  text: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+  userId: z.bigint(),
+});
+export const schema_update_Post = z.object({
+  id: z.bigint().optional(),
+  text: z.string().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+  userId: z.bigint().optional(),
 });
 
 export const schema_insert_UserUserPivot = z.object({
@@ -117,32 +121,21 @@ export const schema_update_PushSubscription = z.object({
   endpoint: z.string().optional(),
 });
 
-export const schema_insert_Post = z.object({
-  id: z.bigint().optional(),
-  text: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-  userId: z.bigint(),
-});
-export const schema_update_Post = z.object({
-  id: z.bigint().optional(),
-  text: z.string().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-  userId: z.bigint().optional(),
-});
-
 export const schema_insert_Pack = z.object({
   id: z.bigint().optional(),
   title: z.string(),
   image: z.string().nullish(),
   creatorId: z.bigint(),
+  imageAspect: z.number().optional(),
+  imageBlurData: zTypedArray.nullish(),
 });
 export const schema_update_Pack = z.object({
   id: z.bigint().optional(),
   title: z.string().optional(),
   image: z.string().nullish(),
   creatorId: z.bigint().optional(),
+  imageAspect: z.number().optional(),
+  imageBlurData: zTypedArray.nullish(),
 });
 
 export const schema_insert_Notification = z.object({
@@ -196,6 +189,17 @@ export const schema_update_Event = z.object({
   imageBlurData: zTypedArray.nullish(),
   imageAspect: z.number().optional(),
   pinnedCommentId: z.bigint().nullish(),
+});
+
+export const schema_insert_CloudMessageAccessToken = z.object({
+  id: z.bigint(),
+  token: z.string(),
+  expires: z.date(),
+});
+export const schema_update_CloudMessageAccessToken = z.object({
+  id: z.bigint().optional(),
+  token: z.string().optional(),
+  expires: z.date().optional(),
 });
 
 export const schema_insert_DeletedEventImages = z.object({

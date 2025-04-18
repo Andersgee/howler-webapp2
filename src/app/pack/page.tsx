@@ -7,7 +7,7 @@ import { MyPacksList } from "./my-packs-list";
 export const metadata = seo({
   title: "Packs | Howler",
   description: "Quickly find/plan stuff to do with friends, or with anyone really.",
-  url: "/packs",
+  url: "/pack",
   image: "/howler.png",
 });
 

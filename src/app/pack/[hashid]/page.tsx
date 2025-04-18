@@ -13,6 +13,7 @@ import { JSONE } from "#src/utils/jsone";
 import { ButtonRemoveUserFromPack } from "./button-remove-user-from-pack";
 import { PrettyDate, PrettyDateLong } from "#src/components/PrettyDate";
 import { Fragment } from "react";
+import { PackInfo } from "./pack-info";
 //import { CreateCommentForm } from "./CreateCommentForm";
 //import { CommentsList, PinnedComment } from "./CommentsList";
 //import { UserImage32x32 } from "#src/components/user/UserImage";
@@ -39,31 +40,48 @@ export default async function Page({ params }: Props) {
 
   return (
     <Shell>
-      <div>pack</div>
+      {pack.image ? (
+        <div className="flex justify-center">
+          <Image
+            priority
+            src={pack.image}
+            alt={pack.title}
+            sizes={imageSizes("w-64", { md: "w-96" })}
+            className="mb-8 h-auto w-64 md:w-96"
+            //width and height only for aspect ratio purpose
+            width={256}
+            height={Math.round(256 / pack.imageAspect)}
+            //placeholder={pack.imageBlurData ? "blur" : undefined}
+            //blurDataURL={pack.imageBlurData ? blurDataURLstring(event.imageBlurData) : undefined}
+          />
+        </div>
+      ) : (
+        <div className="py-4"></div>
+      )}
+      <PackInfo pack={pack} />
 
-      <pre>{JSONE.stringify(pack, 2)}</pre>
-      <h2>Members</h2>
-      <div className="grid grid-cols-4">
-        <div>Name</div>
-        <div>Role</div>
-        <div>Member since</div>
+      <div className="py-8">
+        <h2>Members</h2>
+        <div className="grid grid-cols-4">
+          <div>Name</div>
+          <div>Role</div>
+          <div>Member since</div>
 
-        <div></div>
-        {members.map((member) => (
-          <Fragment key={member.userId}>
-            <div className="truncate">{member.userName}</div>
-            <div>{member.packRole}</div>
-            <PrettyDate date={member.addedToPackAt} />
-            {showRemove(myMemberShip?.packRole, member.packRole) && (
-              <ButtonRemoveUserFromPack packId={member.packId} userId={member.userId} />
-            )}
-          </Fragment>
-        ))}
+          <div></div>
+          {members.map((member) => (
+            <Fragment key={member.userId}>
+              <div className="truncate">{member.userName}</div>
+              <div>{member.packRole}</div>
+              <div className="truncate">
+                <PrettyDate date={member.addedToPackAt} />
+              </div>
+              {showRemove(myMemberShip?.packRole, member.packRole) && (
+                <ButtonRemoveUserFromPack packId={member.packId} userId={member.userId} />
+              )}
+            </Fragment>
+          ))}
+        </div>
       </div>
-
-      {/* 
-      <pre>{JSONE.stringify(users, 2)}</pre>
- */}
     </Shell>
   );
 }

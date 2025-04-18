@@ -3,7 +3,7 @@ import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
-  CloudMessageAccessToken: CloudMessageAccessToken;
+  Post: Post;
   UserUserPivot: UserUserPivot;
   UserPackPivot: UserPackPivot;
   UserNotificationPivot: UserNotificationPivot;
@@ -11,11 +11,11 @@ export type DB = {
   User: User;
   Reply: Reply;
   PushSubscription: PushSubscription;
-  Post: Post;
   Pack: Pack;
   Notification: Notification;
   FcmToken: FcmToken;
   Event: Event;
+  CloudMessageAccessToken: CloudMessageAccessToken;
   DeletedEventImages: DeletedEventImages;
   Comment: Comment;
 };
@@ -103,6 +103,10 @@ export type Pack = {
   image: string | null;
   /** indexed: (creatorId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   creatorId: bigint;
+  /** default: 1, dbtype: 'float' */
+  imageAspect: Generated<number>;
+  /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
+  imageBlurData: Uint8Array | null;
 };
 
 export type Post = {

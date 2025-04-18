@@ -79,6 +79,8 @@ export const packRouter = createTRPCRouter({
         })
         .execute();
 
+      const hashid = hashidFromId(insertResult.insertId!);
+
       //afterResponseIsFinished(async () => {
       //  await notify([input.userId], {
       //    title: `${ctx.user.name} added you to pack ${pack.title}`,
@@ -88,7 +90,7 @@ export const packRouter = createTRPCRouter({
       //  });
       //});
 
-      return insertResult;
+      return { ...insertResult, hashid };
     }),
 
   list: publicProcedure.query(async ({ ctx }) => {

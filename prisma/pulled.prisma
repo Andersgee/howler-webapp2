@@ -213,7 +213,7 @@ model UserPackPivot {
   userId BigInt @db.UnsignedBigInt
   packId BigInt @db.UnsignedBigInt
   createdAt DateTime @db.DateTime(3) @default(now())
-  packRole UserPackPivot_packRole_enum @default(MEMBER)
+  role UserPackPivot_role_enum @default(MEMBER)
 
   @@id([packId, userId])
   @@index([userId])
@@ -236,7 +236,7 @@ model UserUserPivot {
   UserUserPivot_followerId_fkey User @relation("UserUserPivot_followerId_fkey", fields: [followerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
-enum UserPackPivot_packRole_enum {
+enum UserPackPivot_role_enum {
   CREATOR
   ADMIN
   MEMBER
