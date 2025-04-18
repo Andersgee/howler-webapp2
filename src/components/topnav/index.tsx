@@ -16,7 +16,7 @@ export function Topnav() {
           {/*<TopnavLink label="ui" href="/ui-showcase" />*/}
         </div>
       </div>
-      <InstallLink />
+      <InstallLink className="absolute bottom-10 left-1/2 z-50 -translate-x-1/2" />
       <div className="flex gap-2">
         <Suspense>
           <Buttons />

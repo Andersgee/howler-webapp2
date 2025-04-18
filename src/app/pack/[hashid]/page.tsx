@@ -41,6 +41,9 @@ export default async function Page({ params }: Props) {
 
   return (
     <Shell>
+      <div className="py-4">
+        <PackAddMembers packId={pack.id} />
+      </div>
       {pack.image ? (
         <div className="flex justify-center">
           <Image
@@ -61,13 +64,9 @@ export default async function Page({ params }: Props) {
       )}
       <PackInfo pack={pack} />
 
-      <div className="py-4">
-        <PackAddMembers packId={pack.id} />
-      </div>
-
       <div className="py-8">
         <h2>Members</h2>
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-4 items-center gap-2">
           <div>Name</div>
           <div>Role</div>
           <div>Member since</div>

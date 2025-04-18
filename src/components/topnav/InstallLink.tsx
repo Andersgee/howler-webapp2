@@ -13,7 +13,7 @@ export function InstallLink({ className }: Props) {
   if (isStandalone === undefined || isStandalone === true) return null;
   return (
     <Link href="/install" className={buttonVariants({ variant: "primary", className })}>
-      Get the app
+      Get app
     </Link>
   );
 }

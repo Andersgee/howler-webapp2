@@ -18,16 +18,18 @@ type Props = {
 
 export function PackAddMembers({ packId, className }: Props) {
   const [hashid, setHashid] = useState("");
+  const utils = api.useUtils();
 
   const { data: user } = api.user.getByHashid.useQuery({ hashid });
   const { mutate, isPending } = api.pack.addUser.useMutation({
     onSuccess: (data, variables, context) => {
+      void utils.pack.invalidate();
       setHashid("");
     },
   });
   return (
     <div className={cn("", className)}>
-      <div>You can add people to the pack with their howler id</div>
+      <p className="">You can add people to the pack with their howler id</p>
       <Input placeholder="pQyL0" value={hashid} onChange={(e) => setHashid(e.target.value)} />
       {user ? (
         <div className="flex flex-col items-center gap-2">
@@ -38,7 +40,7 @@ export function PackAddMembers({ packId, className }: Props) {
           </Button>
         </div>
       ) : (
-        <div>empty</div>
+        <div></div>
       )}
     </div>
   );

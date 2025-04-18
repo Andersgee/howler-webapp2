@@ -72,7 +72,7 @@ export function FormCreatePack({ className }: Props) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onValid, onInvalid)} className={cn("space-y-2", className)}>
-        <div>Create Pack</div>
+        <h2>Create Pack</h2>
         <FormField
           control={form.control}
           name="title"
