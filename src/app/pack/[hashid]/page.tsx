@@ -15,6 +15,7 @@ import { PrettyDate, PrettyDateLong } from "#src/components/PrettyDate";
 import { Fragment } from "react";
 import { PackInfo } from "./pack-info";
 import { PackAddMembers } from "./pack-add-members";
+import { UserImage32x32 } from "#src/components/user/UserImage";
 //import { CreateCommentForm } from "./CreateCommentForm";
 //import { CommentsList, PinnedComment } from "./CommentsList";
 //import { UserImage32x32 } from "#src/components/user/UserImage";
@@ -66,15 +67,25 @@ export default async function Page({ params }: Props) {
 
       <div className="py-8">
         <h2>Members</h2>
-        <div className="grid grid-cols-4 items-center gap-2">
-          <div>Name</div>
-          <div>Role</div>
-          <div>Member since</div>
+        {members.map((member) => (
+          <div key={member.userId} className="flex items-center gap-2">
+            <Link prefetch={false} className="flex items-center gap-2" href={`/profile/${hashidFromId(member.userId)}`}>
+              <UserImage32x32 image={member.userImage} alt={member.userName} />
+              {member.userName}
+            </Link>
+            {showRemove(myMemberShip?.packRole, member.packRole) && (
+              <ButtonRemoveUserFromPack packId={member.packId} userId={member.userId} />
+            )}
+          </div>
+        ))}
 
-          <div></div>
-          {members.map((member) => (
+        {/*members.map((member) => (
             <Fragment key={member.userId}>
-              <div className="truncate">{member.userName}</div>
+              <Link prefetch={false} className="flex gap-2" href={`/profile/${hashidFromId(member.userId)}`}>
+                <UserImage32x32 image={member.userImage} alt={member.userName} />
+                {member.userName}
+              </Link>
+
               <div>{member.packRole}</div>
               <div className="truncate">
                 <PrettyDate date={member.addedToPackAt} />
@@ -83,8 +94,7 @@ export default async function Page({ params }: Props) {
                 <ButtonRemoveUserFromPack packId={member.packId} userId={member.userId} />
               )}
             </Fragment>
-          ))}
-        </div>
+          ))*/}
       </div>
     </Shell>
   );

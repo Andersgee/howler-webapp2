@@ -6,6 +6,7 @@ import { IconCheck } from "#src/icons/Check";
 import { Button } from "#src/ui/button";
 import { Input } from "#src/ui/input";
 import { cn } from "#src/utils/cn";
+import { idFromHashid } from "#src/utils/hashid";
 import { JSONE } from "#src/utils/jsone";
 import { useState } from "react";
 
@@ -20,7 +21,7 @@ export function PackAddMembers({ packId, className }: Props) {
   const [hashid, setHashid] = useState("");
   const utils = api.useUtils();
 
-  const { data: user } = api.user.getByHashid.useQuery({ hashid });
+  const { data: user } = api.user.getByHashid.useQuery({ hashid }, { enabled: idFromHashid(hashid) !== undefined });
   const { mutate, isPending } = api.pack.addUser.useMutation({
     onSuccess: (data, variables, context) => {
       void utils.pack.invalidate();
@@ -32,11 +33,11 @@ export function PackAddMembers({ packId, className }: Props) {
       <p className="">You can add people to the pack with their howler id</p>
       <Input placeholder="pQyL0" value={hashid} onChange={(e) => setHashid(e.target.value)} />
       {user ? (
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-center gap-2 py-4">
           <UserImage96x96 alt={user.name} image={user.image} />
           <div className="">{user.name}</div>
           <Button variant="positive" disabled={isPending} onClick={() => mutate({ packId, userId: user.id })}>
-            <IconCheck /> Add to pack
+            Add to pack
           </Button>
         </div>
       ) : (
