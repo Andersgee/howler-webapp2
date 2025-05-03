@@ -16,6 +16,9 @@ import { Fragment } from "react";
 import { PackInfo } from "./pack-info";
 import { PackAddMembers } from "./pack-add-members";
 import { UserImage32x32 } from "#src/components/user/UserImage";
+import { NotSignedInPage } from "#src/app/settings/NotSignedInPage";
+import { NotPackMemberPage } from "./not-pack-member-page";
+import { PendingPackMemberPage } from "./pending-pack-member-page";
 //import { CreateCommentForm } from "./CreateCommentForm";
 //import { CommentsList, PinnedComment } from "./CommentsList";
 //import { UserImage32x32 } from "#src/components/user/UserImage";
@@ -38,7 +41,18 @@ export default async function Page({ params }: Props) {
   const pack = await api.pack.getById({ id });
   if (!pack) notFound();
 
+  if (!user) {
+    return <NotSignedInPage />;
+  }
+
   const { members, myMemberShip } = await api.pack.members({ id });
+
+  if (!myMemberShip) {
+    return <NotPackMemberPage packId={pack.id} />;
+  }
+  if (myMemberShip.pending) {
+    return <PendingPackMemberPage myMemberShip={myMemberShip} />;
+  }
 
   return (
     <Shell>

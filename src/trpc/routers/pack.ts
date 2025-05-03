@@ -17,9 +17,9 @@ export const packRouter = createTRPCRouter({
     const pack = await db
       .selectFrom("Pack")
       .where("Pack.id", "=", input.id)
-      .innerJoin("User", "User.id", "Pack.creatorId")
+      //.innerJoin("User", "User.id", "Pack.creatorId")
       .selectAll("Pack")
-      .select(["User.name as creatorName", "User.image as creatorImage"])
+      //.select(["User.name as creatorName", "User.image as creatorImage"])
       //.selectAll("Event")
       //.select(["User.image as creatorImage", "User.name as creatorName"])
       //.select()
@@ -43,6 +43,7 @@ export const packRouter = createTRPCRouter({
         "User.name as userName",
         "User.image as userImage",
         "UserPackPivot.createdAt as addedToPackAt",
+        "UserPackPivot.pending",
       ])
       .orderBy("UserPackPivot.createdAt asc")
       .execute();
@@ -64,10 +65,7 @@ export const packRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const db = dbfetch();
 
-      const insertResult = await db
-        .insertInto("Pack")
-        .values({ ...input, creatorId: ctx.user.id })
-        .executeTakeFirstOrThrow();
+      const insertResult = await db.insertInto("Pack").values(input).executeTakeFirstOrThrow();
 
       await db
         .insertInto("UserPackPivot")
@@ -216,4 +214,75 @@ export const packRouter = createTRPCRouter({
 
       return deleteResult;
     }),
+
+  requestMembership: protectedProcedure.input(z.object({ packId: z.bigint() })).mutation(async ({ ctx, input }) => {
+    const db = dbfetch();
+
+    const pack = await db
+      .selectFrom("Pack")
+      .where("id", "=", input.packId)
+      .select(["id", "title", "inviteSetting"])
+      .executeTakeFirstOrThrow();
+
+    if (pack.inviteSetting === "PUBLIC") {
+      //anyone can straight up join
+      await db
+        .insertInto("UserPackPivot")
+        .values({
+          packId: input.packId,
+          userId: ctx.user.id,
+        })
+        .execute();
+
+      //notify every single member except the one we just added?
+      const members = await db
+        .selectFrom("UserPackPivot")
+        .where("packId", "=", input.packId)
+        .where("userId", "!=", ctx.user.id)
+        .select("userId")
+        .execute();
+      const notifyIds = members.map((x) => x.userId);
+      afterResponseIsFinished(async () => {
+        await notify(notifyIds, {
+          title: `${ctx.user.name} just joined pack ${pack.title}`,
+          body: `Accept or deny their request`,
+          relativeLink: `/pack/${hashidFromId(pack.id)}`,
+          image: ctx.user.image,
+        });
+      });
+
+      return { pending: false };
+    }
+
+    await db
+      .insertInto("UserPackPivot")
+      .values({
+        packId: input.packId,
+        userId: ctx.user.id,
+        pending: true,
+      })
+      .execute();
+
+    let query = db.selectFrom("UserPackPivot").where("packId", "=", input.packId).select("userId");
+    if (pack.inviteSetting === "CREATOR_ONLY") {
+      query = query.where("role", "=", "CREATOR");
+    } else if (pack.inviteSetting === "ADMINS_AND_ABOVE") {
+      query = query.where((eb) => eb.or([eb("role", "=", "CREATOR"), eb("role", "=", "ADMIN")]));
+    } else {
+      //any role
+    }
+    const usersThatCanAcceptRequests = await query.execute();
+
+    const notifyIds = usersThatCanAcceptRequests.map((x) => x.userId);
+    afterResponseIsFinished(async () => {
+      await notify(notifyIds, {
+        title: `${ctx.user.name} wants to join pack ${pack.title}`,
+        body: `Accept or deny their request`,
+        relativeLink: `/pack/${hashidFromId(pack.id)}/pending`,
+        image: ctx.user.image,
+      });
+    });
+
+    return { pending: true };
+  }),
 });

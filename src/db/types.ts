@@ -3,21 +3,21 @@ import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
-  Post: Post;
-  UserUserPivot: UserUserPivot;
-  UserPackPivot: UserPackPivot;
-  UserNotificationPivot: UserNotificationPivot;
   UserEventPivot: UserEventPivot;
-  User: User;
-  Reply: Reply;
-  PushSubscription: PushSubscription;
   Pack: Pack;
   Notification: Notification;
   FcmToken: FcmToken;
+  Post: Post;
+  PushSubscription: PushSubscription;
+  Reply: Reply;
+  User: User;
+  UserNotificationPivot: UserNotificationPivot;
   Event: Event;
-  CloudMessageAccessToken: CloudMessageAccessToken;
   DeletedEventImages: DeletedEventImages;
+  UserPackPivot: UserPackPivot;
+  UserUserPivot: UserUserPivot;
   Comment: Comment;
+  CloudMessageAccessToken: CloudMessageAccessToken;
 };
 
 export type CloudMessageAccessToken = {
@@ -101,12 +101,14 @@ export type Pack = {
   title: string;
   /** dbtype: 'varchar(100)', eg string with max 100 chars */
   image: string | null;
-  /** indexed: (creatorId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
-  creatorId: bigint;
   /** default: 1, dbtype: 'float' */
   imageAspect: Generated<number>;
   /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
   imageBlurData: Uint8Array | null;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
+  /** default: PUBLIC, dbtype: 'enum('PUBLIC','MEMBERS_AND_ABOVE','ADMINS_AND_ABOVE','CREATOR_ONLY')' */
+  inviteSetting: Generated<"PUBLIC" | "MEMBERS_AND_ABOVE" | "ADMINS_AND_ABOVE" | "CREATOR_ONLY">;
 };
 
 export type Post = {
@@ -196,6 +198,8 @@ export type UserPackPivot = {
   createdAt: Generated<Date>;
   /** default: MEMBER, dbtype: 'enum('CREATOR','ADMIN','MEMBER')' */
   role: Generated<"CREATOR" | "ADMIN" | "MEMBER">;
+  /** default: false, dbtype: 'boolean' */
+  pending: Generated<boolean>;
 };
 
 export type UserUserPivot = {

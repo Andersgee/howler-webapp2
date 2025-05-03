@@ -97,7 +97,6 @@ model User {
     FcmToken_userId_fkey              FcmToken[]              @relation("FcmToken_userId_fkey")
     Post_userId_fkey                  Post[]                  @relation("Post_userId_fkey")
     Event_creatorId_fkey              Event[]                 @relation("Event_creatorId_fkey")
-    Pack_creatorId_fkey               Pack[]                  @relation("Pack_creatorId_fkey")
     UserUserPivot_userId_fkey         UserUserPivot[]         @relation("UserUserPivot_userId_fkey")
     UserUserPivot_followerId_fkey     UserUserPivot[]         @relation("UserUserPivot_followerId_fkey")
     UserNotificationPivot_userId_fkey UserNotificationPivot[] @relation("UserNotificationPivot_userId_fkey")
@@ -222,24 +221,31 @@ model UserPackPivot {
     packId    BigInt         @db.UnsignedBigInt
     createdAt DateTime       @default(now()) @db.DateTime(3)
     role      Pack_role_enum @default(MEMBER)
+    pending   Boolean        @default(false)
 
-    UserPackPivot_userId_fkey User @relation(fields: [userId], references: [id])
-    UserPackPivot_packId_fkey Pack @relation(fields: [packId], references: [id])
+    UserPackPivot_userId_fkey User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    UserPackPivot_packId_fkey Pack @relation(fields: [packId], references: [id], onDelete: Cascade)
 
     @@id([packId, userId])
 }
 
 model Pack {
-    id            BigInt  @default(autoincrement()) @db.UnsignedBigInt
-    title         String  @db.VarChar(55)
-    image         String? @db.VarChar(100)
-    imageBlurData Bytes?  @db.VarBinary(255) //4x4=16 pixels ends up around 127 bytes, so go with 255 (btw, dont do tinyblob here. presence of blobs hurt read speed, but necessary for Large OBjects)
-    imageAspect   Float   @default(1) @db.Float
-    creatorId     BigInt  @db.UnsignedBigInt
+    id            BigInt            @default(autoincrement()) @db.UnsignedBigInt
+    title         String            @db.VarChar(55)
+    image         String?           @db.VarChar(100)
+    imageBlurData Bytes?            @db.VarBinary(255) //4x4=16 pixels ends up around 127 bytes, so go with 255 (btw, dont do tinyblob here. presence of blobs hurt read speed, but necessary for Large OBjects)
+    imageAspect   Float             @default(1) @db.Float
+    createdAt     DateTime          @default(now()) @db.DateTime(3)
+    inviteSetting PackInviteSetting @default(PUBLIC)
 
     users UserPackPivot[]
 
-    Pack_creatorId_fkey User @relation("Pack_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-
     @@id([id])
+}
+
+enum PackInviteSetting {
+    PUBLIC //anyone can straight up join without being invited
+    MEMBERS_AND_ABOVE //any member (and above) can add users / accept join requests
+    ADMINS_AND_ABOVE //any admin (and above) can add users / accept join requests
+    CREATOR_ONLY //only creator can add users / accept join requests
 }
