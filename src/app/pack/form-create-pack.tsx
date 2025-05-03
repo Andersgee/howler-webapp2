@@ -59,7 +59,7 @@ export function FormCreatePack({ className }: Props) {
 
   const onValid = (data: FormData) => {
     if (isSignedIn) {
-      mutate(data);
+      mutate({ ...data, inviteSetting: "ADMINS_AND_ABOVE" });
     } else {
       dialogDispatch({ type: "show", name: "profilebutton" });
     }

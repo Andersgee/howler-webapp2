@@ -27,5 +27,10 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default function Layout({ children }: Props) {
-  return children;
+  return (
+    <div>
+      <div>pack layout</div>
+      {children}
+    </div>
+  );
 }

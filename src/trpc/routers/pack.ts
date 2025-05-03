@@ -56,10 +56,10 @@ export const packRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
-        //id: z.bigint().optional(),
         title: z.string(),
         //image: z.string().nullish(),
         //creatorId: z.bigint(),
+        inviteSetting: z.enum(["PUBLIC", "MEMBERS_AND_ABOVE", "ADMINS_AND_ABOVE", "CREATOR_ONLY"]).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -89,6 +89,29 @@ export const packRouter = createTRPCRouter({
       //});
 
       return { ...insertResult, hashid };
+    }),
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.bigint(),
+        title: z.string().optional(),
+        //image: z.string().nullish(),
+        inviteSetting: z.enum(["PUBLIC", "MEMBERS_AND_ABOVE", "ADMINS_AND_ABOVE", "CREATOR_ONLY"]).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const db = dbfetch();
+
+      //TODO: build /pack/hashid/edit page etc and check permission here etc
+      await db
+        .updateTable("Pack")
+        .set({
+          inviteSetting: input.inviteSetting,
+        })
+        .execute();
+
+      return 1;
     }),
 
   list: publicProcedure.query(async ({ ctx }) => {
@@ -140,6 +163,8 @@ export const packRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const db = dbfetch();
 
+      //const alreadyPending =
+
       const pack = await db
         .selectFrom("UserPackPivot")
         .where("packId", "=", input.packId)
@@ -147,39 +172,55 @@ export const packRouter = createTRPCRouter({
         //comment out. allow any member (regardless of role) to add users
         //.where((eb) => eb.or([eb("role", "=", "CREATOR"), eb("role", "=", "ADMIN"), eb("role", "=", "MEMBER")]))
         .innerJoin("Pack", "Pack.id", "UserPackPivot.packId")
-        .selectAll()
+        .selectAll("Pack")
+        .select("UserPackPivot.role as userPackRole")
         .executeTakeFirstOrThrow();
 
-      //only allow adding people up to (including) your role
-      let cappedRole = input.role;
-      if (pack.role === "ADMIN" && input.role === "CREATOR") {
-        cappedRole = "ADMIN";
-      } else if (pack.role === "MEMBER") {
-        cappedRole = "MEMBER";
+      const canAcceptRequest =
+        pack.inviteSetting === "PUBLIC" ||
+        (pack.inviteSetting === "CREATOR_ONLY" && pack.userPackRole === "CREATOR") ||
+        (pack.inviteSetting === "ADMINS_AND_ABOVE" &&
+          (pack.userPackRole === "CREATOR" || pack.userPackRole === "ADMIN"));
+
+      if (!canAcceptRequest) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
       }
 
-      const insertResult = await db
-        .insertInto("UserPackPivot")
-        .ignore()
-        .values({
-          ...input,
-          role: cappedRole,
-        })
-        .executeTakeFirstOrThrow();
+      const insertResult = await db.insertInto("UserPackPivot").ignore().values(input).executeTakeFirstOrThrow();
 
-      afterResponseIsFinished(async () => {
-        await notify([input.userId], {
-          title: `${ctx.user.name} added you to pack ${pack.title}`,
-          body: `See your pack ${pack.title}`,
-          relativeLink: `/pack/${hashidFromId(ctx.user.id)}`,
-          icon: ctx.user.image,
-          image: pack.image ?? undefined,
+      if (insertResult.numInsertedOrUpdatedRows) {
+        afterResponseIsFinished(async () => {
+          await notify([input.userId], {
+            title: `${ctx.user.name} added you to pack ${pack.title}`,
+            body: `See your pack ${pack.title}`,
+            relativeLink: `/pack/${hashidFromId(ctx.user.id)}`,
+            icon: ctx.user.image,
+            image: pack.image ?? undefined,
+          });
         });
-      });
 
-      revalidateTag(tagsPack.info(input.packId));
+        revalidateTag(tagsPack.info(input.packId));
 
-      return insertResult;
+        return { action: "ADDED" };
+      } else {
+        //this either could be
+        // 1. trying to add a user again
+        // 2. the pivot already existed (a pending join request)
+        // so might aswell allow approving via addUser route
+        const updateResult = await db
+          .updateTable("UserPackPivot")
+          .set({ pending: false })
+          .where("packId", "=", input.packId)
+          .where("userId", "=", input.userId)
+          .where("pending", "=", true)
+          .executeTakeFirst();
+
+        if (updateResult.numUpdatedRows) {
+          return { action: "APPROVED" };
+        }
+
+        return { action: "IGNORED" };
+      }
     }),
 
   removeUser: protectedProcedure
