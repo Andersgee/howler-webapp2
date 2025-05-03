@@ -47,6 +47,8 @@ export default async function Layout({ children, params }: Props) {
 
   const userinfo = await api.user.info({ userId: user.id });
 
+  const { members, myMemberShip } = await api.pack.members({ id });
+
   return (
     <Shell>
       <section className="mt-8 flex flex-col items-center">
@@ -75,9 +77,12 @@ export default async function Layout({ children, params }: Props) {
         <Link href={`/pack/${hashid}/members`} className={buttonVariants({ variant: "outline" })}>
           Members
         </Link>
-        <Link href={`/pack/${hashid}/edit`} className={buttonVariants({ variant: "outline" })}>
-          Settings
-        </Link>
+        {myMemberShip?.packRole === "ADMIN" ||
+          (myMemberShip?.packRole === "CREATOR" && (
+            <Link href={`/pack/${hashid}/edit`} className={buttonVariants({ variant: "outline" })}>
+              Settings
+            </Link>
+          ))}
       </div>
       <hr className="py-2" />
 

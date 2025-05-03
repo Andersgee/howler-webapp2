@@ -8,7 +8,7 @@ import { schema_insert_UserPackPivot } from "#src/db/types-zod";
 import { TRPCError } from "@trpc/server";
 import { tagsPack } from "./packTags";
 import { revalidateTag } from "next/cache";
-import { sql } from "kysely";
+import { type NotNull, sql } from "kysely";
 
 export const packRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
@@ -112,15 +112,12 @@ export const packRouter = createTRPCRouter({
         .select("packId")
         .executeTakeFirstOrThrow();
 
-      await db
-        .updateTable("Pack")
-        .set({
-          inviteSetting: input.inviteSetting,
-        })
-        .where("id", "=", input.id)
-        .execute();
+      await db.updateTable("Pack").set(input).where("id", "=", input.id).execute();
 
-      return 1;
+      const tag = tagsPack.info(input.id);
+      revalidateTag(tag);
+
+      return { tag };
     }),
 
   list: publicProcedure.query(async ({ ctx }) => {
@@ -156,6 +153,7 @@ export const packRouter = createTRPCRouter({
           .select(sql<number>`COUNT(*)`.as("count"))
           .as("memberCount"),
       ])
+      .$narrowType<{ memberCount: NotNull }>() //for typescript
       .execute();
 
     return packs;
@@ -171,8 +169,7 @@ export const packRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const db = dbfetch();
-
-      //const alreadyPending =
+      const tag = tagsPack.info(input.packId);
 
       const pack = await db
         .selectFrom("UserPackPivot")
@@ -208,9 +205,9 @@ export const packRouter = createTRPCRouter({
           });
         });
 
-        revalidateTag(tagsPack.info(input.packId));
+        revalidateTag(tag);
 
-        return { action: "ADDED" };
+        return { action: "ADDED", tag };
       } else {
         //this either could be
         // 1. trying to add a user again
@@ -224,11 +221,13 @@ export const packRouter = createTRPCRouter({
           .where("pending", "=", true)
           .executeTakeFirst();
 
+        revalidateTag(tag);
+
         if (updateResult.numUpdatedRows) {
-          return { action: "APPROVED" };
+          return { action: "APPROVED", tag };
         }
 
-        return { action: "IGNORED" };
+        return { action: "IGNORED", tag };
       }
     }),
 
@@ -236,6 +235,7 @@ export const packRouter = createTRPCRouter({
     .input(z.object({ packId: z.bigint(), userId: z.bigint() }))
     .mutation(async ({ ctx, input }) => {
       const db = dbfetch();
+      const tag = tagsPack.info(input.packId);
 
       const pack = await db
         .selectFrom("UserPackPivot")
@@ -258,15 +258,16 @@ export const packRouter = createTRPCRouter({
         query = query.where((eb) => eb.or([eb("role", "=", "ADMIN"), eb("role", "=", "MEMBER")]));
       }
 
-      const deleteResult = await query.executeTakeFirstOrThrow();
+      const _deleteResult = await query.executeTakeFirstOrThrow();
 
-      revalidateTag(tagsPack.info(input.packId));
+      revalidateTag(tag);
 
-      return deleteResult;
+      return { tag };
     }),
 
   requestMembership: protectedProcedure.input(z.object({ packId: z.bigint() })).mutation(async ({ ctx, input }) => {
     const db = dbfetch();
+    const tag = tagsPack.info(input.packId);
 
     const pack = await db
       .selectFrom("Pack")
@@ -300,7 +301,8 @@ export const packRouter = createTRPCRouter({
         });
       });
 
-      return { pending: false };
+      revalidateTag(tag);
+      return { pending: false, tag };
     }
 
     await db
@@ -312,6 +314,7 @@ export const packRouter = createTRPCRouter({
       })
       .execute();
 
+    //notify all users that could approve them
     let query = db.selectFrom("UserPackPivot").where("packId", "=", input.packId).select("userId");
     if (pack.inviteSetting === "CREATOR_ONLY") {
       query = query.where("role", "=", "CREATOR");
@@ -320,25 +323,27 @@ export const packRouter = createTRPCRouter({
     } else {
       //any role
     }
-    const usersThatCanAcceptRequests = await query.execute();
+    const usersThatCanApproveMembershipRequest = await query.execute();
 
-    const notifyIds = usersThatCanAcceptRequests.map((x) => x.userId);
+    const notifyIds = usersThatCanApproveMembershipRequest.map((x) => x.userId);
     afterResponseIsFinished(async () => {
       await notify(notifyIds, {
         title: `${ctx.user.name} wants to join pack ${pack.title}`,
         body: `Accept or deny their request`,
-        relativeLink: `/pack/${hashidFromId(pack.id)}/pending`,
+        relativeLink: `/pack/${hashidFromId(pack.id)}/members`,
         icon: ctx.user.image,
       });
     });
 
-    return { pending: true };
+    revalidateTag(tag);
+    return { pending: true, tag };
   }),
 
   approveMembershipRequest: protectedProcedure
     .input(z.object({ packId: z.bigint(), userId: z.bigint() }))
     .mutation(async ({ ctx, input }) => {
       const db = dbfetch();
+      const tag = tagsPack.info(input.packId);
 
       const pack = await db
         .selectFrom("UserPackPivot")
@@ -389,10 +394,10 @@ export const packRouter = createTRPCRouter({
             icon: approvedUser.image ?? undefined,
           });
         });
-
-        return { pending: false };
+        revalidateTag(tag);
+        return { pending: false, tag };
       }
 
-      return { pending: true };
+      return { pending: true, tag };
     }),
 });

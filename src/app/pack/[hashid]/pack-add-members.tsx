@@ -1,13 +1,12 @@
 "use client";
 
+import { actionRevalidateTag } from "#src/app/actions";
 import { UserImage96x96 } from "#src/components/user/UserImage";
 import { api } from "#src/hooks/api";
-import { IconCheck } from "#src/icons/Check";
 import { Button } from "#src/ui/button";
 import { Input } from "#src/ui/input";
 import { cn } from "#src/utils/cn";
 import { idFromHashid } from "#src/utils/hashid";
-import { JSONE } from "#src/utils/jsone";
 import { useState } from "react";
 
 type Props = {
@@ -25,6 +24,7 @@ export function PackAddMembers({ packId, className }: Props) {
   const { mutate, isPending } = api.pack.addUser.useMutation({
     onSuccess: (data, variables, context) => {
       void utils.pack.invalidate();
+      void actionRevalidateTag(data.tag);
       setHashid("");
     },
   });

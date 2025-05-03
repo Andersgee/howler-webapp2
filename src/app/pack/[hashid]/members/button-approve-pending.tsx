@@ -2,7 +2,7 @@
 
 import { actionRevalidateTag } from "#src/app/actions";
 import { api } from "#src/hooks/api";
-import { IconClose } from "#src/icons/Close";
+import { IconCheck } from "#src/icons/Check";
 import { Button } from "#src/ui/button";
 import { cn } from "#src/utils/cn";
 
@@ -12,8 +12,8 @@ type Props = {
   userId: bigint;
 };
 
-export function ButtonRemoveUserFromPack({ className, packId, userId }: Props) {
-  const { mutate, isPending } = api.pack.removeUser.useMutation({
+export function ButtonApproveMembershipRequest({ className, packId, userId }: Props) {
+  const { mutate, isPending } = api.pack.approveMembershipRequest.useMutation({
     onSuccess(data, _variables, _context) {
       void actionRevalidateTag(data.tag);
     },
@@ -21,13 +21,13 @@ export function ButtonRemoveUserFromPack({ className, packId, userId }: Props) {
   return (
     <div className={cn("", className)}>
       <Button
-        variant="warning"
+        variant="positive"
         disabled={isPending}
         onClick={() => {
           mutate({ packId, userId });
         }}
       >
-        <IconClose /> remove
+        <IconCheck /> approve
       </Button>
     </div>
   );
