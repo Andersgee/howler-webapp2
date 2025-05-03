@@ -10,14 +10,19 @@ import { imageSizes } from "#src/utils/image-sizes";
 import Link from "next/link";
 import { Shell } from "#src/components/Shell";
 import { JSONE } from "#src/utils/jsone";
-import { ButtonRemoveUserFromPack } from "./button-remove-user-from-pack";
+//import { ButtonRemoveUserFromPack } from "./button-remove-user-from-pack";
 import { PrettyDate, PrettyDateLong } from "#src/components/PrettyDate";
-import { PackInfo } from "./pack-info";
-import { PackAddMembers } from "./pack-add-members";
+
 import { UserImage32x32 } from "#src/components/user/UserImage";
 import { NotSignedInPage } from "#src/app/settings/NotSignedInPage";
-import { NotPackMemberPage } from "./not-pack-member-page";
-import { PendingPackMemberPage } from "./pending-pack-member-page";
+//import { NotPackMemberPage } from "./not-pack-member-page";
+import { PendingPackMemberPage } from "../pending-pack-member-page";
+import { PackAddMembers } from "../pack-add-members";
+import { NotPackMemberPage } from "../not-pack-member-page";
+import { ButtonRemoveUserFromPack } from "../button-remove-user-from-pack";
+import { Fragment } from "react";
+import { FormEditPack } from "./form-edit-pack";
+
 //import { CreateCommentForm } from "./CreateCommentForm";
 //import { CommentsList, PinnedComment } from "./CommentsList";
 //import { UserImage32x32 } from "#src/components/user/UserImage";
@@ -51,6 +56,9 @@ export default async function Page({ params }: Props) {
 
   return (
     <Shell>
+      <div className="py-4">
+        <FormEditPack initialPack={pack} />
+      </div>
       {pack.image ? (
         <div className="flex justify-center">
           <Image
@@ -69,7 +77,12 @@ export default async function Page({ params }: Props) {
       ) : (
         <div className="py-4"></div>
       )}
-      <p>todo: Activity feed, prob just list of pack-specific posts/messages </p>
     </Shell>
   );
+}
+
+function showRemove(myRole: "ADMIN" | "CREATOR" | "MEMBER" | undefined, otherRole: "ADMIN" | "CREATOR" | "MEMBER") {
+  if (myRole === "CREATOR" && otherRole !== "CREATOR") return true;
+  if (myRole === "ADMIN" && otherRole === "MEMBER") return true;
+  return false;
 }

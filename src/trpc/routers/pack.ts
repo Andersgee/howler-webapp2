@@ -103,12 +103,21 @@ export const packRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const db = dbfetch();
 
-      //TODO: build /pack/hashid/edit page etc and check permission here etc
+      //only for ADMINS / CREATOR
+      await db
+        .selectFrom("UserPackPivot")
+        .where("packId", "=", input.id)
+        .where("userId", "=", ctx.user.id)
+        .where((eb) => eb.or([eb("role", "=", "CREATOR"), eb("role", "=", "ADMIN")]))
+        .select("packId")
+        .executeTakeFirstOrThrow();
+
       await db
         .updateTable("Pack")
         .set({
           inviteSetting: input.inviteSetting,
         })
+        .where("id", "=", input.id)
         .execute();
 
       return 1;

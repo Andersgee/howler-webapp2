@@ -16,7 +16,7 @@ export const metadata = seo({
 type Props = {
   children: React.ReactNode;
   /** adjust params according dynamic routes, eg if this is under a [slug] folder */
-  params: { slug: string };
+  //params: { slug: string };
 };
 
 export default async function Layout({ children }: Props) {
