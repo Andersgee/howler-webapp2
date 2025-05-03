@@ -170,10 +170,10 @@ export const packRouter = createTRPCRouter({
       afterResponseIsFinished(async () => {
         await notify([input.userId], {
           title: `${ctx.user.name} added you to pack ${pack.title}`,
-          body: `see your pack ${pack.title}`,
+          body: `See your pack ${pack.title}`,
           relativeLink: `/pack/${hashidFromId(ctx.user.id)}`,
-          //image: pack.image,
-          //icon: ctx.user.image,
+          icon: ctx.user.image,
+          image: pack.image ?? undefined,
         });
       });
 
@@ -238,16 +238,15 @@ export const packRouter = createTRPCRouter({
       const members = await db
         .selectFrom("UserPackPivot")
         .where("packId", "=", input.packId)
-        .where("userId", "!=", ctx.user.id)
         .select("userId")
         .execute();
-      const notifyIds = members.map((x) => x.userId);
+      const notifyIds = members.map((x) => x.userId).filter((id) => id !== ctx.user.id);
       afterResponseIsFinished(async () => {
         await notify(notifyIds, {
           title: `${ctx.user.name} just joined pack ${pack.title}`,
-          body: `Accept or deny their request`,
+          body: `See your pack ${pack.title}`,
           relativeLink: `/pack/${hashidFromId(pack.id)}`,
-          image: ctx.user.image,
+          icon: ctx.user.image,
         });
       });
 
@@ -279,7 +278,7 @@ export const packRouter = createTRPCRouter({
         title: `${ctx.user.name} wants to join pack ${pack.title}`,
         body: `Accept or deny their request`,
         relativeLink: `/pack/${hashidFromId(pack.id)}/pending`,
-        image: ctx.user.image,
+        icon: ctx.user.image,
       });
     });
 
@@ -337,7 +336,7 @@ export const packRouter = createTRPCRouter({
             title: `${approvedUser.name} just joined pack ${pack.title}`,
             body: `Approved by ${ctx.user.name}`,
             relativeLink: `/pack/${hashidFromId(pack.id)}`,
-            image: approvedUser.image ?? undefined,
+            icon: approvedUser.image ?? undefined,
           });
         });
 
