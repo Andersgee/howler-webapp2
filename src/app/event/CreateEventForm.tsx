@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useFormContext } from "react-hook-form";
 import { z } from "zod";
 import { api } from "#src/hooks/api";
 import { Button } from "#src/ui/button";
@@ -29,6 +29,9 @@ import { InputAutocompleteGooglePlaces } from "#src/components/InputAutocomplete
 import { pointFromlatLngLiteral } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { usePlaceFromPlaceId } from "#src/hooks/usePlaceFromPlaceId";
 import { useUserCookie } from "#src/hooks/useUserCookie";
+import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
+import { InputAutocompletePack } from "#src/ui/input-autocomplete-pack";
+import { IconWho } from "#src/icons/Who";
 
 const zFormData = z.object({
   title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
@@ -99,6 +102,8 @@ export function CreateEventForm() {
       eventCreate.mutate(data);
     }
   };
+
+  const myPacks = api.pack.listMy.useQuery();
 
   return (
     <Form {...form}>
@@ -183,6 +188,8 @@ export function CreateEventForm() {
           )}
         />
 
+        <InputWho />
+
         <div className="flex gap-2 py-4">
           {isSignedIn === false ? (
             <>
@@ -199,6 +206,35 @@ export function CreateEventForm() {
         </div>
       </form>
     </Form>
+  );
+}
+
+function InputWho() {
+  const [value, setValue] = useState("");
+  const form = useFormContext<FormData>();
+
+  return (
+    <div className="flex items-center gap-2">
+      <IconWho />
+      <FormLabel className="w-11 shrink-0">Who</FormLabel>
+      <InputAutocompletePack
+        value={value}
+        onChange={(str, packId) => {
+          //field.onChange(str);
+          if (packId) {
+            setValue(str);
+            form.setValue("whoPackId", packId);
+            console.log("selected packid:", packId);
+          } else if (packId === null) {
+            setValue("");
+            form.setValue("whoPackId", null);
+            console.log("cleared");
+          } else {
+            setValue(str);
+          }
+        }}
+      />
+    </div>
   );
 }
 
