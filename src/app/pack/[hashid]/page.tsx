@@ -12,7 +12,6 @@ import { Shell } from "#src/components/Shell";
 import { JSONE } from "#src/utils/jsone";
 import { ButtonRemoveUserFromPack } from "./button-remove-user-from-pack";
 import { PrettyDate, PrettyDateLong } from "#src/components/PrettyDate";
-import { Fragment } from "react";
 import { PackInfo } from "./pack-info";
 import { PackAddMembers } from "./pack-add-members";
 import { UserImage32x32 } from "#src/components/user/UserImage";
@@ -29,10 +28,6 @@ type Props = {
   params: { hashid: string };
 };
 
-//function blurDataURLstring(data: Uint8Array) {
-//  return `data:image/png;base64,${base64.stringify(data)}`;
-//}
-
 export default async function Page({ params }: Props) {
   const id = idFromHashid(params.hashid);
   if (id === undefined) notFound();
@@ -48,7 +43,7 @@ export default async function Page({ params }: Props) {
   const { members, myMemberShip } = await api.pack.members({ id });
 
   if (!myMemberShip) {
-    return <NotPackMemberPage packId={pack.id} />;
+    return <NotPackMemberPage pack={pack} />;
   }
   if (myMemberShip.pending) {
     return <PendingPackMemberPage myMemberShip={myMemberShip} />;

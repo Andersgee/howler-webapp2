@@ -13,7 +13,9 @@ export function PendingPackMemberPage({ className, myMemberShip }: Props) {
         <section className="flex flex-col items-center">
           <h1 className="mt-2">You have requested to join the pack.</h1>
           <p>Not accepted yet.</p>
+          {/* 
           <div>TODO: ButtonCancelJoinRequest</div>
+          */}
         </section>
       </div>
     </div>
