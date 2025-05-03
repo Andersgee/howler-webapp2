@@ -72,17 +72,13 @@ export default async function Layout({ children, params }: Props) {
 
       <div className="flex justify-center gap-2">
         <Link href={`/pack/${hashid}`} className={buttonVariants({ variant: "outline" })}>
-          Activity
-        </Link>
-        <Link href={`/pack/${hashid}/members`} className={buttonVariants({ variant: "outline" })}>
           Members
         </Link>
-        {myMemberShip?.packRole === "ADMIN" ||
-          (myMemberShip?.packRole === "CREATOR" && (
-            <Link href={`/pack/${hashid}/edit`} className={buttonVariants({ variant: "outline" })}>
-              Settings
-            </Link>
-          ))}
+        {(myMemberShip?.packRole === "ADMIN" || myMemberShip?.packRole === "CREATOR") && (
+          <Link href={`/pack/${hashid}/settings`} className={buttonVariants({ variant: "outline" })}>
+            Settings
+          </Link>
+        )}
       </div>
       <hr className="py-2" />
 

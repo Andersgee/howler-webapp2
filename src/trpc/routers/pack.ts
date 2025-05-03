@@ -4,7 +4,6 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
 import { hashidFromId } from "#src/utils/hashid";
 import { afterResponseIsFinished } from "#src/utils/after-response-is-finished";
-import { schema_insert_UserPackPivot } from "#src/db/types-zod";
 import { TRPCError } from "@trpc/server";
 import { tagsPack } from "./packTags";
 import { revalidateTag } from "next/cache";
@@ -330,7 +329,7 @@ export const packRouter = createTRPCRouter({
       await notify(notifyIds, {
         title: `${ctx.user.name} wants to join pack ${pack.title}`,
         body: `Accept or deny their request`,
-        relativeLink: `/pack/${hashidFromId(pack.id)}/members`,
+        relativeLink: `/pack/${hashidFromId(pack.id)}`,
         icon: ctx.user.image,
       });
     });
