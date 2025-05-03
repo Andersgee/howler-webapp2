@@ -8,6 +8,7 @@ import { tagsEvent } from "./eventTags";
 import { revalidateTag } from "next/cache";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
 import { afterResponseIsFinished } from "#src/utils/after-response-is-finished";
+import { unique } from "#src/utils/unique";
 
 export const eventRouter = createTRPCRouter({
   getById: publicProcedure.input(z.object({ id: z.bigint() })).query(async ({ input }) => {
@@ -56,6 +57,7 @@ export const eventRouter = createTRPCRouter({
         date: z.date(),
         location: z.union([z.null().transform(() => undefined), zGeoJsonPoint]),
         locationName: z.union([z.literal("").transform(() => undefined), z.string().min(3).max(55)]),
+        whoPackId: z.bigint().nullable(),
         //image: z.string().nullish(),
         //imageAspect: z.number().optional(),
       })
@@ -64,19 +66,32 @@ export const eventRouter = createTRPCRouter({
       const db = dbfetch();
       const insertResult = await db
         .insertInto("Event")
-        .values({ ...input, creatorId: ctx.user.id })
+        .values({
+          title: input.title,
+          date: input.date,
+          location: input.location,
+          locationName: input.locationName,
+          creatorId: ctx.user.id,
+        })
         .executeTakeFirstOrThrow();
 
       const hashid = hashidFromId(insertResult.insertId!);
 
       afterResponseIsFinished(async () => {
+        const userPackPivots = input.whoPackId
+          ? await db.selectFrom("UserPackPivot").select("userId").where("packId", "=", input.whoPackId).execute()
+          : [];
+        const notifyPackMemberIds = userPackPivots.map((x) => x.userId);
+
         const userUserPivots = await db
           .selectFrom("UserUserPivot")
           .select("followerId")
           .where("userId", "=", ctx.user.id)
           .execute();
-        const notifyUserIds = userUserPivots.map((x) => x.followerId);
 
+        const notifyFollowerIds = userUserPivots.map((x) => x.followerId);
+
+        const notifyUserIds = unique(notifyFollowerIds.concat(notifyPackMemberIds)).filter((id) => id !== ctx.user.id);
         //in dev, also notify creator
         if (process.env.NODE_ENV === "development") {
           notifyUserIds.push(ctx.user.id);

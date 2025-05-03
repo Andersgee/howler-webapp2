@@ -42,6 +42,7 @@ const zFormData = z.object({
       .min(3, { message: "at least 3 characters - or empty" })
       .max(55, { message: "at most 55 characters - or empty" }),
   ]),
+  whoPackId: z.bigint().nullable(),
   //image: z.string().nullish(),
   //imageAspect: z.number().optional(),
 });
@@ -57,6 +58,7 @@ export function CreateEventForm() {
       date: new Date(Date.now() + 1000 * 60 * 60),
       location: null,
       locationName: "",
+      whoPackId: null,
     },
   });
   const [showMap, setShowMap] = useState(false);
