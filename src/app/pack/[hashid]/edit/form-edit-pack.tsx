@@ -89,7 +89,7 @@ export function FormEditPack({ className, initialPack }: Props) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onValid)} className={cn("space-y-2", className)}>
+      <form onSubmit={form.handleSubmit(onValid)} className={cn("space-y-4", className)}>
         <FormField
           control={form.control}
           name="title"
@@ -138,19 +138,15 @@ export function FormEditPack({ className, initialPack }: Props) {
                 </RadioGroup>
               </FormControl>
 
-              <div className="text-sm">
-                <p>Note: All options except first will requires a user to either.</p>
-                <ol className="list-inside list-disc">
-                  <li>be invited</li>
-                  <li>request to join and then be approved by a member</li>
-                </ol>
-              </div>
+              <p className="text-balance text-xs">
+                Note: All options except first will requires a user to either be invited or request to join and then be
+                approved.
+              </p>
 
               <FormMessage />
             </FormItem>
           )}
         />
-        <div className="py-2"></div>
         <Button type="submit" disabled={isPending}>
           Save
         </Button>
