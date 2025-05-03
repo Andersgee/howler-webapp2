@@ -285,4 +285,65 @@ export const packRouter = createTRPCRouter({
 
     return { pending: true };
   }),
+
+  approveMembershipRequest: protectedProcedure
+    .input(z.object({ packId: z.bigint(), userId: z.bigint() }))
+    .mutation(async ({ ctx, input }) => {
+      const db = dbfetch();
+
+      const pack = await db
+        .selectFrom("UserPackPivot")
+        .where("packId", "=", input.packId)
+        .where("userId", "=", ctx.user.id)
+        .innerJoin("Pack", "Pack.id", "UserPackPivot.packId")
+        .select([
+          "Pack.id",
+          "Pack.title",
+          "UserPackPivot.role as userPackRole",
+          "Pack.inviteSetting as packInviteSetting",
+          "Pack.title as packTitle",
+        ])
+        .executeTakeFirstOrThrow();
+
+      const canAcceptRequest =
+        pack.packInviteSetting === "PUBLIC" ||
+        (pack.packInviteSetting === "CREATOR_ONLY" && pack.userPackRole === "CREATOR") ||
+        (pack.packInviteSetting === "ADMINS_AND_ABOVE" &&
+          (pack.userPackRole === "CREATOR" || pack.userPackRole === "ADMIN"));
+      if (canAcceptRequest) {
+        await db
+          .updateTable("UserPackPivot")
+          .set({ pending: false })
+          .where("packId", "=", input.packId)
+          .where("userId", "=", input.userId)
+          .execute();
+
+        const approvedUser = await db
+          .selectFrom("User")
+          .where("id", "=", input.userId)
+          .select(["id", "name", "image"])
+          .executeTakeFirstOrThrow();
+
+        const notifyUsers = await db
+          .selectFrom("UserPackPivot")
+          .where("packId", "=", input.packId)
+          .where("userId", "=", ctx.user.id)
+          .select("userId")
+          .execute();
+
+        const notifyIds = notifyUsers.map((x) => x.userId);
+        afterResponseIsFinished(async () => {
+          await notify(notifyIds, {
+            title: `${approvedUser.name} just joined pack ${pack.title}`,
+            body: `Approved by ${ctx.user.name}`,
+            relativeLink: `/pack/${hashidFromId(pack.id)}`,
+            image: approvedUser.image ?? undefined,
+          });
+        });
+
+        return { pending: false };
+      }
+
+      return { pending: true };
+    }),
 });
