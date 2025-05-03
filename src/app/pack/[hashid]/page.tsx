@@ -46,7 +46,7 @@ export default async function Page({ params }: Props) {
     return <NotPackMemberPage pack={pack} />;
   }
   if (myMemberShip.pending) {
-    return <PendingPackMemberPage myMemberShip={myMemberShip} />;
+    return <PendingPackMemberPage myMemberShip={myMemberShip} packTitle={pack.title} />;
   }
 
   return (
