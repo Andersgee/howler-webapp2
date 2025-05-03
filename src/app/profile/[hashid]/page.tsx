@@ -48,6 +48,9 @@ export default async function Page({ params }: Props) {
   return (
     <Shell>
       <section className="flex flex-col items-center">
+        <p className="pb-4">
+          howler id: <span className="font-bold">{hashidFromId(profile.id)}</span>
+        </p>
         <UserImage96x96 alt={profile.name} image={profile.image ?? ""} />
         <h1 className="mt-2">{`${profile.name}`}</h1>
         {user && user.id !== profile.id && (
