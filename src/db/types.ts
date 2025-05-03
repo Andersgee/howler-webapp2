@@ -4,8 +4,8 @@ import type { GeoJson } from "./types-geojson";
   
 export type DB = {
   UserEventPivot: UserEventPivot;
-  Pack: Pack;
   Notification: Notification;
+  Pack: Pack;
   FcmToken: FcmToken;
   Post: Post;
   PushSubscription: PushSubscription;
@@ -72,6 +72,8 @@ export type Event = {
   imageAspect: Generated<number>;
   /** dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   pinnedCommentId: bigint | null;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  who: string | null;
 };
 
 export type FcmToken = {

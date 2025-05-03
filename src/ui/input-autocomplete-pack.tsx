@@ -25,7 +25,7 @@ export function InputAutocompletePack({ className, value, onChange }: Props) {
   return (
     <Command
       className="w-56 text-base text-color-neutral-1000"
-      shouldFilter={false} //handle filtering (and sorting) myself
+      //shouldFilter={false} //handle filtering (and sorting) myself
     >
       <div className="relative">
         <Command.Input
@@ -67,7 +67,7 @@ export function InputAutocompletePack({ className, value, onChange }: Props) {
         <Command.List className="absolute z-50 m-0 max-h-72 w-72 overflow-x-hidden overflow-y-scroll rounded-b-lg bg-color-neutral-0">
           {suggestions
             ?.map((x) => ({
-              value: x.id.toString(),
+              value: x.title,
               key: x.id,
               label: x.title,
               secondaryLabel: `${x.memberCount} members`,

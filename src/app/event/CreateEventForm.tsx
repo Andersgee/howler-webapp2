@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, useFormContext } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "#src/hooks/api";
 import { Button } from "#src/ui/button";
@@ -17,7 +17,7 @@ import { useEffect, useRef, useState } from "react";
 import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
-//import { IconWho } from "#src/icons/Who";
+import { IconWho } from "#src/icons/Who";
 import { dialogDispatch } from "#src/store/slices/dialog";
 import { zGeoJsonPoint } from "#src/db/types-geojson";
 import { ControlLocate } from "#src/components/GoogleMaps/control-locate";
@@ -29,15 +29,21 @@ import { InputAutocompleteGooglePlaces } from "#src/components/InputAutocomplete
 import { pointFromlatLngLiteral } from "#src/components/GoogleMaps/google-maps-point-latlng";
 import { usePlaceFromPlaceId } from "#src/hooks/usePlaceFromPlaceId";
 import { useUserCookie } from "#src/hooks/useUserCookie";
-import { InputWithAutocomplete } from "#src/ui/input-with-autocomplete";
 import { InputAutocompletePack } from "#src/ui/input-autocomplete-pack";
-import { IconWho } from "#src/icons/Who";
 
 const zFormData = z.object({
   title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
   date: z.date(),
   location: zGeoJsonPoint.nullable(),
   locationName: z.union([
+    z.string().trim().length(0, { message: "at least 3 characters - or empty" }),
+    z
+      .string()
+      .trim()
+      .min(3, { message: "at least 3 characters - or empty" })
+      .max(55, { message: "at most 55 characters - or empty" }),
+  ]),
+  who: z.union([
     z.string().trim().length(0, { message: "at least 3 characters - or empty" }),
     z
       .string()
@@ -61,6 +67,7 @@ export function CreateEventForm() {
       date: new Date(Date.now() + 1000 * 60 * 60),
       location: null,
       locationName: "",
+      who: "",
       whoPackId: null,
     },
   });
@@ -102,8 +109,6 @@ export function CreateEventForm() {
       eventCreate.mutate(data);
     }
   };
-
-  const myPacks = api.pack.listMy.useQuery();
 
   return (
     <Form {...form}>
@@ -188,7 +193,32 @@ export function CreateEventForm() {
           )}
         />
 
-        <InputWho />
+        <FormField
+          control={form.control}
+          name="who"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-2">
+                <IconWho />
+                <FormLabel className="w-11 shrink-0">Who</FormLabel>
+                <InputAutocompletePack
+                  value={field.value}
+                  onChange={(str, packId) => {
+                    field.onChange(str);
+                    if (packId) {
+                      form.setValue("whoPackId", packId);
+                      console.log("selected packid:", packId);
+                    } else if (packId === null) {
+                      form.setValue("whoPackId", null);
+                      console.log("cleared");
+                    }
+                  }}
+                />
+              </div>
+              <FormMessage className="ml-8" />
+            </FormItem>
+          )}
+        />
 
         <div className="flex gap-2 py-4">
           {isSignedIn === false ? (
@@ -206,35 +236,6 @@ export function CreateEventForm() {
         </div>
       </form>
     </Form>
-  );
-}
-
-function InputWho() {
-  const [value, setValue] = useState("");
-  const form = useFormContext<FormData>();
-
-  return (
-    <div className="flex items-center gap-2">
-      <IconWho />
-      <FormLabel className="w-11 shrink-0">Who</FormLabel>
-      <InputAutocompletePack
-        value={value}
-        onChange={(str, packId) => {
-          //field.onChange(str);
-          if (packId) {
-            setValue(str);
-            form.setValue("whoPackId", packId);
-            console.log("selected packid:", packId);
-          } else if (packId === null) {
-            setValue("");
-            form.setValue("whoPackId", null);
-            console.log("cleared");
-          } else {
-            setValue(str);
-          }
-        }}
-      />
-    </div>
   );
 }
 

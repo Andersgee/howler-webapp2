@@ -35,7 +35,7 @@ export function Eventinfo({ event, className }: Props) {
       <div className="flex items-center gap-2">
         <IconWho />
         <div className="w-12 shrink-0">Who</div>
-        <EventinfoWho eventId={event.id} />
+        <EventinfoWho eventId={event.id} who={event.who} />
       </div>
     </div>
   );

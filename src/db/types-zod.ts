@@ -18,6 +18,21 @@ export const schema_update_UserEventPivot = z.object({
   joinDate: z.date().optional(),
 });
 
+export const schema_insert_Notification = z.object({
+  id: z.bigint().optional(),
+  title: z.string(),
+  body: z.string(),
+  relativeLink: z.string(),
+  createdAt: z.date().optional(),
+});
+export const schema_update_Notification = z.object({
+  id: z.bigint().optional(),
+  title: z.string().optional(),
+  body: z.string().optional(),
+  relativeLink: z.string().optional(),
+  createdAt: z.date().optional(),
+});
+
 export const schema_insert_Pack = z.object({
   id: z.bigint().optional(),
   title: z.string(),
@@ -35,21 +50,6 @@ export const schema_update_Pack = z.object({
   imageBlurData: zTypedArray.nullish(),
   createdAt: z.date().optional(),
   inviteSetting: z.enum(["PUBLIC","MEMBERS_AND_ABOVE","ADMINS_AND_ABOVE","CREATOR_ONLY"]).optional(),
-});
-
-export const schema_insert_Notification = z.object({
-  id: z.bigint().optional(),
-  title: z.string(),
-  body: z.string(),
-  relativeLink: z.string(),
-  createdAt: z.date().optional(),
-});
-export const schema_update_Notification = z.object({
-  id: z.bigint().optional(),
-  title: z.string().optional(),
-  body: z.string().optional(),
-  relativeLink: z.string().optional(),
-  createdAt: z.date().optional(),
 });
 
 export const schema_insert_FcmToken = z.object({
@@ -153,6 +153,7 @@ export const schema_insert_Event = z.object({
   imageBlurData: zTypedArray.nullish(),
   imageAspect: z.number().optional(),
   pinnedCommentId: z.bigint().nullish(),
+  who: z.string().nullish(),
 });
 export const schema_update_Event = z.object({
   id: z.bigint().optional(),
@@ -167,6 +168,7 @@ export const schema_update_Event = z.object({
   imageBlurData: zTypedArray.nullish(),
   imageAspect: z.number().optional(),
   pinnedCommentId: z.bigint().nullish(),
+  who: z.string().nullish(),
 });
 
 export const schema_insert_DeletedEventImages = z.object({

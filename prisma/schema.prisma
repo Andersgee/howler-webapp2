@@ -30,6 +30,7 @@ model Event {
     date          DateTime              @default(now()) @db.DateTime(3)
     location      Unsupported("point")? //https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html
     locationName  String?               @db.VarChar(55)
+    who           String?               @db.VarChar(55)
     creatorId     BigInt                @db.UnsignedBigInt
     image         String?               @db.VarChar(100)
     imageBlurData Bytes?                @db.VarBinary(255) //4x4=16 pixels ends up around 127 bytes, so go with 255 (btw, dont do tinyblob here. presence of blobs hurt read speed, but necessary for Large OBjects)

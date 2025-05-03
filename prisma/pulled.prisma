@@ -53,6 +53,7 @@ model Event {
   imageBlurData Bytes? @db.VarBinary(255)
   imageAspect Float @db.Float @default(1)
   pinnedCommentId BigInt? @db.UnsignedBigInt
+  who String @db.VarChar(55)
 
   @@index([creatorId])
   @@fulltext([title, locationName])
@@ -218,8 +219,8 @@ model UserPackPivot {
   @@index([userId])
 
   //foreign key relations (mysql adds an index on them)
-  UserPackPivot_packId_fkey Pack @relation("UserPackPivot_packId_fkey", fields: [packId], references: [id], onUpdate: Cascade, onDelete: Restrict)
-  UserPackPivot_userId_fkey User @relation("UserPackPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Restrict)
+  UserPackPivot_userId_fkey User @relation("UserPackPivot_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  UserPackPivot_packId_fkey Pack @relation("UserPackPivot_packId_fkey", fields: [packId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model UserUserPivot {

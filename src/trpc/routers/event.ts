@@ -57,6 +57,7 @@ export const eventRouter = createTRPCRouter({
         date: z.date(),
         location: z.union([z.null().transform(() => undefined), zGeoJsonPoint]),
         locationName: z.union([z.literal("").transform(() => undefined), z.string().min(3).max(55)]),
+        who: z.string().optional(),
         whoPackId: z.bigint().nullable(),
         //image: z.string().nullish(),
         //imageAspect: z.number().optional(),
@@ -71,6 +72,7 @@ export const eventRouter = createTRPCRouter({
           date: input.date,
           location: input.location,
           locationName: input.locationName,
+          who: input.who,
           creatorId: ctx.user.id,
         })
         .executeTakeFirstOrThrow();
