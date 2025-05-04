@@ -19,7 +19,7 @@ export function EventinfoWho({ eventId, who }: Props) {
         <Link
           className="block text-color-neutral-600 underline decoration-dotted duration-500 animate-in fade-in"
           href={`/event/${hashidFromId(eventId)}/people`}
-        >{`(${data.count} people joined)`}</Link>
+        >{`(${data.count} people)`}</Link>
       ) : null}
     </div>
   );

@@ -80,6 +80,15 @@ export const eventRouter = createTRPCRouter({
 
       const createdEventId = insertResult.insertId!;
 
+      //add creator as joined immediately
+      await db
+        .insertInto("UserEventPivot")
+        .values({
+          eventId: createdEventId,
+          userId: ctx.user.id,
+        })
+        .execute();
+
       //I have decided to always link an event to a what (create new one with that title if needed)
       const existingWhat = await db.selectFrom("What").where("title", "=", input.title).select("id").executeTakeFirst();
 

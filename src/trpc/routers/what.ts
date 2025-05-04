@@ -11,31 +11,52 @@ export const whatRouter = createTRPCRouter({
 
     return whats;
   }),
-  search: publicProcedure
+  search: protectedProcedure
     .input(
       z.object({
         title: z.string().trim().max(55),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const trimmedStr = trimSearchOperators(input.title);
 
       const withSearch = trimmedStr.length > 0;
 
-      const db = withSearch ? dbfetch() : dbfetch({ next: { revalidate: 10 } });
+      if (withSearch) {
+        const db = dbfetch();
 
-      const search = searchstring(trimmedStr);
+        const search = searchstring(trimmedStr);
 
-      const suggestions = db
-        .selectFrom("What")
-        .select(["id", "title"])
-        .select(sql<number>`MATCH (title) AGAINST (${search} IN BOOLEAN MODE)`.as("score"))
-        .orderBy("score desc")
-        .orderBy("id desc") //finally order by id desc aka latest created first
-        .limit(5)
-        .execute();
+        const suggestions = await db
+          .selectFrom("What")
+          .select(["id", "title"])
+          .select(sql<number>`MATCH (title) AGAINST (${search} IN BOOLEAN MODE)`.as("score"))
+          .orderBy("score desc")
+          .orderBy("id desc") //finally order by id desc aka latest created first
+          .limit(10)
+          .execute();
 
-      return suggestions;
+        return suggestions.filter((x) => x.score > 0);
+      } else {
+        const db = dbfetch({ next: { revalidate: 10 } });
+
+        //suggest any title of any joined event as default? seems reasonable
+        const relevantMaybe = await db
+          .selectFrom("UserEventPivot")
+          .where("userId", "=", ctx.user.id)
+          .innerJoin("Event", "Event.id", "UserEventPivot.eventId")
+          .select(["Event.id as eventId", "Event.title"])
+          .orderBy("UserEventPivot.joinDate desc") //most recently joined first
+          .limit(10)
+          .execute();
+
+        const defaultSuggestions = relevantMaybe.map((x) => ({
+          id: x.eventId,
+          title: x.title,
+          score: 0,
+        }));
+        return defaultSuggestions;
+      }
     }),
 });
 

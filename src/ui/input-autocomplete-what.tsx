@@ -24,7 +24,7 @@ export function InputAutocompleteWhat({ className, value, onChange }: Props) {
     { title: value },
     {
       refetchOnMount: true,
-      enabled: value.trim().length > 0,
+      staleTime: 10000, //just for testing
     }
   );
 
