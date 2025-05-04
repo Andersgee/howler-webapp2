@@ -20,7 +20,7 @@ type Props = {
 
 export function InputAutocompleteWhat({ className, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const { data: suggestions } = api.what.listMy.useQuery();
+  const { data: suggestions } = api.what.list.useQuery();
 
   return (
     <Command
@@ -70,7 +70,7 @@ export function InputAutocompleteWhat({ className, value, onChange }: Props) {
               value: x.title,
               key: x.id,
               label: x.title,
-              secondaryLabel: `${x.memberCount} members`,
+              //secondaryLabel: `${x.memberCount} members`,
             }))
             .map((x) => (
               <Command.Item
@@ -88,7 +88,9 @@ export function InputAutocompleteWhat({ className, value, onChange }: Props) {
                 }}
               >
                 <span>{x.label}</span>
+                {/* 
                 <span className="ml-1 text-color-neutral-500">{x.secondaryLabel}</span>
+              */}
               </Command.Item>
             ))}
         </Command.List>

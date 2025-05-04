@@ -22,9 +22,9 @@ model Comment {
   text String @db.VarChar(280)
   createdAt DateTime @db.DateTime(3) @default(now())
 
-  @@index([eventId])
-  @@index([userId])
   @@id([id])
+  @@index([userId])
+  @@index([eventId])
 
   //foreign key relations (mysql adds an index on them)
   Comment_userId_fkey User @relation("Comment_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -53,11 +53,11 @@ model Event {
   imageBlurData Bytes? @db.VarBinary(255)
   imageAspect Float @db.Float @default(1)
   pinnedCommentId BigInt? @db.UnsignedBigInt
-  who String @db.VarChar(55)
+  who String? @db.VarChar(55)
 
+  @@id([id])
   @@index([creatorId])
   @@fulltext([title, locationName])
-  @@id([id])
 
   //foreign key relations (mysql adds an index on them)
   Event_creatorId_fkey User @relation("Event_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -71,8 +71,8 @@ model FcmToken {
   token String @db.VarChar(200)
   userId BigInt @db.UnsignedBigInt
 
-  @@index([userId])
   @@id([token])
+  @@index([userId])
 
   //foreign key relations (mysql adds an index on them)
   FcmToken_userId_fkey User @relation("FcmToken_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -113,8 +113,8 @@ model Post {
   updatedAt DateTime @db.DateTime(3) @default(now()) @updatedAt
   userId BigInt @db.UnsignedBigInt
 
-  @@index([userId])
   @@id([id])
+  @@index([userId])
 
   //foreign key relations (mysql adds an index on them)
   Post_userId_fkey User @relation("Post_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
@@ -163,11 +163,11 @@ model User {
   facebookdUserId String?
 
   @@id([id])
-  @@unique([discordUserId])
   @@unique([email])
-  @@unique([facebookdUserId])
-  @@unique([githubUserId])
   @@unique([googleUserSub])
+  @@unique([discordUserId])
+  @@unique([githubUserId])
+  @@unique([facebookdUserId])
 
   //opposing relation fields for prisma syntax only (they dont do anything at db level, the index is in the other table)
   Comment_userId_fkey Comment[] @relation("Comment_userId_fkey")
@@ -236,11 +236,10 @@ model UserUserPivot {
   UserUserPivot_followerId_fkey User @relation("UserUserPivot_followerId_fkey", fields: [followerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
-enum Pack_inviteSetting_enum {
-  PUBLIC
-  MEMBERS_AND_ABOVE
-  ADMINS_AND_ABOVE
-  CREATOR_ONLY
+enum UserPackPivot_role_enum {
+  CREATOR
+  ADMIN
+  MEMBER
 }
 
 enum User_role_enum {
@@ -248,9 +247,10 @@ enum User_role_enum {
   ADMIN
 }
 
-enum UserPackPivot_role_enum {
-  CREATOR
-  ADMIN
-  MEMBER
+enum Pack_inviteSetting_enum {
+  PUBLIC
+  MEMBERS_AND_ABOVE
+  ADMINS_AND_ABOVE
+  CREATOR_ONLY
 }
 

@@ -7,15 +7,31 @@ const zTypedArray = z.custom<Uint8Array>((value) => value instanceof Uint8Array)
 // this file here mostly generated as a copy-paste starting point reference for when specifying api inputs
 // anyway, this is how values of "INSERT" and "UPDATE" looks from a zod perspective
 
-export const schema_insert_UserEventPivot = z.object({
-  userId: z.bigint(),
-  eventId: z.bigint(),
-  joinDate: z.date().optional(),
+export const schema_insert_User = z.object({
+  id: z.bigint().optional(),
+  email: z.string(),
+  googleUserSub: z.string().nullish(),
+  discordUserId: z.string().nullish(),
+  githubUserId: z.number().nullish(),
+  image: z.string().nullish(),
+  name: z.string(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+  role: z.enum(["USER","ADMIN"]).optional(),
+  facebookdUserId: z.string().nullish(),
 });
-export const schema_update_UserEventPivot = z.object({
-  userId: z.bigint().optional(),
-  eventId: z.bigint().optional(),
-  joinDate: z.date().optional(),
+export const schema_update_User = z.object({
+  id: z.bigint().optional(),
+  email: z.string().optional(),
+  googleUserSub: z.string().nullish(),
+  discordUserId: z.string().nullish(),
+  githubUserId: z.number().nullish(),
+  image: z.string().nullish(),
+  name: z.string().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+  role: z.enum(["USER","ADMIN"]).optional(),
+  facebookdUserId: z.string().nullish(),
 });
 
 export const schema_insert_Notification = z.object({
@@ -61,6 +77,15 @@ export const schema_update_FcmToken = z.object({
   userId: z.bigint().optional(),
 });
 
+export const schema_insert_EventWhatPivot = z.object({
+  eventId: z.bigint(),
+  whatId: z.bigint(),
+});
+export const schema_update_EventWhatPivot = z.object({
+  eventId: z.bigint().optional(),
+  whatId: z.bigint().optional(),
+});
+
 export const schema_insert_Post = z.object({
   id: z.bigint().optional(),
   text: z.string(),
@@ -104,42 +129,6 @@ export const schema_update_Reply = z.object({
   createdAt: z.date().optional(),
 });
 
-export const schema_insert_User = z.object({
-  id: z.bigint().optional(),
-  email: z.string(),
-  googleUserSub: z.string().nullish(),
-  discordUserId: z.string().nullish(),
-  githubUserId: z.number().nullish(),
-  image: z.string().nullish(),
-  name: z.string(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-  role: z.enum(["USER","ADMIN"]).optional(),
-  facebookdUserId: z.string().nullish(),
-});
-export const schema_update_User = z.object({
-  id: z.bigint().optional(),
-  email: z.string().optional(),
-  googleUserSub: z.string().nullish(),
-  discordUserId: z.string().nullish(),
-  githubUserId: z.number().nullish(),
-  image: z.string().nullish(),
-  name: z.string().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-  role: z.enum(["USER","ADMIN"]).optional(),
-  facebookdUserId: z.string().nullish(),
-});
-
-export const schema_insert_UserNotificationPivot = z.object({
-  userId: z.bigint(),
-  notificationId: z.bigint(),
-});
-export const schema_update_UserNotificationPivot = z.object({
-  userId: z.bigint().optional(),
-  notificationId: z.bigint().optional(),
-});
-
 export const schema_insert_Event = z.object({
   id: z.bigint().optional(),
   createdAt: z.date().optional(),
@@ -171,26 +160,52 @@ export const schema_update_Event = z.object({
   who: z.string().nullish(),
 });
 
-export const schema_insert_DeletedEventImages = z.object({
-  image: z.string(),
+export const schema_insert_UserEventPivot = z.object({
+  userId: z.bigint(),
+  eventId: z.bigint(),
+  joinDate: z.date().optional(),
 });
-export const schema_update_DeletedEventImages = z.object({
-  image: z.string().optional(),
+export const schema_update_UserEventPivot = z.object({
+  userId: z.bigint().optional(),
+  eventId: z.bigint().optional(),
+  joinDate: z.date().optional(),
 });
 
-export const schema_insert_UserPackPivot = z.object({
+export const schema_insert_UserNotificationPivot = z.object({
   userId: z.bigint(),
-  packId: z.bigint(),
-  createdAt: z.date().optional(),
-  role: z.enum(["CREATOR","ADMIN","MEMBER"]).optional(),
-  pending: z.boolean().optional(),
+  notificationId: z.bigint(),
 });
-export const schema_update_UserPackPivot = z.object({
+export const schema_update_UserNotificationPivot = z.object({
   userId: z.bigint().optional(),
-  packId: z.bigint().optional(),
+  notificationId: z.bigint().optional(),
+});
+
+export const schema_insert_CloudMessageAccessToken = z.object({
+  id: z.bigint(),
+  token: z.string(),
+  expires: z.date(),
+});
+export const schema_update_CloudMessageAccessToken = z.object({
+  id: z.bigint().optional(),
+  token: z.string().optional(),
+  expires: z.date().optional(),
+});
+
+export const schema_insert_What = z.object({
+  id: z.bigint().optional(),
+  title: z.string(),
+  image: z.string().nullish(),
+  imageBlurData: zTypedArray.nullish(),
+  imageAspect: z.number().optional(),
   createdAt: z.date().optional(),
-  role: z.enum(["CREATOR","ADMIN","MEMBER"]).optional(),
-  pending: z.boolean().optional(),
+});
+export const schema_update_What = z.object({
+  id: z.bigint().optional(),
+  title: z.string().optional(),
+  image: z.string().nullish(),
+  imageBlurData: zTypedArray.nullish(),
+  imageAspect: z.number().optional(),
+  createdAt: z.date().optional(),
 });
 
 export const schema_insert_UserUserPivot = z.object({
@@ -219,14 +234,25 @@ export const schema_update_Comment = z.object({
   createdAt: z.date().optional(),
 });
 
-export const schema_insert_CloudMessageAccessToken = z.object({
-  id: z.bigint(),
-  token: z.string(),
-  expires: z.date(),
+export const schema_insert_UserPackPivot = z.object({
+  userId: z.bigint(),
+  packId: z.bigint(),
+  createdAt: z.date().optional(),
+  role: z.enum(["CREATOR","ADMIN","MEMBER"]).optional(),
+  pending: z.boolean().optional(),
 });
-export const schema_update_CloudMessageAccessToken = z.object({
-  id: z.bigint().optional(),
-  token: z.string().optional(),
-  expires: z.date().optional(),
+export const schema_update_UserPackPivot = z.object({
+  userId: z.bigint().optional(),
+  packId: z.bigint().optional(),
+  createdAt: z.date().optional(),
+  role: z.enum(["CREATOR","ADMIN","MEMBER"]).optional(),
+  pending: z.boolean().optional(),
+});
+
+export const schema_insert_DeletedEventImages = z.object({
+  image: z.string(),
+});
+export const schema_update_DeletedEventImages = z.object({
+  image: z.string().optional(),
 });
 

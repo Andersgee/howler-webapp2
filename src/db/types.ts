@@ -3,21 +3,23 @@ import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
-  UserEventPivot: UserEventPivot;
+  User: User;
   Notification: Notification;
   Pack: Pack;
   FcmToken: FcmToken;
+  EventWhatPivot: EventWhatPivot;
   Post: Post;
   PushSubscription: PushSubscription;
   Reply: Reply;
-  User: User;
-  UserNotificationPivot: UserNotificationPivot;
   Event: Event;
-  DeletedEventImages: DeletedEventImages;
-  UserPackPivot: UserPackPivot;
+  UserEventPivot: UserEventPivot;
+  UserNotificationPivot: UserNotificationPivot;
+  CloudMessageAccessToken: CloudMessageAccessToken;
+  What: What;
   UserUserPivot: UserUserPivot;
   Comment: Comment;
-  CloudMessageAccessToken: CloudMessageAccessToken;
+  UserPackPivot: UserPackPivot;
+  DeletedEventImages: DeletedEventImages;
 };
 
 export type CloudMessageAccessToken = {
@@ -74,6 +76,13 @@ export type Event = {
   pinnedCommentId: bigint | null;
   /** dbtype: 'varchar(55)', eg string with max 55 chars */
   who: string | null;
+};
+
+export type EventWhatPivot = {
+  /** indexed: (eventId, whatId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  eventId: bigint;
+  /** indexed: (eventId, whatId) and (whatId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  whatId: bigint;
 };
 
 export type FcmToken = {
@@ -209,6 +218,21 @@ export type UserUserPivot = {
   userId: bigint;
   /** indexed: (userId, followerId) and (followerId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   followerId: bigint;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
+};
+
+export type What = {
+  /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  id: Generated<bigint>;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  title: string;
+  /** dbtype: 'varchar(100)', eg string with max 100 chars */
+  image: string | null;
+  /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
+  imageBlurData: Uint8Array | null;
+  /** default: 1, dbtype: 'float' */
+  imageAspect: Generated<number>;
   /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   createdAt: Generated<Date>;
 };
