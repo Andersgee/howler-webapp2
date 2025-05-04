@@ -64,7 +64,20 @@ model Event {
 
   //opposing relation fields for prisma syntax only (they dont do anything at db level, the index is in the other table)
   Comment_eventId_fkey Comment[] @relation("Comment_eventId_fkey")
+  EventWhatPivot_eventId_fkey EventWhatPivot[] @relation("EventWhatPivot_eventId_fkey")
   UserEventPivot_eventId_fkey UserEventPivot[] @relation("UserEventPivot_eventId_fkey")
+}
+
+model EventWhatPivot {
+  eventId BigInt @db.UnsignedBigInt
+  whatId BigInt @db.UnsignedBigInt
+
+  @@id([eventId, whatId])
+  @@index([whatId])
+
+  //foreign key relations (mysql adds an index on them)
+  EventWhatPivot_eventId_fkey Event @relation("EventWhatPivot_eventId_fkey", fields: [eventId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  EventWhatPivot_whatId_fkey What @relation("EventWhatPivot_whatId_fkey", fields: [whatId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
 model FcmToken {
@@ -236,10 +249,20 @@ model UserUserPivot {
   UserUserPivot_followerId_fkey User @relation("UserUserPivot_followerId_fkey", fields: [followerId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
 
-enum UserPackPivot_role_enum {
-  CREATOR
-  ADMIN
-  MEMBER
+model What {
+  id BigInt @db.UnsignedBigInt @default(autoincrement())
+  title String @db.VarChar(55)
+  image String? @db.VarChar(100)
+  imageBlurData Bytes? @db.VarBinary(255)
+  imageAspect Float @db.Float @default(1)
+  createdAt DateTime @db.DateTime(3) @default(now())
+
+  @@id([id])
+  @@unique([title])
+  @@fulltext([title])
+
+  //opposing relation fields for prisma syntax only (they dont do anything at db level, the index is in the other table)
+  EventWhatPivot_whatId_fkey EventWhatPivot[] @relation("EventWhatPivot_whatId_fkey")
 }
 
 enum User_role_enum {
@@ -252,5 +275,11 @@ enum Pack_inviteSetting_enum {
   MEMBERS_AND_ABOVE
   ADMINS_AND_ABOVE
   CREATOR_ONLY
+}
+
+enum UserPackPivot_role_enum {
+  CREATOR
+  ADMIN
+  MEMBER
 }
 

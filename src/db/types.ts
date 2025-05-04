@@ -225,7 +225,7 @@ export type UserUserPivot = {
 export type What = {
   /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   id: Generated<bigint>;
-  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  /** indexed: (title) and (title), dbtype: 'varchar(55)', eg string with max 55 chars */
   title: string;
   /** dbtype: 'varchar(100)', eg string with max 100 chars */
   image: string | null;

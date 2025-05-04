@@ -79,36 +79,22 @@ export const eventRouter = createTRPCRouter({
         .executeTakeFirstOrThrow();
 
       const createdEventId = insertResult.insertId!;
-      console.log("input.whatId: ", input.whatId);
-      if (input.whatId) {
-        console.log("inserting EventWhatPivot since whatId exists");
-        await db
-          .insertInto("EventWhatPivot")
-          .values({
-            eventId: createdEventId,
-            whatId: input.whatId,
-          })
-          .execute();
-      } else {
-        //I guess for now just always create a new 'What' row
-        console.log("first creating new What row");
+
+      //I have decided to always link an event to a what (create new one with that title if needed)
+      const existingWhat = await db.selectFrom("What").where("title", "=", input.title).select("id").executeTakeFirst();
+
+      let whatId = existingWhat?.id;
+      if (!whatId) {
         const whatinsertResult = await db
           .insertInto("What")
           .values({
-            //id: input.whatId,
             title: input.title,
           })
           .executeTakeFirst();
-        const createdWhatId = whatinsertResult.insertId!;
-        console.log("and then inserting EventWhatPivot");
-        await db
-          .insertInto("EventWhatPivot")
-          .values({
-            eventId: createdEventId,
-            whatId: createdWhatId,
-          })
-          .execute();
+        whatId = whatinsertResult.insertId!;
       }
+      //link it
+      await db.insertInto("EventWhatPivot").values({ eventId: createdEventId, whatId }).execute();
 
       const hashid = hashidFromId(createdEventId);
 
