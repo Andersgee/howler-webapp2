@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Trigger as CollapsibleTrigger } from "@radix-ui/react-collapsible";
 
 type Props = {
+  placeholder?: string;
   className?: string;
   suggestions: { key: bigint; value: string; label: string }[];
   value: string;
@@ -18,7 +19,13 @@ type Props = {
   onChange: (search: string, key: bigint | undefined) => void;
 };
 
-export function InputSearch({ className, suggestions, value, onChange }: Props) {
+export function InputSearch({
+  className,
+  suggestions,
+  value,
+  onChange,
+  placeholder = "anything / anywhere...",
+}: Props) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -28,7 +35,7 @@ export function InputSearch({ className, suggestions, value, onChange }: Props) 
     >
       <div className="relative">
         <Command.Input
-          placeholder="anything / anywhere..."
+          placeholder={placeholder}
           autoCapitalize="none"
           autoComplete="off"
           autoCorrect="off"

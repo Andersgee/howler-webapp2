@@ -13,7 +13,6 @@ import { datetimelocalString } from "#src/utils/date";
 import { GoogleMaps } from "#src/components/GoogleMaps";
 import { useStore } from "#src/store";
 import { useEffect, useRef, useState } from "react";
-
 import { IconWhat } from "#src/icons/What";
 import { IconWhen } from "#src/icons/When";
 import { IconWhere } from "#src/icons/Where";
@@ -53,7 +52,7 @@ const zFormData = z.object({
       .max(55, { message: "at most 55 characters - or empty" }),
   ]),
   whoPackId: z.bigint().nullable(),
-  whatId: z.bigint().nullable(),
+  //whatId: z.bigint().nullable(),
   //image: z.string().nullish(),
   //imageAspect: z.number().optional(),
 });
@@ -71,7 +70,7 @@ export function CreateEventForm() {
       locationName: "",
       who: "",
       whoPackId: null,
-      whatId: null,
+      //whatId: null,
     },
   });
   const [showMap, setShowMap] = useState(false);
@@ -116,32 +115,6 @@ export function CreateEventForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onValid)} className="space-y-2">
-        {/* 
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center gap-2">
-                <IconWhat />
-                <FormLabel className="w-11 shrink-0">What</FormLabel>
-
-                <FormControl>
-                  <Input
-                    type="text"
-                    placeholder="anything"
-                    autoCapitalize="none"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    {...field}
-                  />
-                </FormControl>
-              </div>
-              <FormMessage className="ml-8" />
-            </FormItem>
-          )}
-        />
-         */}
         <FormField
           control={form.control}
           name="title"
@@ -152,15 +125,8 @@ export function CreateEventForm() {
                 <FormLabel className="w-11 shrink-0">What</FormLabel>
                 <InputAutocompleteWhat
                   value={field.value}
-                  onChange={(str, whatId) => {
+                  onChange={(str, _whatId) => {
                     field.onChange(str);
-                    if (whatId) {
-                      console.log("selected whatId:", whatId);
-                      form.setValue("whatId", whatId);
-                    } else if (whatId === null) {
-                      console.log("cleared:", whatId);
-                      form.setValue("whatId", null);
-                    }
                   }}
                 />
               </div>

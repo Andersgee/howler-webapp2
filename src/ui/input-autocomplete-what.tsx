@@ -13,16 +13,20 @@ type Props = {
   /**
    * called whenever search input changes in any way
    *
-   * also packId will be defined if change was triggered by selecting a suggestion
+   * also whatId will be defined if change was triggered by selecting a suggestion
    */
   onChange: (value: string, whatId: bigint | undefined | null) => void;
 };
 
 export function InputAutocompleteWhat({ className, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const { data: suggestions } = api.what.list.useQuery(undefined, {
-    refetchOnMount: true,
-  });
+  const { data: suggestions } = api.what.search.useQuery(
+    { title: value },
+    {
+      refetchOnMount: true,
+      enabled: value.trim().length > 0,
+    }
+  );
 
   return (
     <Command

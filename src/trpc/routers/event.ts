@@ -59,7 +59,7 @@ export const eventRouter = createTRPCRouter({
         locationName: z.union([z.literal("").transform(() => undefined), z.string().min(3).max(55)]),
         who: z.string().optional(),
         whoPackId: z.bigint().nullable(),
-        whatId: z.bigint().nullable(),
+        //whatId: z.bigint().nullable(),
         //image: z.string().nullish(),
         //imageAspect: z.number().optional(),
       })
