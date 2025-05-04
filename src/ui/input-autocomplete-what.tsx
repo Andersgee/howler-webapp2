@@ -15,12 +15,12 @@ type Props = {
    *
    * also packId will be defined if change was triggered by selecting a suggestion
    */
-  onChange: (value: string, packId: bigint | undefined | null) => void;
+  onChange: (value: string, whatId: bigint | undefined | null) => void;
 };
 
-export function InputAutocompletePack({ className, value, onChange }: Props) {
+export function InputAutocompleteWhat({ className, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const { data: suggestions } = api.pack.listMy.useQuery();
+  const { data: suggestions } = api.what.listMy.useQuery();
 
   return (
     <Command
@@ -29,7 +29,7 @@ export function InputAutocompletePack({ className, value, onChange }: Props) {
     >
       <div className="relative">
         <Command.Input
-          placeholder="anyone"
+          placeholder="anything"
           autoCapitalize="none"
           autoComplete="off"
           autoCorrect="off"

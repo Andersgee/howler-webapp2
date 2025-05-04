@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { api } from "#src/hooks/api";
 import { Button } from "#src/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "#src/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "#src/ui/form";
 import { Input } from "#src/ui/input";
 import { useToast } from "#src/ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -30,6 +30,7 @@ import { pointFromlatLngLiteral } from "#src/components/GoogleMaps/google-maps-p
 import { usePlaceFromPlaceId } from "#src/hooks/usePlaceFromPlaceId";
 import { useUserCookie } from "#src/hooks/useUserCookie";
 import { InputAutocompletePack } from "#src/ui/input-autocomplete-pack";
+import { InputAutocompleteWhat } from "#src/ui/input-autocomplete-what";
 
 const zFormData = z.object({
   title: z.string().trim().min(3, { message: "at least 3 characters" }).max(55, { message: "at most 55 characters" }),
@@ -113,6 +114,7 @@ export function CreateEventForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onValid)} className="space-y-2">
+        {/* 
         <FormField
           control={form.control}
           name="title"
@@ -134,7 +136,33 @@ export function CreateEventForm() {
                 </FormControl>
               </div>
               <FormMessage className="ml-8" />
-              {/*<FormDescription>some string.</FormDescription>*/}
+            </FormItem>
+          )}
+        />
+         */}
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-2">
+                <IconWhat />
+                <FormLabel className="w-11 shrink-0">What</FormLabel>
+                <InputAutocompleteWhat
+                  value={field.value}
+                  onChange={(str, whatId) => {
+                    field.onChange(str);
+                    if (whatId) {
+                      console.log("selected whatId:", whatId);
+                      //form.setValue("whoPackId", packId);
+                    } else if (whatId === null) {
+                      console.log("cleared:", whatId);
+                      //form.setValue("whoPackId", null);
+                    }
+                  }}
+                />
+              </div>
+              <FormMessage className="ml-8" />
             </FormItem>
           )}
         />
@@ -214,6 +242,9 @@ export function CreateEventForm() {
                 />
               </div>
               <FormMessage className="ml-8" />
+              {/* 
+              {form.watch("whoPackId") !== null && <FormDescription>pack will be notified</FormDescription>}
+               */}
             </FormItem>
           )}
         />

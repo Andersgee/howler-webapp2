@@ -8,10 +8,12 @@ import { commentRouter } from "./routers/comment";
 import { replyRouter } from "./routers/reply";
 import { webpushRouter } from "./routers/webpush";
 import { packRouter } from "./routers/pack";
+import { whatRouter } from "./routers/what";
 
 export const trpcRouter = createTRPCRouter({
   user: userRouter,
   pack: packRouter,
+  what: whatRouter,
   post: postRouter,
   event: eventRouter,
   geocode: geocodeRouter,
