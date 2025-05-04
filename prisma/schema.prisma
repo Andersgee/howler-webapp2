@@ -30,6 +30,7 @@ model Event {
     date          DateTime              @default(now()) @db.DateTime(3)
     location      Unsupported("point")? //https://dev.mysql.com/doc/refman/8.0/en/spatial-type-overview.html
     locationName  String?               @db.VarChar(55)
+    who           String?               @db.VarChar(55)
     creatorId     BigInt                @db.UnsignedBigInt
     image         String?               @db.VarChar(100)
     imageBlurData Bytes?                @db.VarBinary(255) //4x4=16 pixels ends up around 127 bytes, so go with 255 (btw, dont do tinyblob here. presence of blobs hurt read speed, but necessary for Large OBjects)
@@ -40,6 +41,8 @@ model Event {
     Event_creatorId_fkey        User             @relation("Event_creatorId_fkey", fields: [creatorId], references: [id], onUpdate: Cascade, onDelete: Cascade)
     UserEventPivot_eventId_fkey UserEventPivot[] @relation("UserEventPivot_eventId_fkey")
     Comment_eventId_fkey        Comment[]        @relation("Comment_eventId_fkey")
+
+    whats EventWhatPivot[]
 
     @@id([id])
     @@index([creatorId])
@@ -104,6 +107,8 @@ model User {
     Comment_userId_fkey               Comment[]               @relation("Comment_userId_fkey")
     Reply_userId_fkey                 Reply[]                 @relation("Reply_userId_fkey")
     PushSubscription_userId_fkey      PushSubscription[]      @relation("PushSubscription_userId_fkey")
+
+    packs UserPackPivot[]
 
     @@id([id])
     @@unique([email])
@@ -206,4 +211,68 @@ model Reply {
     Reply_userId_fkey    User    @relation("Reply_userId_fkey", fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
     @@id([id])
+}
+
+enum Pack_role_enum {
+    CREATOR
+    ADMIN
+    MEMBER
+}
+
+model UserPackPivot {
+    userId    BigInt         @db.UnsignedBigInt
+    packId    BigInt         @db.UnsignedBigInt
+    createdAt DateTime       @default(now()) @db.DateTime(3)
+    role      Pack_role_enum @default(MEMBER)
+    pending   Boolean        @default(false)
+
+    UserPackPivot_userId_fkey User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    UserPackPivot_packId_fkey Pack @relation(fields: [packId], references: [id], onDelete: Cascade)
+
+    @@id([packId, userId])
+}
+
+model Pack {
+    id            BigInt            @default(autoincrement()) @db.UnsignedBigInt
+    title         String            @db.VarChar(55)
+    image         String?           @db.VarChar(100)
+    imageBlurData Bytes?            @db.VarBinary(255) //4x4=16 pixels ends up around 127 bytes, so go with 255 (btw, dont do tinyblob here. presence of blobs hurt read speed, but necessary for Large OBjects)
+    imageAspect   Float             @default(1) @db.Float
+    createdAt     DateTime          @default(now()) @db.DateTime(3)
+    inviteSetting PackInviteSetting @default(PUBLIC)
+
+    users UserPackPivot[]
+
+    @@id([id])
+}
+
+enum PackInviteSetting {
+    PUBLIC //anyone can straight up join without being invited
+    MEMBERS_AND_ABOVE //any member (and above) can add users / accept join requests
+    ADMINS_AND_ABOVE //any admin (and above) can add users / accept join requests
+    CREATOR_ONLY //only creator can add users / accept join requests
+}
+
+model EventWhatPivot {
+    eventId BigInt @db.UnsignedBigInt
+    whatId  BigInt @db.UnsignedBigInt
+
+    EventWhatPivot_eventId_fkey Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+    EventWhatPivot_whatId_fkey  What  @relation(fields: [whatId], references: [id], onDelete: Cascade)
+
+    @@id([eventId, whatId])
+}
+
+model What {
+    id            BigInt   @default(autoincrement()) @db.UnsignedBigInt
+    title         String   @unique @db.VarChar(55)
+    image         String?  @db.VarChar(100)
+    imageBlurData Bytes?   @db.VarBinary(255) //4x4=16 pixels ends up around 127 bytes, so go with 255 (btw, dont do tinyblob here. presence of blobs hurt read speed, but necessary for Large OBjects)
+    imageAspect   Float    @default(1) @db.Float
+    createdAt     DateTime @default(now()) @db.DateTime(3)
+
+    events EventWhatPivot[]
+
+    @@id([id])
+    @@fulltext([title])
 }

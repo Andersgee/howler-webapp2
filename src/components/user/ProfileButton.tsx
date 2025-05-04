@@ -10,6 +10,7 @@ import { dialogDispatch } from "#src/store/slices/dialog";
 import { IconSettings } from "#src/icons/Settings";
 import Link from "next/link";
 import { type TokenUser } from "#src/utils/jwt/schema";
+import { InstallLink } from "../topnav/InstallLink";
 
 export function ProfileButton({ user }: { user: TokenUser | null }) {
   //const user = useStore.use.user();
@@ -27,6 +28,7 @@ export function ProfileButton({ user }: { user: TokenUser | null }) {
           </PopoverTrigger>
           <PopoverContent>
             <div className="p-4">
+              <InstallLink className="my-4" />
               <div className="flex items-center">
                 <div className="mb-2">{user.name}</div>
                 <Link
@@ -50,6 +52,8 @@ export function ProfileButton({ user }: { user: TokenUser | null }) {
           </PopoverTrigger>
           <PopoverContent>
             <div>
+              <InstallLink className="my-4" />
+
               <SigninButtons />
             </div>
           </PopoverContent>

@@ -5,10 +5,101 @@ import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { tagsUser } from "./userTags";
 import { userCookieRemoveString } from "#src/utils/auth/schema";
 import { notify } from "#src/lib/cloud-messaging-light/notify";
-import { hashidFromId } from "#src/utils/hashid";
+import { hashidFromId, idFromHashid } from "#src/utils/hashid";
 import { afterResponseIsFinished } from "#src/utils/after-response-is-finished";
+import { sql } from "kysely";
 
 export const userRouter = createTRPCRouter({
+  infinite: protectedProcedure
+    .input(
+      z.object({
+        cursor: z.bigint().optional(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      //await sleep(1000);
+      const limit = 10;
+
+      let query = dbfetch()
+        .selectFrom("Notification")
+        .innerJoin("UserNotificationPivot", "UserNotificationPivot.notificationId", "Notification.id")
+        .select(["Notification.id", "Notification.title", "Notification.body", "Notification.relativeLink"])
+        .where("UserNotificationPivot.userId", "=", ctx.user.id)
+        .orderBy("Notification.id desc")
+        .limit(limit + 1); //one extra to know first item of next page
+
+      if (input.cursor !== undefined) {
+        query = query.where("Notification.id", "<=", input.cursor);
+      }
+
+      const items = await query.execute();
+
+      let nextCursor: bigint | undefined = undefined;
+      if (items.length > limit) {
+        const firstItemOfNextPage = items.pop()!; //dont return the one extra
+        nextCursor = firstItemOfNextPage.id;
+      }
+      return { items, nextCursor };
+    }),
+
+  getByHashid: protectedProcedure
+    .input(
+      z.object({
+        hashid: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const userId = idFromHashid(input.hashid);
+      if (userId === undefined) return null;
+
+      const db = dbfetch();
+      const user = await db
+        .selectFrom("User")
+        .select(["User.id", "User.name", "User.image"])
+        .where("User.id", "=", userId)
+        .executeTakeFirst();
+
+      return user;
+    }),
+
+  search: protectedProcedure
+    .input(
+      z.object({
+        searchName: z.string(),
+        cursor: z.bigint().optional(),
+      })
+    )
+    .query(async ({ input }) => {
+      const searchstr = input.searchName;
+      const limit = 10;
+      const db = dbfetch();
+      let query = db
+        .selectFrom("User")
+        .select([
+          "User.id",
+          "User.name",
+          "User.image",
+          sql<number>`MATCH (name) AGAINST (${searchstr} IN BOOLEAN MODE)`.as("score"),
+        ])
+        .orderBy("score desc")
+        //.where("User.name", "like", `${searchstr}%`)
+        //.orderBy("User.id asc")
+        .limit(limit + 1); //one extra to know first item of next page
+
+      if (input.cursor !== undefined) {
+        query = query.where("User.id", "<=", input.cursor);
+      }
+
+      const items = await query.execute();
+
+      let nextCursor: bigint | undefined = undefined;
+      if (items.length > limit) {
+        const firstItemOfNextPage = items.pop()!; //dont return the one extra
+        nextCursor = firstItemOfNextPage.id;
+      }
+      return { items, nextCursor };
+    }),
+
   cookie: publicProcedure.query(({ ctx }) => {
     return ctx.user;
   }),

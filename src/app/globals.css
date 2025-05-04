@@ -204,7 +204,7 @@
   }
 
   p {
-    @apply my-2 max-w-[55ch] font-sans text-color-neutral-800;
+    @apply my-2 max-w-[55ch] text-pretty font-sans text-color-neutral-800;
   }
 
   p > a {

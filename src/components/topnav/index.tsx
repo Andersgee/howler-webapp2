@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { ProfileButton } from "../user/ProfileButton";
 import { NotificationsButton } from "./NotificationsButton";
 import { TopnavLink } from "./TopnavLink";
-import { InstallLink } from "./InstallLink";
 
 export function Topnav() {
   return (
@@ -12,10 +11,10 @@ export function Topnav() {
         <div className="flex">
           <TopnavLink label="Explore" href="/" />
           <TopnavLink label="Create" href="/event" />
+          <TopnavLink label="Packs" href="/pack" />
           {/*<TopnavLink label="ui" href="/ui-showcase" />*/}
         </div>
       </div>
-      <InstallLink />
       <div className="flex gap-2">
         <Suspense>
           <Buttons />

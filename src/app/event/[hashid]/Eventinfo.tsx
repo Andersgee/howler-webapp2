@@ -23,7 +23,7 @@ export function Eventinfo({ event, className }: Props) {
       <div className="flex items-center gap-2">
         <IconWhere />
         <div className="w-12 shrink-0">Where</div>
-        <div className="capitalize-first">{event.locationName ?? "anywhere"}</div>
+        <div className="capitalize-first">{event.locationName ?? "Anywhere"}</div>
       </div>
       <div className="flex items-center gap-2">
         <IconWhen />
@@ -35,7 +35,7 @@ export function Eventinfo({ event, className }: Props) {
       <div className="flex items-center gap-2">
         <IconWho />
         <div className="w-12 shrink-0">Who</div>
-        <EventinfoWho eventId={event.id} />
+        <EventinfoWho eventId={event.id} who={event.who} />
       </div>
     </div>
   );

@@ -33,7 +33,7 @@ export function NotificationnSettings({ className, mYPushSubscriptions }: Props)
   if (isStandalone === undefined || isSupported === undefined || pushSubscription === undefined) return null;
 
   if (isSupported === false) {
-    return NotSupported();
+    return <NotSupported />;
   }
 
   if (notificationPermission === "denied") {
@@ -93,8 +93,8 @@ function NotSupported() {
   return (
     <div>
       <h1>Not supported</h1>
-      <p>This browser does not support push notifications</p>
-      <p>For reference, this is the user agent: {userAgent}</p>
+      <p>Push notifications are supported in all major browsers but this browser does not support push notifications</p>
+      <p>For reference, this is your user agent: {userAgent}</p>
     </div>
   );
 }

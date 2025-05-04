@@ -3,18 +3,22 @@ import type { Generated } from "kysely";
 import type { GeoJson } from "./types-geojson";
   
 export type DB = {
-  CloudMessageAccessToken: CloudMessageAccessToken;
-  UserUserPivot: UserUserPivot;
-  UserNotificationPivot: UserNotificationPivot;
-  UserEventPivot: UserEventPivot;
   User: User;
-  Reply: Reply;
-  PushSubscription: PushSubscription;
-  Post: Post;
   Notification: Notification;
+  Pack: Pack;
   FcmToken: FcmToken;
+  EventWhatPivot: EventWhatPivot;
+  Post: Post;
+  PushSubscription: PushSubscription;
+  Reply: Reply;
   Event: Event;
+  UserEventPivot: UserEventPivot;
+  UserNotificationPivot: UserNotificationPivot;
+  CloudMessageAccessToken: CloudMessageAccessToken;
+  What: What;
+  UserUserPivot: UserUserPivot;
   Comment: Comment;
+  UserPackPivot: UserPackPivot;
   DeletedEventImages: DeletedEventImages;
 };
 
@@ -70,6 +74,15 @@ export type Event = {
   imageAspect: Generated<number>;
   /** dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   pinnedCommentId: bigint | null;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  who: string | null;
+};
+
+export type EventWhatPivot = {
+  /** indexed: (eventId, whatId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  eventId: bigint;
+  /** indexed: (eventId, whatId) and (whatId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  whatId: bigint;
 };
 
 export type FcmToken = {
@@ -90,6 +103,23 @@ export type Notification = {
   relativeLink: string;
   /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   createdAt: Generated<Date>;
+};
+
+export type Pack = {
+  /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  id: Generated<bigint>;
+  /** dbtype: 'varchar(55)', eg string with max 55 chars */
+  title: string;
+  /** dbtype: 'varchar(100)', eg string with max 100 chars */
+  image: string | null;
+  /** default: 1, dbtype: 'float' */
+  imageAspect: Generated<number>;
+  /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
+  imageBlurData: Uint8Array | null;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
+  /** default: PUBLIC, dbtype: 'enum('PUBLIC','MEMBERS_AND_ABOVE','ADMINS_AND_ABOVE','CREATOR_ONLY')' */
+  inviteSetting: Generated<"PUBLIC" | "MEMBERS_AND_ABOVE" | "ADMINS_AND_ABOVE" | "CREATOR_ONLY">;
 };
 
 export type Post = {
@@ -170,11 +200,39 @@ export type UserNotificationPivot = {
   notificationId: bigint;
 };
 
+export type UserPackPivot = {
+  /** indexed: (packId, userId) and (userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  userId: bigint;
+  /** indexed: (packId, userId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  packId: bigint;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
+  /** default: MEMBER, dbtype: 'enum('CREATOR','ADMIN','MEMBER')' */
+  role: Generated<"CREATOR" | "ADMIN" | "MEMBER">;
+  /** default: false, dbtype: 'boolean' */
+  pending: Generated<boolean>;
+};
+
 export type UserUserPivot = {
   /** indexed: (userId, followerId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   userId: bigint;
   /** indexed: (userId, followerId) and (followerId), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
   followerId: bigint;
+  /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
+  createdAt: Generated<Date>;
+};
+
+export type What = {
+  /** default: autoincrement(), indexed: (id), dbtype: 'bigint unsigned' eg number in range [0, 2^64-1] */
+  id: Generated<bigint>;
+  /** indexed: (title) and (title), dbtype: 'varchar(55)', eg string with max 55 chars */
+  title: string;
+  /** dbtype: 'varchar(100)', eg string with max 100 chars */
+  image: string | null;
+  /** dbtype: 'varbinary(255)', eg bytes with max 255 bytes */
+  imageBlurData: Uint8Array | null;
+  /** default: 1, dbtype: 'float' */
+  imageAspect: Generated<number>;
   /** default: now(), dbtype: 'datetime(3)', eg "2000-12-24 21:01:59.123456" with max 3 digits after decimal */
   createdAt: Generated<Date>;
 };

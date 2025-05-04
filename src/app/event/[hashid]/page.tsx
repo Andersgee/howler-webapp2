@@ -58,6 +58,7 @@ export default async function Page({ params }: Props) {
         )}
 
         <Eventinfo event={event} />
+
         <EventActions
           event={event}
           user={user}
