@@ -1,31 +1,13 @@
 import { apiRsc } from "#src/trpc/api-rsc";
-import { hashidFromId, idFromHashid } from "#src/utils/hashid";
+import { idFromHashid } from "#src/utils/hashid";
 import { notFound } from "next/navigation";
-//import { Eventinfo } from "./Eventinfo";
-//import { EventActions } from "./EventActions";
 import Image from "next/image";
 import { imageSizes } from "#src/utils/image-sizes";
-//import { base64 } from "rfc4648";
-//import { RichResults } from "./RichResults";
-import Link from "next/link";
 import { Shell } from "#src/components/Shell";
-import { JSONE } from "#src/utils/jsone";
-//import { ButtonRemoveUserFromPack } from "./button-remove-user-from-pack";
-import { PrettyDate, PrettyDateLong } from "#src/components/PrettyDate";
-
-import { UserImage32x32 } from "#src/components/user/UserImage";
 import { NotSignedInPage } from "#src/app/settings/NotSignedInPage";
-//import { NotPackMemberPage } from "./not-pack-member-page";
 import { PendingPackMemberPage } from "../pending-pack-member-page";
-import { PackAddMembers } from "../pack-add-members";
 import { NotPackMemberPage } from "../not-pack-member-page";
-import { ButtonRemoveUserFromPack } from "../button-remove-user-from-pack";
-import { Fragment } from "react";
 import { FormEditPack } from "./form-edit-pack";
-
-//import { CreateCommentForm } from "./CreateCommentForm";
-//import { CommentsList, PinnedComment } from "./CommentsList";
-//import { UserImage32x32 } from "#src/components/user/UserImage";
 
 type Props = {
   searchParams: Record<string, string | string[] | undefined>;
@@ -79,10 +61,4 @@ export default async function Page({ params }: Props) {
       )}
     </Shell>
   );
-}
-
-function showRemove(myRole: "ADMIN" | "CREATOR" | "MEMBER" | undefined, otherRole: "ADMIN" | "CREATOR" | "MEMBER") {
-  if (myRole === "CREATOR" && otherRole !== "CREATOR") return true;
-  if (myRole === "ADMIN" && otherRole === "MEMBER") return true;
-  return false;
 }

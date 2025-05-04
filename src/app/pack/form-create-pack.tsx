@@ -1,6 +1,6 @@
 "use client";
 
-import { type RouterOutputs, api } from "#src/hooks/api";
+import { api } from "#src/hooks/api";
 import { useToast } from "#src/ui/use-toast";
 import { cn } from "#src/utils/cn";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,10 +8,7 @@ import { type FieldErrors, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "#src/ui/form";
 import { Button } from "#src/ui/button";
-import { type TokenUser } from "#src/utils/jwt/schema";
 import { dialogDispatch } from "#src/store/slices/dialog";
-import { IconClose } from "#src/icons/Close";
-import { IconCheck } from "#src/icons/Check";
 import { Input } from "#src/ui/input";
 import { IconWhat } from "#src/icons/What";
 import { useUserCookie } from "#src/hooks/useUserCookie";
@@ -23,9 +20,6 @@ const zFormData = z.object({
   //image: z.string().nullish(),
   //creatorId: z.bigint(),
 });
-// z.object({
-//  text: z.string().min(3, { message: "at least 3 characters" }).max(280, { message: "at most 280 characters" }),
-//});
 
 type FormData = z.infer<typeof zFormData>;
 

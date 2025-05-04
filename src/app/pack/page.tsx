@@ -2,7 +2,6 @@ import { Shell } from "#src/components/Shell";
 import { seo } from "#src/utils/seo";
 import { FormCreatePack } from "./form-create-pack";
 import { MyPacksList } from "./my-packs-list";
-//import { CreateEventForm } from "./CreateEventForm";
 
 export const metadata = seo({
   title: "Packs | Howler",
