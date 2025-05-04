@@ -198,7 +198,7 @@ export const packRouter = createTRPCRouter({
           await notify([input.userId], {
             title: `${ctx.user.name} added you to pack ${pack.title}`,
             body: `See your pack ${pack.title}`,
-            relativeLink: `/pack/${hashidFromId(ctx.user.id)}`,
+            relativeLink: `/pack/${hashidFromId(pack.id)}`,
             icon: ctx.user.image,
             image: pack.image ?? undefined,
           });
