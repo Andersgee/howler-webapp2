@@ -50,12 +50,15 @@ export const whatRouter = createTRPCRouter({
           .limit(10)
           .execute();
 
-        const defaultSuggestions = relevantMaybe.map((x) => ({
+        const suggestions = relevantMaybe.map((x) => ({
           id: x.eventId,
           title: x.title,
           score: 0,
         }));
-        return defaultSuggestions;
+
+        const uniqueTitleSuggestions = [...new Map(suggestions.map((item) => [item.title, item])).values()];
+
+        return uniqueTitleSuggestions;
       }
     }),
 });
