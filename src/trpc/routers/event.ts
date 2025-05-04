@@ -59,6 +59,7 @@ export const eventRouter = createTRPCRouter({
         locationName: z.union([z.literal("").transform(() => undefined), z.string().min(3).max(55)]),
         who: z.string().optional(),
         whoPackId: z.bigint().nullable(),
+        whatId: z.bigint().nullable(),
         //image: z.string().nullish(),
         //imageAspect: z.number().optional(),
       })
@@ -77,7 +78,39 @@ export const eventRouter = createTRPCRouter({
         })
         .executeTakeFirstOrThrow();
 
-      const hashid = hashidFromId(insertResult.insertId!);
+      const createdEventId = insertResult.insertId!;
+      console.log("input.whatId: ", input.whatId);
+      if (input.whatId) {
+        console.log("inserting EventWhatPivot since whatId exists");
+        await db
+          .insertInto("EventWhatPivot")
+          .values({
+            eventId: createdEventId,
+            whatId: input.whatId,
+          })
+          .execute();
+      } else {
+        //I guess for now just always create a new 'What' row
+        console.log("first creating new What row");
+        const whatinsertResult = await db
+          .insertInto("What")
+          .values({
+            //id: input.whatId,
+            title: input.title,
+          })
+          .executeTakeFirst();
+        const createdWhatId = whatinsertResult.insertId!;
+        console.log("and then inserting EventWhatPivot");
+        await db
+          .insertInto("EventWhatPivot")
+          .values({
+            eventId: createdEventId,
+            whatId: createdWhatId,
+          })
+          .execute();
+      }
+
+      const hashid = hashidFromId(createdEventId);
 
       afterResponseIsFinished(async () => {
         const userPackPivots = input.whoPackId

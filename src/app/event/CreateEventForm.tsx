@@ -53,6 +53,7 @@ const zFormData = z.object({
       .max(55, { message: "at most 55 characters - or empty" }),
   ]),
   whoPackId: z.bigint().nullable(),
+  whatId: z.bigint().nullable(),
   //image: z.string().nullish(),
   //imageAspect: z.number().optional(),
 });
@@ -70,6 +71,7 @@ export function CreateEventForm() {
       locationName: "",
       who: "",
       whoPackId: null,
+      whatId: null,
     },
   });
   const [showMap, setShowMap] = useState(false);
@@ -154,10 +156,10 @@ export function CreateEventForm() {
                     field.onChange(str);
                     if (whatId) {
                       console.log("selected whatId:", whatId);
-                      //form.setValue("whoPackId", packId);
+                      form.setValue("whatId", whatId);
                     } else if (whatId === null) {
                       console.log("cleared:", whatId);
-                      //form.setValue("whoPackId", null);
+                      form.setValue("whatId", null);
                     }
                   }}
                 />

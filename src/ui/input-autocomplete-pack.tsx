@@ -20,7 +20,9 @@ type Props = {
 
 export function InputAutocompletePack({ className, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const { data: suggestions } = api.pack.listMy.useQuery();
+  const { data: suggestions } = api.pack.listMy.useQuery(undefined, {
+    refetchOnMount: true,
+  });
 
   return (
     <Command

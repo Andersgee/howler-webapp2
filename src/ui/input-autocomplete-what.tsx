@@ -20,7 +20,9 @@ type Props = {
 
 export function InputAutocompleteWhat({ className, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
-  const { data: suggestions } = api.what.list.useQuery();
+  const { data: suggestions } = api.what.list.useQuery(undefined, {
+    refetchOnMount: true,
+  });
 
   return (
     <Command
