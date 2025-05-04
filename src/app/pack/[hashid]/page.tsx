@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { imageSizes } from "#src/utils/image-sizes";
 import Link from "next/link";
-import { Shell } from "#src/components/Shell";
 import { UserImage32x32 } from "#src/components/user/UserImage";
 import { NotSignedInPage } from "#src/app/settings/NotSignedInPage";
 import { PendingPackMemberPage } from "./pending-pack-member-page";
@@ -42,7 +41,7 @@ export default async function Page({ params }: Props) {
   }
 
   return (
-    <Shell>
+    <div>
       {showAddMember(myMemberShip.packRole, pack.inviteSetting) && (
         <div className="py-4">
           <PackAddMembers packId={pack.id} />
@@ -114,7 +113,7 @@ export default async function Page({ params }: Props) {
         ))}
       </div>
        */}
-    </Shell>
+    </div>
   );
 }
 

@@ -3,7 +3,6 @@ import { idFromHashid } from "#src/utils/hashid";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { imageSizes } from "#src/utils/image-sizes";
-import { Shell } from "#src/components/Shell";
 import { NotSignedInPage } from "#src/app/settings/NotSignedInPage";
 import { PendingPackMemberPage } from "../pending-pack-member-page";
 import { NotPackMemberPage } from "../not-pack-member-page";
@@ -37,7 +36,7 @@ export default async function Page({ params }: Props) {
   }
 
   return (
-    <Shell>
+    <div>
       <div className="py-4">
         <FormEditPack initialPack={pack} />
       </div>
@@ -59,6 +58,6 @@ export default async function Page({ params }: Props) {
       ) : (
         <div className="py-4"></div>
       )}
-    </Shell>
+    </div>
   );
 }
