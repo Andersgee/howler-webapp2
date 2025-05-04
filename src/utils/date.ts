@@ -8,7 +8,7 @@ export function prettyDateLong(date: Date, defaultLocale = true) {
   if (defaultLocale) {
     return new Intl.DateTimeFormat(undefined, OPTIONS_LONG).format(date);
   }
-  return new Intl.DateTimeFormat("en-US", { ...OPTIONS_LONG, timeZone: "UTC" }).format(date);
+  return new Intl.DateTimeFormat("en-US", OPTIONS_LONG).format(date);
 }
 
 /** example: `"Jul 5, 2023, 13:17"` */
@@ -16,7 +16,7 @@ export function prettyDate(date: Date, defaultLocale = true) {
   if (defaultLocale) {
     return new Intl.DateTimeFormat(undefined, OPTIONS).format(date);
   }
-  return new Intl.DateTimeFormat("en-US", { ...OPTIONS, timeZone: "UTC" }).format(date);
+  return new Intl.DateTimeFormat("en-US", OPTIONS).format(date);
 }
 
 /**

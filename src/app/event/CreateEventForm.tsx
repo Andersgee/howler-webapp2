@@ -207,10 +207,8 @@ export function CreateEventForm() {
                     field.onChange(str);
                     if (packId) {
                       form.setValue("whoPackId", packId);
-                      console.log("selected packid:", packId);
                     } else if (packId === null) {
                       form.setValue("whoPackId", null);
-                      console.log("cleared");
                     }
                   }}
                 />

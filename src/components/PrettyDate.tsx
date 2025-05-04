@@ -14,6 +14,7 @@ type Props = {
  */
 export function PrettyDateLong({ date }: Props) {
   const [str, setStr] = useState(() => prettyDateLong(date, false));
+  //const [str, setStr] = useState("");
   useEffect(() => {
     setStr(prettyDateLong(date, true));
   }, [date]);
@@ -28,6 +29,7 @@ export function PrettyDateLong({ date }: Props) {
  */
 export function PrettyDate({ date }: Props) {
   const [str, setStr] = useState(() => prettyDate(date, false));
+  //const [str, setStr] = useState("");
   useEffect(() => {
     setStr(prettyDate(date, true));
   }, [date]);

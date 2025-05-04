@@ -36,6 +36,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",
+    "date-fns": "^4.1.0",
     "firebase": "^10.7.2",
     "hashids": "^2.3.0",
     "jose": "^5.1.1",

@@ -6,6 +6,7 @@ import { Button } from "#src/ui/button";
 import { cn } from "#src/utils/cn";
 import { Command } from "cmdk";
 import { api } from "#src/hooks/api";
+import { inputElementStyles } from "./input";
 
 type Props = {
   className?: string;
@@ -43,6 +44,7 @@ export function InputAutocompletePack({ className, value, onChange }: Props) {
             }
           }}
           className={cn(
+            //inputElementStyles,
             "flex w-full border-none bg-color-neutral-0 px-3 py-5 outline-none placeholder:text-color-neutral-500",
             open ? "rounded-t-lg" : "rounded-lg",
             className
