@@ -122,10 +122,7 @@ export const eventRouter = createTRPCRouter({
         const notifyFollowerIds = userUserPivots.map((x) => x.followerId);
 
         const notifyUserIds = unique(notifyFollowerIds.concat(notifyPackMemberIds)).filter((id) => id !== ctx.user.id);
-        //in dev, also notify creator
-        if (process.env.NODE_ENV === "development") {
-          notifyUserIds.push(ctx.user.id);
-        }
+
         await notify(notifyUserIds, {
           title: `${ctx.user.name} howled!`,
           body: input.title,
@@ -236,82 +233,75 @@ export const eventRouter = createTRPCRouter({
       return { events, withSearch };
     }),
   isJoined: publicProcedure.input(z.object({ id: z.bigint(), userId: z.bigint() })).query(async ({ input }) => {
-    const t = tagsEvent.isJoined({ eventId: input.id, userId: input.userId });
-    const r = await dbfetch({ next: { tags: [t] } })
+    const tag = tagsEvent.isJoined({ eventId: input.id, userId: input.userId });
+    const userEventPivot = await dbfetch({ next: { tags: [tag] } })
       .selectFrom("UserEventPivot")
       .select("eventId")
       .where("eventId", "=", input.id)
       .where("userId", "=", input.userId)
       .executeTakeFirst();
-    return r ? true : false;
+    return userEventPivot ? true : false;
   }),
   meIsJoined: protectedProcedure.input(z.object({ id: z.bigint() })).query(async ({ input, ctx }) => {
-    const t = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
-    const r = await dbfetch({ next: { tags: [t] } })
+    const tag = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
+    const userEventPivot = await dbfetch({ next: { tags: [tag] } })
       .selectFrom("UserEventPivot")
       .select("eventId")
       .where("eventId", "=", input.id)
       .where("userId", "=", ctx.user.id)
       .executeTakeFirst();
-    return r ? true : false;
+    return userEventPivot ? true : false;
   }),
-  joinOrLeave: protectedProcedure
-    .input(z.object({ id: z.bigint(), join: z.boolean() }))
-    .mutation(async ({ ctx, input }) => {
-      const tag = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
-      const db = dbfetch();
-      if (input.join) {
-        await db
-          .insertInto("UserEventPivot")
-          .ignore()
-          .values({
-            eventId: input.id,
-            userId: ctx.user.id,
-          })
-          .executeTakeFirstOrThrow();
-      } else {
-        await db
-          .deleteFrom("UserEventPivot")
-          .where("eventId", "=", input.id)
-          .where("userId", "=", ctx.user.id)
-          .executeTakeFirstOrThrow();
-      }
 
-      afterResponseIsFinished(async () => {
-        if (!input.join) return;
+  join: protectedProcedure.input(z.object({ id: z.bigint() })).mutation(async ({ ctx, input }) => {
+    const tag = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
+    const db = dbfetch();
 
-        const event = await db
-          .selectFrom("Event")
-          .select(["id", "creatorId", "title"])
-          .where("id", "=", input.id)
-          .executeTakeFirstOrThrow();
+    const eventId = input.id;
 
-        await notify([event.creatorId], {
-          title: `${ctx.user.name} joined your howl!`,
-          body: `${event.title}`,
-          relativeLink: `/event/${hashidFromId(event.id)}`,
-          icon: ctx.user.image,
-        });
+    await db.insertInto("UserEventPivot").ignore().values({ eventId, userId: ctx.user.id }).executeTakeFirstOrThrow();
 
-        //lets notify every joined user also now that this doesnt affect response time
-        const joinedUsers = await db
-          .selectFrom("UserEventPivot")
-          .select(["userId"])
-          .where("eventId", "=", input.id)
-          .execute();
-        const joinedUserIds = joinedUsers.map((user) => user.userId);
+    afterResponseIsFinished(async () => {
+      const event = await db
+        .selectFrom("Event")
+        .select(["id", "creatorId", "title"])
+        .where("id", "=", eventId)
+        .executeTakeFirstOrThrow();
 
-        await notify(joinedUserIds, {
-          title: `${ctx.user.name} also joined ${event.title}`,
-          body: `${event.title}`,
-          relativeLink: `/event/${hashidFromId(event.id)}`,
-          icon: ctx.user.image,
-        });
+      const joinedUsers = await db
+        .selectFrom("UserEventPivot")
+        .select(["userId"])
+        .where("eventId", "=", eventId)
+        .execute();
+
+      const notifyUserIds = joinedUsers.map((x) => x.userId).filter((id) => id !== ctx.user.id);
+      await notify(notifyUserIds, {
+        title: `${ctx.user.name} joined ${event.title}`,
+        body: `${event.title}`,
+        relativeLink: `/event/${hashidFromId(event.id)}`,
+        icon: ctx.user.image,
       });
+    });
 
-      revalidateTag(tag);
-      return tag;
-    }),
+    revalidateTag(tag);
+    return { tag };
+  }),
+
+  leave: protectedProcedure.input(z.object({ id: z.bigint() })).mutation(async ({ ctx, input }) => {
+    const tag = tagsEvent.isJoined({ eventId: input.id, userId: ctx.user.id });
+    const db = dbfetch();
+
+    const eventId = input.id;
+
+    await db
+      .deleteFrom("UserEventPivot")
+      .where("eventId", "=", eventId)
+      .where("userId", "=", ctx.user.id)
+      .executeTakeFirstOrThrow();
+
+    revalidateTag(tag);
+    return { tag };
+  }),
 });
 
 /**

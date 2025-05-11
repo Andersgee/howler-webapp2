@@ -41,9 +41,6 @@ export function EventActions(props: Props) {
             <IconEdit /> Edit
           </Link>
         )}
-        {/*!props.isCreator && (
-          <FollowUnfollowButton event={props.event} user={props.user} isFollowing={props.isFollowing} />
-        )*/}
         <ShareButton title={props.event.title} />
 
         {props.event.location && (
@@ -51,7 +48,12 @@ export function EventActions(props: Props) {
             <IconWhere /> {showMap ? "close map" : "show map"}
           </Button>
         )}
-        {!props.isCreator && <JoinLeaveButton user={props.user} id={props.event.id} isJoined={props.isJoined} />}
+        {props.isCreator ? null : props.isJoined ? (
+          <LeaveButton user={props.user} id={props.event.id} />
+        ) : (
+          <JoinButton user={props.user} id={props.event.id} />
+        )}
+
         <Button variant="icon" onClick={() => downloadEventAsIcs(props.event)}>
           .ics
         </Button>
@@ -61,20 +63,38 @@ export function EventActions(props: Props) {
   );
 }
 
-function JoinLeaveButton({ user, id, isJoined }: { user: TokenUser | null; id: bigint; isJoined: boolean }) {
-  const eventJoinOrLeave = api.event.joinOrLeave.useMutation({
-    onSuccess: (tag) => actionRevalidateTag(tag),
+function JoinButton({ user, id }: { user: TokenUser | null; id: bigint }) {
+  const { mutate, isPending } = api.event.join.useMutation({
+    onSuccess: ({ tag }) => actionRevalidateTag(tag),
   });
   const handleClick = () => {
     if (user) {
-      eventJoinOrLeave.mutate({ id, join: isJoined ? false : true });
+      mutate({ id });
     } else {
       dialogDispatch({ type: "show", name: "profilebutton" });
     }
   };
   return (
-    <Button disabled={eventJoinOrLeave.isPending} onClick={handleClick}>
-      {isJoined ? "Leave" : "Join"}
+    <Button disabled={isPending} onClick={handleClick}>
+      Join
+    </Button>
+  );
+}
+
+function LeaveButton({ user, id }: { user: TokenUser | null; id: bigint }) {
+  const { mutate, isPending } = api.event.leave.useMutation({
+    onSuccess: ({ tag }) => actionRevalidateTag(tag),
+  });
+  const handleClick = () => {
+    if (user) {
+      mutate({ id });
+    } else {
+      dialogDispatch({ type: "show", name: "profilebutton" });
+    }
+  };
+  return (
+    <Button disabled={isPending} onClick={handleClick}>
+      Leave
     </Button>
   );
 }
@@ -109,46 +129,3 @@ function Map({ show, location }: { show: boolean; location: GeoJson["Point"] }) 
     )
   );
 }
-
-/*
-
-function FollowUnfollowButton({
-  user,
-  isFollowing,
-  event,
-}: {
-  user: TokenUser | null;
-  isFollowing: boolean;
-  event: NonNullable<RouterOutputs["event"]["getById"]>;
-}) {
-  const maybeRequestNotifications = useStore.use.maybeRequestNotifications();
-  const { toast } = useToast();
-  const onDenied = () =>
-    toast({
-      variant: "default",
-      title: "You have blocked notifications",
-      description:
-        "Open your browser preferences or click the lock near the address bar to change your notification preferences.",
-    });
-
-  const userFollowOrUnfollow = api.user.followOrUnfollow.useMutation({
-    onSuccess: (tag) => actionRevalidateTag(tag),
-  });
-
-  const handleClick = async () => {
-    if (user) {
-      await maybeRequestNotifications(onDenied);
-      userFollowOrUnfollow.mutate({ id: event.creatorId, join: isFollowing ? false : true });
-    } else {
-      dialogDispatch({ type: "show", name: "profilebutton" });
-    }
-  };
-
-  return (
-    <Button onClick={handleClick} variant="icon" disabled={userFollowOrUnfollow.isPending}>
-      <UserImage32x32 image={event.creatorImage ?? ""} alt={event.creatorName} />{" "}
-      <span className="ml-1">{isFollowing ? "Unfollow" : "Follow"}</span>
-    </Button>
-  );
-}
-*/
